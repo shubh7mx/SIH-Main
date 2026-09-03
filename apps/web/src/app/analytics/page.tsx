@@ -82,7 +82,11 @@ export default function AnalyticsPage() {
           />
           <KpiStatTile
             label="FRP 90th Percentile"
-            value={stats?.frp_percentiles.p90.toFixed(1) ?? "—"}
+            value={
+              typeof stats?.frp_percentiles?.p90 === "number"
+                ? stats.frp_percentiles.p90.toFixed(1)
+                : "—"
+            }
             unit="MW"
             subtext="Top 10% thermal intensity"
             accentColor="#f97316"
@@ -90,7 +94,11 @@ export default function AnalyticsPage() {
           />
           <KpiStatTile
             label="Max FRP Recorded"
-            value={stats?.frp_percentiles.max.toFixed(1) ?? "—"}
+            value={
+              typeof stats?.frp_percentiles?.max === "number"
+                ? stats.frp_percentiles.max.toFixed(1)
+                : "—"
+            }
             unit="MW"
             subtext="Peak single-event output"
             accentColor="#ef4444"

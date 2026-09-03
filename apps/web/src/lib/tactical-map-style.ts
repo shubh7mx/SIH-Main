@@ -10,17 +10,12 @@ export const TACTICAL_DARK_STYLE: StyleSpecification = {
   name: "NTRO-Dark-Tactical",
   glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources: {
-    "carto-dark-matter": {
-      type: "raster",
-      tiles: [
-        "https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png",
-        "https://b.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png",
-        "https://c.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png",
-      ],
-      tileSize: 256,
+    "maplibre-demotiles": {
+      type: "vector",
+      tiles: ["https://demotiles.maplibre.org/tiles/{z}/{x}/{y}.pbf"],
       minzoom: 0,
-      maxzoom: 19,
-      attribution: "© OpenStreetMap · © CARTO · NTRO Tactical Core",
+      maxzoom: 6,
+      attribution: "© MapLibre · Natural Earth",
     },
   },
   layers: [
@@ -32,17 +27,24 @@ export const TACTICAL_DARK_STYLE: StyleSpecification = {
       },
     },
     {
-      id: "carto-dark-base",
-      type: "raster",
-      source: "carto-dark-matter",
-      minzoom: 0,
-      maxzoom: 19,
+      id: "countries-fill",
+      type: "fill",
+      source: "maplibre-demotiles",
+      "source-layer": "countries",
       paint: {
-        "raster-opacity": 0.88,
-        "raster-contrast": 0.15,
-        "raster-saturation": -0.3,
-        "raster-brightness-min": 0.02,
-        "raster-brightness-max": 0.95,
+        "fill-color": "#0b1220",
+        "fill-outline-color": "#0b1220",
+      },
+    },
+    {
+      id: "countries-boundary",
+      type: "line",
+      source: "maplibre-demotiles",
+      "source-layer": "countries",
+      paint: {
+        "line-color": "#ffffff",
+        "line-width": 1.2,
+        "line-opacity": 0.9,
       },
     },
   ],

@@ -440,8 +440,67 @@ class EventStore:
     async def detailed_analytics(self) -> Dict[str, Any]:
         """Provides deep analytical breakdowns for monitored facilities and regions."""
         async with self._lock:
+            total = len(self._events)
             facilities_map: Dict[str, Dict[str, Any]] = {}
+            class_breakdown: Dict[str, int] = {}
+            severity_breakdown: Dict[str, int] = {
+                "CRITICAL": 0,
+                "WARNING": 0,
+                "WATCH": 0,
+                "MONITORING": 0,
+            }
+            source_breakdown: Dict[str, int] = {}
+            state_breakdown: Dict[str, int] = {}
+            cde_scores: List[float] = []
+            frp_values: List[float] = []
+            critical_count = 0
+
             for ev in self._events.values():
+                cls = ev.get("classification") or "UNMAPPED_ANOMALY"
+                class_breakdown[cls] = class_breakdown.get(cls, 0) + 1
+
+                if ev.get("is_critical_alert"):
+                    critical_count += 1
+                    severity_breakdown["CRITICAL"] += 1
+                elif cls == "INDUSTRIAL_FIRE_EMERGENCY":
+                    severity_breakdown["WARNING"] += 1
+                elif cls == "PERSISTENT_INDUSTRIAL_FLARE":
+                    severity_breakdown["WATCH"] += 1
+                else:
+                    severity_breakdown["MONITORING"] += 1
+
+                src = ev.get("satellite_source") or ev.get("source") or "VIIRS_SNPP"
+                source_breakdown[src] = source_breakdown.get(src, 0) + 1
+
+                state = ev.get("state") or ev.get("region") or "Unknown"
+                if not state or state == "Unknown":
+                    # Infer approximate Indian region from coordinates if state not populated
+                    lat = float(ev.get("latitude") or 0.0)
+                    lon = float(ev.get("longitude") or 0.0)
+                    if lat >= 28.0 and lon <= 78.0:
+                        state = "Punjab / Haryana"
+                    elif lat >= 20.0 and lat < 28.0 and lon <= 74.5:
+                        state = "Gujarat / Rajasthan"
+                    elif lat >= 20.0 and lat < 26.0 and lon >= 82.0:
+                        state = "Jharkhand / Odisha / WB"
+                    elif lat < 20.0 and lon <= 78.0:
+                        state = "Maharashtra / Karnataka"
+                    elif lat < 20.0 and lon > 78.0:
+                        state = "Andhra / Tamil Nadu"
+                    else:
+                        state = "Central India"
+                state_breakdown[state] = state_breakdown.get(state, 0) + 1
+
+                cde = ev.get("cde_anomaly_score")
+                if cde is not None:
+                    try:
+                        cde_scores.append(float(cde))
+                    except (ValueError, TypeError):
+                        pass
+
+                frp = float(ev.get("frp_megawatts") or 0.0)
+                frp_values.append(frp)
+
                 fac = ev.get("facility_name") or "Unmapped Regional Cluster"
                 if fac not in facilities_map:
                     facilities_map[fac] = {
@@ -458,7 +517,6 @@ class EventStore:
                 f["event_count"] += 1
                 if ev.get("is_critical_alert"):
                     f["critical_alerts"] += 1
-                frp = float(ev.get("frp_megawatts") or 0.0)
                 f["frp_total"] += frp
                 if frp > f["max_frp"]:
                     f["max_frp"] = round(frp, 1)
@@ -470,9 +528,30 @@ class EventStore:
 
             rankings.sort(key=lambda x: (x["critical_alerts"], x["mean_frp"]), reverse=True)
 
+            frp_values.sort()
+            n = len(frp_values)
+            def p(pct: float) -> float:
+                if not frp_values:
+                    return 0.0
+                idx = int(len(frp_values) * pct)
+                return round(frp_values[min(idx, len(frp_values) - 1)], 1)
+
             return {
-                "monitored_facilities": len(rankings),
+                "total_events_processed": total,
+                "critical_alerts_count": critical_count,
+                "class_breakdown": class_breakdown,
+                "severity_breakdown": severity_breakdown,
+                "source_breakdown": source_breakdown,
+                "mean_cde_score": round(sum(cde_scores) / max(1, len(cde_scores)), 2) if cde_scores else None,
+                "frp_percentiles": {
+                    "p50": p(0.50),
+                    "p90": p(0.90),
+                    "p99": p(0.99),
+                    "max": round(frp_values[-1], 1) if n > 0 else 0.0,
+                },
                 "facilities_ranking": rankings,
+                "state_breakdown": state_breakdown,
+                "monitored_facilities": len(rankings),
             }
 
     # ── Analytics Aggregations ────────────────────────────────────────────

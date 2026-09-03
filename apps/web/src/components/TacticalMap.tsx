@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import type { Map as MlMap, Popup as MlPopup } from "maplibre-gl";
 import type { HotspotEvent } from "@/lib/types";
 import { getClassificationSeverity } from "@/lib/design-tokens";
-import { getIndiaBoundaryGeoJSON } from "@/lib/tactical-map-style";
 import { getIndiaStatesGeoJSON, getIndiaCitiesGeoJSON } from "@/lib/india-places";
 import { inferAnomalyReason } from "@/lib/anomaly-inference";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -54,8 +53,132 @@ export const REGIONAL_SECTORS = [
 ] as const;
 
 // Tactical Basemap Style Definitions
-const DARK_STYLE_URL = "https://tiles.openfreemap.org/styles/dark";
-const LIBERTY_3D_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
+// Pure MapLibre vector & keyless raster styles — NO CARTO dependencies, NO API keys required.
+const DARK_STYLE_SPEC: any = {
+  version: 8,
+  name: "NTRO-Dark-Tactical",
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+  sources: {
+    "maplibre-demotiles": {
+      type: "vector",
+      tiles: ["https://demotiles.maplibre.org/tiles/{z}/{x}/{y}.pbf"],
+      minzoom: 0,
+      maxzoom: 6,
+      attribution: "© MapLibre · Natural Earth",
+    },
+  },
+  layers: [
+    {
+      id: "background",
+      type: "background",
+      paint: { "background-color": "#030712" },
+    },
+    {
+      id: "countries-fill",
+      type: "fill",
+      source: "maplibre-demotiles",
+      "source-layer": "countries",
+      paint: {
+        "fill-color": "#0a1120",
+        "fill-outline-color": "#0a1120",
+      },
+    },
+    {
+      id: "countries-outline",
+      type: "line",
+      source: "maplibre-demotiles",
+      "source-layer": "countries",
+      paint: {
+        "line-color": "#ffffff",
+        "line-width": 1.2,
+        "line-opacity": 0.9,
+      },
+    },
+  ],
+};
+
+const LIBERTY_3D_STYLE_SPEC: any = {
+  version: 8,
+  name: "NTRO-3D-Tactical-Vector",
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+  sources: {
+    openmaptiles: {
+      type: "vector",
+      tiles: [
+        "https://tiles.openfreemap.org/planet/20260830_080001_pt/{z}/{x}/{y}.pbf",
+      ],
+      maxzoom: 14,
+      attribution: "© OpenFreeMap · © OpenMapTiles",
+    },
+    "maplibre-demotiles": {
+      type: "vector",
+      tiles: ["https://demotiles.maplibre.org/tiles/{z}/{x}/{y}.pbf"],
+      minzoom: 0,
+      maxzoom: 6,
+    },
+  },
+  layers: [
+    {
+      id: "background",
+      type: "background",
+      paint: { "background-color": "#030712" },
+    },
+    {
+      id: "countries-fill",
+      type: "fill",
+      source: "maplibre-demotiles",
+      "source-layer": "countries",
+      paint: {
+        "fill-color": "#0a1120",
+        "fill-outline-color": "#0a1120",
+      },
+    },
+    {
+      id: "countries-outline",
+      type: "line",
+      source: "maplibre-demotiles",
+      "source-layer": "countries",
+      paint: {
+        "line-color": "#ffffff",
+        "line-width": 1.2,
+        "line-opacity": 0.9,
+      },
+    },
+    {
+      id: "3d-buildings-extruded",
+      source: "openmaptiles",
+      "source-layer": "building",
+      type: "fill-extrusion",
+      minzoom: 12,
+      paint: {
+        "fill-extrusion-color": [
+          "interpolate",
+          ["linear"],
+          ["coalesce", ["get", "render_height"], ["get", "height"], 18],
+          0, "#38bdf8",
+          20, "#0284c7",
+          50, "#0369a1",
+          100, "#0c4a6e",
+        ],
+        "fill-extrusion-height": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          12, 0,
+          14.5, ["coalesce", ["get", "render_height"], ["get", "height"], 18],
+        ],
+        "fill-extrusion-base": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          12, 0,
+          14.5, ["coalesce", ["get", "render_min_height"], ["get", "min_height"], 0],
+        ],
+        "fill-extrusion-opacity": 0.88,
+      },
+    },
+  ],
+};
 
 const SATELLITE_STYLE_SPEC: any = {
   version: 8,
@@ -69,17 +192,8 @@ const SATELLITE_STYLE_SPEC: any = {
       maxzoom: 19,
       attribution: "ESRI World Imagery",
     },
-    "carto-labels": {
-      type: "raster",
-      tiles: [
-        "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_only_labels/{z}/{x}/{y}.png",
-        "https://cartodb-basemaps-b.global.ssl.fastly.net/dark_only_labels/{z}/{x}/{y}.png",
-      ],
-      tileSize: 256,
-      maxzoom: 19,
-    },
   },
-  glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   layers: [
     {
       id: "background",
@@ -99,16 +213,6 @@ const SATELLITE_STYLE_SPEC: any = {
         "raster-contrast": 0.1,
       },
     },
-    {
-      id: "carto-labels-layer",
-      type: "raster",
-      source: "carto-labels",
-      minzoom: 2,
-      maxzoom: 19,
-      paint: {
-        "raster-opacity": 0.85,
-      },
-    },
   ],
 };
 
@@ -117,7 +221,6 @@ const WATER_COLOR = "#334658"; // Light bluish grey sea color
 const RIVER_COLOR = "#546a80"; // Light bluish grey rivers/canals
 const COUNTRY_BORDER_COLOR = "#ffffff";
 const STATE_BORDER_COLOR = "#64748b";
-const COUNTRY_HIGHLIGHT_FILL = "#2A75D3";
 const COUNTRY_LABEL_COLOR = "#dbeafe";
 
 // Palette for severity mapping
@@ -128,58 +231,96 @@ const SEV_WILDFIRE_BORDER = "#fdba74";
 const SEV_AGRICULTURAL = "#eab308";
 const SEV_AGRICULTURAL_BORDER = "#fef08a";
 
-/** Apply tactical adjustments on dark style (sea, rivers, borders) */
+/** Apply tactical adjustments on dark style (sea, rivers, borders matching website theme) */
 function applyDarkBasemapStyling(map: MlMap) {
   const styleLayers = map.getStyle()?.layers ?? [];
   for (const layer of styleLayers) {
     const lid = layer.id.toLowerCase();
+
+    // 0. Base background (Landmass fill - dark tactical slate)
+    if (layer.type === "background") {
+      try {
+        map.setPaintProperty(layer.id, "background-color", "#0b1220");
+      } catch {}
+      continue;
+    }
 
     // 1. Waterways
     if (lid.includes("waterway") || lid.includes("river") || lid.includes("stream") || lid.includes("canal")) {
       try {
         map.setLayoutProperty(layer.id, "visibility", "visible");
         if (layer.type === "line") {
-          map.setPaintProperty(layer.id, "line-color", RIVER_COLOR);
-          map.setPaintProperty(layer.id, "line-width", 0.9);
-          map.setPaintProperty(layer.id, "line-opacity", 0.7);
+          map.setPaintProperty(layer.id, "line-color", "#0284c7");
+          map.setPaintProperty(layer.id, "line-width", 1.1);
+          map.setPaintProperty(layer.id, "line-opacity", 0.75);
         }
       } catch {}
       continue;
     }
 
-    // 2. Water / Ocean (Light bluish grey)
+    // 2. Water / Ocean (Deep abyss oceanic void - clear land/sea contrast)
     if (lid.includes("water") || lid.includes("ocean") || lid.includes("sea") || lid.includes("marine")) {
       if (layer.type === "fill") {
         try {
-          map.setPaintProperty(layer.id, "fill-color", WATER_COLOR);
+          map.setPaintProperty(layer.id, "fill-color", "#030712");
           map.setPaintProperty(layer.id, "fill-opacity", 1.0);
+        } catch {}
+      }
+      continue;
+    }
+
+    // 3. National Country Borders -> Crisp WHITE lines (#ffffff) matching website theme
+    if (
+      layer.type === "line" &&
+      (lid.includes("boundary_country") ||
+        ((lid.includes("admin") || lid.includes("boundary") || lid.includes("border")) &&
+          (lid.includes("0") || lid.includes("country") || lid.includes("national"))))
+    ) {
+      try {
+        map.setLayoutProperty(layer.id, "visibility", "visible");
+        map.setPaintProperty(layer.id, "line-color", "#ffffff");
+        map.setPaintProperty(layer.id, "line-width", 1.5);
+        map.setPaintProperty(layer.id, "line-opacity", 0.95);
+      } catch {}
+      continue;
+    }
+
+    // 4. State Borders -> Light Grey lines (#94a3b8) matching website theme
+    if (
+      layer.type === "line" &&
+      (lid.includes("boundary_state") ||
+        ((lid.includes("admin") || lid.includes("boundary") || lid.includes("border")) &&
+          (lid.includes("1") || lid.includes("state") || lid.includes("province"))))
+    ) {
+      try {
+        map.setLayoutProperty(layer.id, "visibility", "visible");
+        map.setPaintProperty(layer.id, "line-color", "#94a3b8");
+        map.setPaintProperty(layer.id, "line-width", 1.0);
+        map.setPaintProperty(layer.id, "line-opacity", 0.85);
+      } catch {}
+      continue;
+    }
+
+    // 5. Roads & Transport Lines (Subtle tactical styling)
+    if (lid.includes("highway") || lid.includes("road")) {
+      if (layer.type === "line") {
+        try {
+          if (lid.includes("motorway") || lid.includes("major")) {
+            map.setPaintProperty(layer.id, "line-color", "#334155");
+            map.setPaintProperty(layer.id, "line-opacity", 0.6);
+          } else {
+            map.setPaintProperty(layer.id, "line-color", "#1e293b");
+            map.setPaintProperty(layer.id, "line-opacity", 0.4);
+          }
         } catch {}
       }
     }
 
-    // 3. National Borders
-    if (
-      layer.type === "line" &&
-      (lid.includes("admin") || lid.includes("boundary") || lid.includes("border")) &&
-      (lid.includes("0") || lid.includes("country") || lid.includes("national"))
-    ) {
+    // 6. Buildings (Dark slate footprints)
+    if (lid.includes("building") && layer.type === "fill") {
       try {
-        map.setPaintProperty(layer.id, "line-color", COUNTRY_BORDER_COLOR);
-        map.setPaintProperty(layer.id, "line-width", 1.0);
-        map.setPaintProperty(layer.id, "line-opacity", 0.8);
-      } catch {}
-    }
-
-    // 4. State Borders
-    if (
-      layer.type === "line" &&
-      (lid.includes("admin") || lid.includes("boundary") || lid.includes("border")) &&
-      (lid.includes("1") || lid.includes("state") || lid.includes("province"))
-    ) {
-      try {
-        map.setPaintProperty(layer.id, "line-color", STATE_BORDER_COLOR);
-        map.setPaintProperty(layer.id, "line-width", 0.8);
-        map.setPaintProperty(layer.id, "line-opacity", 0.75);
+        map.setPaintProperty(layer.id, "fill-color", "#1e293b");
+        map.setPaintProperty(layer.id, "fill-opacity", 0.7);
       } catch {}
     }
   }
@@ -262,6 +403,7 @@ export function TacticalMap({
   const [showSectorMenu, setShowSectorMenu] = useState(false);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  const setupLayersRef = useRef<() => void>(() => {});
 
   // Deduplicate events cleanly
   const events = useMemo(() => deduplicateEvents(rawEvents), [rawEvents]);
@@ -324,8 +466,8 @@ export function TacticalMap({
           startStyle === "satellite"
             ? SATELLITE_STYLE_SPEC
             : startStyle === "3d"
-            ? LIBERTY_3D_STYLE_URL
-            : DARK_STYLE_URL,
+            ? LIBERTY_3D_STYLE_SPEC
+            : DARK_STYLE_SPEC,
         center: startCenter,
         zoom: startZoom,
         minZoom: 3.5,
@@ -351,6 +493,18 @@ export function TacticalMap({
         }
         setMapReady(true);
         map.resize();
+        // Force setupLayers to execute immediately on map load
+        try {
+          setupLayersRef.current?.();
+        } catch (err) {
+          console.warn("[Map] Error in initial setupLayers:", err);
+        }
+      });
+
+      // Log tile/network errors for debugging without crashing the UI
+      map.on("error", (e: any) => {
+        if (e?.error?.status === 404 || e?.error?.status === 403) return; // expected missing tiles
+        console.warn("[Map] Non-fatal error:", e?.error?.message || e);
       });
 
       map.on("mousemove", (e: any) => {
@@ -396,13 +550,13 @@ export function TacticalMap({
     }
 
     if (newStyle === "dark") {
-      map.setStyle(DARK_STYLE_URL);
+      map.setStyle(DARK_STYLE_SPEC);
       map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
     } else if (newStyle === "satellite") {
       map.setStyle(SATELLITE_STYLE_SPEC);
       map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
     } else if (newStyle === "3d") {
-      map.setStyle(LIBERTY_3D_STYLE_URL);
+      map.setStyle(LIBERTY_3D_STYLE_SPEC);
       map.easeTo({ pitch: 50, bearing: -10, duration: 700 });
     }
   };
@@ -447,24 +601,6 @@ export function TacticalMap({
         }
       }
 
-      // 1. Country Polygon Highlight (Atmospheric Blue Fill)
-      if (!map.getSource("country-polygons")) {
-        map.addSource("country-polygons", {
-          type: "geojson",
-          data: getIndiaBoundaryGeoJSON(),
-        });
-
-        map.addLayer({
-          id: "highlighted-country",
-          type: "fill",
-          source: "country-polygons",
-          paint: {
-            "fill-color": COUNTRY_HIGHLIGHT_FILL,
-            "fill-opacity": activeStyle === "satellite" ? 0.08 : 0.15,
-          },
-        });
-      }
-
       // 2. English Country Labels
       if (!map.getSource("english-country-label-src")) {
         const COUNTRY_LABELS: Array<[string, number, number]> = [
@@ -502,7 +638,7 @@ export function TacticalMap({
           maxzoom: 6.5,
           layout: {
             "text-field": ["get", "name"],
-            "text-font": ["Noto Sans Bold", "Arial Unicode MS Bold"],
+            "text-font": ["Noto Sans Bold"],
             "text-size": ["interpolate", ["linear"], ["zoom"], 2, 9, 4, 13, 6, 16],
             "text-letter-spacing": 0.25,
             "text-transform": "uppercase",
@@ -533,7 +669,7 @@ export function TacticalMap({
           maxzoom: 10.5,
           layout: {
             "text-field": ["get", "name"],
-            "text-font": ["Noto Sans Bold", "Arial Unicode MS Bold"],
+            "text-font": ["Noto Sans Bold"],
             "text-size": [
               "interpolate",
               ["linear"],
@@ -606,7 +742,7 @@ export function TacticalMap({
           minzoom: 5.6,
           layout: {
             "text-field": ["get", "name"],
-            "text-font": ["Noto Sans Regular", "Arial Unicode MS Bold"],
+            "text-font": ["Noto Sans Regular"],
             "text-size": [
               "interpolate",
               ["linear"],
@@ -636,7 +772,8 @@ export function TacticalMap({
 
       // 5. 3D Building Extrusions (Active in 3D Mode)
       if (activeStyle === "3d") {
-        if (!map.getLayer("3d-buildings-extruded") && map.getSource("openmaptiles")) {
+        const hasOpenMapTiles = map.getSource("openmaptiles");
+        if (hasOpenMapTiles && !map.getLayer("3d-buildings-extruded")) {
           map.addLayer({
             id: "3d-buildings-extruded",
             source: "openmaptiles",
@@ -647,25 +784,25 @@ export function TacticalMap({
               "fill-extrusion-color": [
                 "interpolate",
                 ["linear"],
-                ["get", "render_height"],
-                0, "#1e293b",
-                50, "#334155",
-                150, "#0284c7",
-                300, "#38bdf8",
+                ["coalesce", ["get", "render_height"], ["get", "height"], 18],
+                0, "#38bdf8",
+                20, "#0284c7",
+                50, "#0369a1",
+                100, "#0c4a6e",
               ],
               "fill-extrusion-height": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
                 12, 0,
-                14.5, ["coalesce", ["get", "render_height"], 12],
+                14.5, ["coalesce", ["get", "render_height"], ["get", "height"], 18],
               ],
               "fill-extrusion-base": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
                 12, 0,
-                14.5, ["coalesce", ["get", "render_min_height"], 0],
+                14.5, ["coalesce", ["get", "render_min_height"], ["get", "min_height"], 0],
               ],
               "fill-extrusion-opacity": 0.85,
             },
@@ -684,6 +821,73 @@ export function TacticalMap({
           clusterProperties: {
             max_frp: ["max", ["get", "frp"]],
             has_critical: ["max", ["get", "is_critical"]],
+          },
+        });
+
+        // Non-clustered duplicate source required by the heatmap layer
+        if (!map.getSource("heat")) {
+          map.addSource("heat", {
+            type: "geojson",
+            data: toGeoJSON(events),
+          });
+        }
+
+        // TRUE Heatmap layer (thermal gradient by FRP intensity)
+        map.addLayer({
+          id: "thermal-heatmap",
+          type: "heatmap",
+          source: "heat",
+          maxzoom: 14,
+          paint: {
+            // Thermal color ramp: low FRP fires visibly glow on dark map
+            "heatmap-color": [
+              "interpolate",
+              ["linear"],
+              ["heatmap-density"],
+              0.0, "rgba(0, 0, 0, 0)",
+              0.01, "rgba(6, 182, 212, 0.40)",
+              0.1, "rgba(14, 165, 233, 0.60)",
+              0.25, "rgba(34, 197, 94, 0.78)",
+              0.5, "rgba(234, 179, 8, 0.88)",
+              0.75, "rgba(249, 115, 22, 0.96)",
+              1.0, "rgba(239, 68, 68, 1.0)",
+            ],
+            // Heatmap radius for both country-wide and regional views
+            "heatmap-radius": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              3, 18,
+              6, 30,
+              10, 48,
+              14, 65,
+            ],
+            // Weight by FRP power output - lower threshold for agricultural fires
+            "heatmap-weight": [
+              "interpolate",
+              ["linear"],
+              ["coalesce", ["get", "frp"], 0],
+              0, 0.25,
+              20, 0.55,
+              100, 0.85,
+              300, 1.0,
+            ],
+            "heatmap-intensity": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              3, 1.4,
+              8, 2.8,
+              12, 3.8,
+            ],
+            "heatmap-opacity": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              3, 0.9,
+              9, 0.8,
+              13, 0.4,
+            ],
           },
         });
 
@@ -753,7 +957,7 @@ export function TacticalMap({
           layout: {
             "text-field": "{point_count_abbreviated}",
             "text-size": 11,
-            "text-font": ["Noto Sans Bold", "Arial Unicode MS Bold"],
+            "text-font": ["Noto Sans Bold"],
             "text-letter-spacing": 0.02,
           },
           paint: {
@@ -762,40 +966,47 @@ export function TacticalMap({
           },
         });
 
-        // Unclustered Outer Glow
+        // Unclustered Outer Glow (High Visibility)
         map.addLayer({
           id: "unclustered-glow",
           type: "circle",
           source: "hotspots",
           filter: ["!", ["has", "point_count"]],
           paint: {
-            "circle-color": ["get", "color"],
-            "circle-radius": ["interpolate", ["linear"], ["get", "frp"], 0, 18, 100, 28, 400, 38],
-            "circle-opacity": 0.3,
-            "circle-blur": 1,
+            "circle-color": ["coalesce", ["get", "color"], "#06b6d4"],
+            "circle-radius": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              3, 16,
+              8, 24,
+              14, 36,
+            ],
+            "circle-opacity": 0.55,
+            "circle-blur": 0.85,
           },
         });
 
-        // Unclustered Point Body
+        // Unclustered Point Body (Solid Vibrant Marker + White Halo)
         map.addLayer({
           id: "unclustered-point",
           type: "circle",
           source: "hotspots",
           filter: ["!", ["has", "point_count"]],
           paint: {
-            "circle-color": ["get", "color"],
+            "circle-color": ["coalesce", ["get", "color"], "#06b6d4"],
             "circle-radius": [
               "interpolate",
               ["linear"],
               ["zoom"],
-              4, ["interpolate", ["linear"], ["get", "frp"], 0, 3.5, 100, 6, 400, 9],
-              10, ["interpolate", ["linear"], ["get", "frp"], 0, 6, 100, 10, 400, 16],
-              16, ["interpolate", ["linear"], ["get", "frp"], 0, 10, 100, 16, 400, 24],
+              3, 6,
+              8, 10,
+              14, 16,
             ],
-            "circle-stroke-width": 1.5,
+            "circle-stroke-width": 2.5,
             "circle-stroke-color": "#ffffff",
-            "circle-stroke-opacity": 0.9,
-            "circle-opacity": 0.95,
+            "circle-stroke-opacity": 1.0,
+            "circle-opacity": 1.0,
           },
         });
 
@@ -1059,9 +1270,14 @@ export function TacticalMap({
         if (source && typeof source.setData === "function") {
           source.setData(toGeoJSON(events));
         }
+        const heatSource = map.getSource("heat") as any;
+        if (heatSource && typeof heatSource.setData === "function") {
+          heatSource.setData(toGeoJSON(events));
+        }
       }
     };
 
+    setupLayersRef.current = setupLayers;
     map.on("style.load", setupLayers);
     if (mapReady) setupLayers();
 

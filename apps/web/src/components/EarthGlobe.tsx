@@ -338,7 +338,8 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
 
     let flyInProgress = 0;
     const FLY_IN_DURATION = 2.0;
-    const clock = new THREE.Clock();
+    let lastTime = performance.now();
+    const startTime = lastTime;
 
     // ── 8. Raycasting for Hover Tooltips ──────────────────────────────
     const raycaster = new THREE.Raycaster();
@@ -386,9 +387,11 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
 
     // ── 9. Main Render Loop with Smooth Easing ────────────────────────
     const animate = () => {
-      const rawDelta = clock.getDelta();
+      const now = performance.now();
+      const rawDelta = (now - lastTime) / 1000;
+      lastTime = now;
       const delta = Math.min(rawDelta, 0.1);
-      const elapsed = clock.getElapsedTime();
+      const elapsed = (now - startTime) / 1000;
 
       // Smooth Fly-in sequence (ambient rotation strictly paused during fly-in)
       if (flyInProgress < 1) {
