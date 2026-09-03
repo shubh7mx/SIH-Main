@@ -1,0 +1,35 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    SIH26162 — OPEN THIS NOW                           ║
+║                                                                          ║
+║  STEP 1: Open a BRAND NEW browser window (or Ctrl+Shift+N for Incognito)║
+║                                                                          ║
+║  STEP 2: Type this EXACT URL:                                          ║
+║                                                                          ║
+║              http://localhost:8000/                                      ║
+║                                                                          ║
+║  STEP 3: Press Enter                                                    ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+You should see:
+  - A dark tactical header: "🛰️ SIH26162 · NTRO Industrial Fire Detection"
+  - A LIVE status pip in the top-right corner
+  - An India map with coastline outline
+  - A list of events on the right side
+  - Stats: Total Events, Industrial, Critical, Agricultural counts
+
+The map shows real NASA FIRMS data — no external dependencies,
+no CDN, no build step. Everything is inside the HTML file.
+
+If you see "Backend unreachable" in the header:
+  → The backend (python -m apps.api.main) may have stopped.
+    Restart it from the terminal:
+      cd V:\SIH26162
+      python -m apps.api.main
+
+If the map shows but events say "Loading":
+  → Wait 10 seconds — the frontend polls the backend every 30s.
+    After the first poll, events will appear as markers.
+
+If nothing loads at all:
+  → The backend is stopped. Start it first.

@@ -1,0 +1,12 @@
+[project]
+name = "@sih26162/ingestion"
+version = "1.0.0"
+description = "SIH26162 Real-Time Ingestion Pipeline — NASA FIRMS NRT, OSM Overpass, PostGIS & Redpanda"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.28.1",
+    "asyncpg>=0.30.0",
+    "redis>=5.2.1",
+    "pydantic>=2.10.0",
+    "h3>=4.1.0",
+]

@@ -1,0 +1,18 @@
+import urllib.request, json
+r = urllib.request.urlopen('http://127.0.0.1:8000/api/v1/events?limit=5', timeout=5)
+evs = json.loads(r.read())
+print(f'Events in store: {len(evs)}')
+for e in evs[:5]:
+    cls = e.get('classification', '?')
+    fac = e.get('facility_name', 'Unknown')
+    conf = e.get('confidence_score', 0)
+    frp = e.get('frp_megawatts', 0)
+    crit = e.get('is_critical_alert', False)
+    print(f'  {cls} | facility={fac} | conf={conf} | frp={frp} MW | critical={crit}')
+print('\n--- Analytics summary ---')
+r2 = urllib.request.urlopen('http://127.0.0.1:8000/api/v1/analytics/summary', timeout=5)
+d = json.loads(r2.read())
+print(f'  Total events: {d.get("total_events_processed")}')
+print(f'  Critical alerts: {d.get("critical_alerts_count")}')
+print(f'  Class breakdown: {d.get("class_breakdown")}')
+print(f'  Mean latency: {d.get("mean_latency_seconds", "?")}s')

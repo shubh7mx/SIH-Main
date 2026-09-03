@@ -1,0 +1,11 @@
+{
+  "name": "@sih26162/api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "uvicorn apps.api.main:app --reload --host 0.0.0.0 --port 8000",
+    "start": "uvicorn apps.api.main:app --host 0.0.0.0 --port 8000",
+    "test": "python -m pytest apps/api/tests",
+    "smoke": "python apps/api/smoke_test.py"
+  }
+}

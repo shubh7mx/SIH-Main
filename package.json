@@ -1,0 +1,24 @@
+{
+  "name": "sih26162-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SIH26162 — AI-Based Detection and Classification of Industrial Fires & Persistent Thermal Sources (NTRO)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rimraf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6",
+    "turbo": "^2.10.12",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@11.25.0"
+}

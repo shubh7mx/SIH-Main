@@ -1,0 +1,158 @@
+name: sih26162
+
+services:
+  # =========================================================================
+  # SPATIAL DATABASE — PostgreSQL 17 + PostGIS 3.6.2 (Feb 2026 release)
+  # =========================================================================
+  postgres:
+    image: postgis/postgis:17-3.6-alpine
+    container_name: sih26162-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sih_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sih_secret_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-sih26162_spatial}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./packages/database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sih_user} -d ${POSTGRES_DB:-sih26162_spatial}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sih26162-net
+
+  # =========================================================================
+  # STREAM PROCESSING — Redpanda 24.x (Kafka API, no Zookeeper)
+  # =========================================================================
+  redpanda:
+    image: redpandadata/redpanda:v24.2.7
+    container_name: sih26162-redpanda
+    restart: unless-stopped
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=1G
+      - --reserve-memory=0M
+      - --node-id=0
+      - --check=false
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092
+      - --pandaproxy-addr=0.0.0.0:8082
+      - --advertise-pandaproxy-addr=redpanda:8082
+    ports:
+      - "9092:9092"
+      - "8082:8082"
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - sih26162-net
+
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:latest
+    container_name: sih26162-redpanda-console
+    restart: unless-stopped
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+    ports:
+      - "8080:8080"
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    networks:
+      - sih26162-net
+
+  # =========================================================================
+  # STREAMING SQL — RisingWave 2.x (Event Streaming for Agentic AI)
+  # =========================================================================
+  risingwave:
+    image: risingwavelabs/risingwave:v2.0.4
+    container_name: sih26162-risingwave
+    restart: unless-stopped
+    command: "playground"
+    ports:
+      - "4566:4566"
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 3 bash -c 'echo > /dev/tcp/localhost/4566' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sih26162-net
+
+  # =========================================================================
+  # VECTOR DB — Qdrant (Hybrid Dense + Sparse retrieval for RAG)
+  # =========================================================================
+  qdrant:
+    image: qdrant/qdrant:v1.12.0
+    container_name: sih26162-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - sih26162-net
+
+  # =========================================================================
+  # CACHE & PUBSUB — Redis 7
+  # =========================================================================
+  redis:
+    image: redis:7.4-alpine
+    container_name: sih26162-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - sih26162-net
+
+  # =========================================================================
+  # OBJECT STORAGE — MinIO (S3-compatible) for Sentinel-2 tiles
+  # =========================================================================
+  minio:
+    image: minio/minio:RELEASE.2025-01-20T14-49-07Z
+    container_name: sih26162-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - sih26162-net
+
+networks:
+  sih26162-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  qdrant_data:
+  redis_data:
+  minio_data:

@@ -1,0 +1,12 @@
+SIH26162 Phase 2 — Test Results
+==================================================
+[PASS] Jamnagar Critical Fire: class=INDUSTRIAL_FIRE_EMERGENCY, cde=21.84, critical=True, conf=0.979
+[PASS] Haldia Persistent Flare: class=PERSISTENT_INDUSTRIAL_FLARE, cde=0.17, critical=False, conf=0.829
+[PASS] Punjab Agricultural: class=AGRICULTURAL_BURNING, cde=0.0, critical=False, conf=0.612
+[PASS] Uttarakhand Wildfire: class=WILDFIRE, cde=0.0, critical=False, conf=0.671
+[PASS] CDE Boundary (4-sigma): class=INDUSTRIAL_FIRE_EMERGENCY, cde=21.87, critical=True, conf=0.970
+[PASS] CDE Boundary (1-sigma normal): class=PERSISTENT_INDUSTRIAL_FLARE, cde=0.58, critical=False, conf=0.737
+
+6/6 tests passed.
+
+All Phase 2 swarm tests passed.
