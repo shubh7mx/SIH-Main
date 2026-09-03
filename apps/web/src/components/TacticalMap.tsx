@@ -52,6 +52,9 @@ export const REGIONAL_SECTORS = [
   { id: "central", label: "Central Belts (MP/CG)", type: "center", center: [80.5, 22.0] as [number, number], zoom: 6.8 },
 ] as const;
 
+const SEA_COLOR = "#334658";   // Light bluish grey sea
+const LAND_COLOR = "#16202e";  // Dark slate landmass
+
 // Tactical Basemap Style Definitions
 // Pure MapLibre vector & keyless raster styles — NO CARTO dependencies, NO API keys required.
 const DARK_STYLE_SPEC: any = {
@@ -66,12 +69,20 @@ const DARK_STYLE_SPEC: any = {
       maxzoom: 6,
       attribution: "© MapLibre · Natural Earth",
     },
+    openmaptiles: {
+      type: "vector",
+      tiles: [
+        "https://tiles.openfreemap.org/planet/20260830_080001_pt/{z}/{x}/{y}.pbf",
+      ],
+      maxzoom: 14,
+      attribution: "© OpenFreeMap · © OpenMapTiles",
+    },
   },
   layers: [
     {
       id: "background",
       type: "background",
-      paint: { "background-color": "#030712" },
+      paint: { "background-color": SEA_COLOR },
     },
     {
       id: "countries-fill",
@@ -79,8 +90,35 @@ const DARK_STYLE_SPEC: any = {
       source: "maplibre-demotiles",
       "source-layer": "countries",
       paint: {
-        "fill-color": "#0a1120",
-        "fill-outline-color": "#0a1120",
+        "fill-color": LAND_COLOR,
+        "fill-outline-color": LAND_COLOR,
+      },
+    },
+    {
+      // Provider-native State Borders (Admin Level 4) -> Grey lines
+      id: "provider-state-borders",
+      type: "line",
+      source: "openmaptiles",
+      "source-layer": "boundary",
+      filter: ["==", ["get", "admin_level"], 4],
+      paint: {
+        "line-color": "#94a3b8",
+        "line-width": 1.0,
+        "line-opacity": 0.85,
+        "line-dasharray": [3, 2],
+      },
+    },
+    {
+      // Provider-native Country Borders (Admin Level 2) -> Crisp White lines
+      id: "provider-country-borders",
+      type: "line",
+      source: "openmaptiles",
+      "source-layer": "boundary",
+      filter: ["==", ["get", "admin_level"], 2],
+      paint: {
+        "line-color": "#ffffff",
+        "line-width": 1.4,
+        "line-opacity": 0.95,
       },
     },
     {
@@ -97,88 +135,9 @@ const DARK_STYLE_SPEC: any = {
   ],
 };
 
-const LIBERTY_3D_STYLE_SPEC: any = {
-  version: 8,
-  name: "NTRO-3D-Tactical-Vector",
-  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
-  sources: {
-    openmaptiles: {
-      type: "vector",
-      tiles: [
-        "https://tiles.openfreemap.org/planet/20260830_080001_pt/{z}/{x}/{y}.pbf",
-      ],
-      maxzoom: 14,
-      attribution: "© OpenFreeMap · © OpenMapTiles",
-    },
-    "maplibre-demotiles": {
-      type: "vector",
-      tiles: ["https://demotiles.maplibre.org/tiles/{z}/{x}/{y}.pbf"],
-      minzoom: 0,
-      maxzoom: 6,
-    },
-  },
-  layers: [
-    {
-      id: "background",
-      type: "background",
-      paint: { "background-color": "#030712" },
-    },
-    {
-      id: "countries-fill",
-      type: "fill",
-      source: "maplibre-demotiles",
-      "source-layer": "countries",
-      paint: {
-        "fill-color": "#0a1120",
-        "fill-outline-color": "#0a1120",
-      },
-    },
-    {
-      id: "countries-outline",
-      type: "line",
-      source: "maplibre-demotiles",
-      "source-layer": "countries",
-      paint: {
-        "line-color": "#ffffff",
-        "line-width": 1.2,
-        "line-opacity": 0.9,
-      },
-    },
-    {
-      id: "3d-buildings-extruded",
-      source: "openmaptiles",
-      "source-layer": "building",
-      type: "fill-extrusion",
-      minzoom: 12,
-      paint: {
-        "fill-extrusion-color": [
-          "interpolate",
-          ["linear"],
-          ["coalesce", ["get", "render_height"], ["get", "height"], 18],
-          0, "#38bdf8",
-          20, "#0284c7",
-          50, "#0369a1",
-          100, "#0c4a6e",
-        ],
-        "fill-extrusion-height": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 0,
-          14.5, ["coalesce", ["get", "render_height"], ["get", "height"], 18],
-        ],
-        "fill-extrusion-base": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 0,
-          14.5, ["coalesce", ["get", "render_min_height"], ["get", "min_height"], 0],
-        ],
-        "fill-extrusion-opacity": 0.88,
-      },
-    },
-  ],
-};
+// 3D Mode uses the full daylight OpenFreeMap Liberty style with complete street grid,
+// landcover, waterways, and 3D building extrusions.
+const LIBERTY_3D_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
 
 const SATELLITE_STYLE_SPEC: any = {
   version: 8,
@@ -217,8 +176,6 @@ const SATELLITE_STYLE_SPEC: any = {
 };
 
 // Colors for tactical map styling
-const WATER_COLOR = "#334658"; // Light bluish grey sea color
-const RIVER_COLOR = "#546a80"; // Light bluish grey rivers/canals
 const COUNTRY_BORDER_COLOR = "#ffffff";
 const STATE_BORDER_COLOR = "#64748b";
 const COUNTRY_LABEL_COLOR = "#dbeafe";
@@ -238,9 +195,10 @@ function applyDarkBasemapStyling(map: MlMap) {
     const lid = layer.id.toLowerCase();
 
     // 0. Base background (Landmass fill - dark tactical slate)
+    // 0. Base background (sea) - light bluish grey
     if (layer.type === "background") {
       try {
-        map.setPaintProperty(layer.id, "background-color", "#0b1220");
+        map.setPaintProperty(layer.id, "background-color", SEA_COLOR);
       } catch {}
       continue;
     }
@@ -250,19 +208,19 @@ function applyDarkBasemapStyling(map: MlMap) {
       try {
         map.setLayoutProperty(layer.id, "visibility", "visible");
         if (layer.type === "line") {
-          map.setPaintProperty(layer.id, "line-color", "#0284c7");
+          map.setPaintProperty(layer.id, "line-color", "#4a5b6e");
           map.setPaintProperty(layer.id, "line-width", 1.1);
-          map.setPaintProperty(layer.id, "line-opacity", 0.75);
+          map.setPaintProperty(layer.id, "line-opacity", 0.8);
         }
       } catch {}
       continue;
     }
 
-    // 2. Water / Ocean (Deep abyss oceanic void - clear land/sea contrast)
+    // 2. Water / Ocean (light bluish grey sea - matches background)
     if (lid.includes("water") || lid.includes("ocean") || lid.includes("sea") || lid.includes("marine")) {
       if (layer.type === "fill") {
         try {
-          map.setPaintProperty(layer.id, "fill-color", "#030712");
+          map.setPaintProperty(layer.id, "fill-color", SEA_COLOR);
           map.setPaintProperty(layer.id, "fill-opacity", 1.0);
         } catch {}
       }
@@ -466,13 +424,13 @@ export function TacticalMap({
           startStyle === "satellite"
             ? SATELLITE_STYLE_SPEC
             : startStyle === "3d"
-            ? LIBERTY_3D_STYLE_SPEC
+            ? LIBERTY_3D_STYLE_URL
             : DARK_STYLE_SPEC,
         center: startCenter,
         zoom: startZoom,
         minZoom: 3.5,
         maxZoom: 19,
-        pitch: startStyle === "3d" ? 45 : 0,
+        pitch: startStyle === "3d" ? 50 : 0,
         bearing: 0,
         attributionControl: false,
       });
@@ -556,8 +514,8 @@ export function TacticalMap({
       map.setStyle(SATELLITE_STYLE_SPEC);
       map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
     } else if (newStyle === "3d") {
-      map.setStyle(LIBERTY_3D_STYLE_SPEC);
-      map.easeTo({ pitch: 50, bearing: -10, duration: 700 });
+      map.setStyle(LIBERTY_3D_STYLE_URL);
+      map.easeTo({ pitch: 60, bearing: -15, duration: 750 });
     }
   };
 
@@ -575,6 +533,69 @@ export function TacticalMap({
       // If active style is dark, apply custom dark basemap styling (water, borders)
       if (activeStyle === "dark") {
         applyDarkBasemapStyling(map);
+      }
+
+      // ─── 3D Mode: White Google-Maps-style Building Models ───────────────
+      // Liberty's native "building-3d" layer is beige (hsl(35,8%,85%)) with
+      // opacity 0.8. We override it to a crisp white extrusion theme with
+      // grey side accents — the classic Google Maps 3D look.
+      if (activeStyle === "3d") {
+        try {
+          // 2D building footprint fill (zoom 13-14) -> light grey, subtle
+          if (map.getLayer("building")) {
+            map.setPaintProperty("building", "fill-color", "#e8eaed");
+            map.setPaintProperty("building", "fill-outline-color", "#c7ccd1");
+          }
+          // 3D extruded buildings (zoom >= 14) -> white faces, grey base shadow
+          if (map.getLayer("building-3d")) {
+            map.setPaintProperty("building-3d", "fill-extrusion-color", "#f8f9fa");
+            map.setPaintProperty("building-3d", "fill-extrusion-opacity", 0.96);
+            map.setPaintProperty("building-3d", "fill-extrusion-height", [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              14, 0,
+              14.8, ["coalesce", ["get", "render_height"], ["get", "height"], 12],
+            ]);
+            map.setPaintProperty("building-3d", "fill-extrusion-base", [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              14, 0,
+              14.8, ["coalesce", ["get", "render_min_height"], ["get", "min_height"], 0],
+            ]);
+          } else {
+            // Fallback: add our own white extrusion layer if liberty didn't provide one
+            const hasOmtSource = Boolean(map.getSource("openmaptiles"));
+            if (hasOmtSource) {
+              map.addLayer({
+                id: "ntro-white-buildings-3d",
+                type: "fill-extrusion",
+                source: "openmaptiles",
+                "source-layer": "building",
+                minzoom: 14,
+                paint: {
+                  "fill-extrusion-color": "#f8f9fa",
+                  "fill-extrusion-height": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    14, 0,
+                    14.8, ["coalesce", ["get", "render_height"], ["get", "height"], 12],
+                  ],
+                  "fill-extrusion-base": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    14, 0,
+                    14.8, ["coalesce", ["get", "render_min_height"], ["get", "min_height"], 0],
+                  ],
+                  "fill-extrusion-opacity": 0.96,
+                },
+              });
+            }
+          }
+        } catch {}
       }
 
       // 0. Hide default basemap place/state/city symbol layers to prevent foreign state/city clutter
