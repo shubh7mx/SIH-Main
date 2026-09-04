@@ -44,7 +44,7 @@ echo -e "\n${YELLOW}[3/6] Verifying Python backend dependencies...${NC}"
 echo -e "${GREEN}✓ Backend dependencies ready.${NC}"
 
 # 4. HARD RESTART Backend API (purge bytecode cache + restart process)
-echo -e "\n${YELLOW}[4/6] Restarting backend API with fresh code...${NC}"
+echo -e "${YELLOW}[4/6] Restarting backend API with fresh code...${NC}"
 # Purge stale __pycache__ so .pyc never shadows updated .py files
 find "$APP_DIR/apps/api" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 # Hard restart (not soft reload) guarantees the uvicorn process re-imports all code
@@ -60,16 +60,25 @@ echo -e "${GREEN}✓ Next.js build completed.${NC}"
 
 # 6. Reload PM2 Web Service (Zero Downtime cluster reload)
 echo -e "${YELLOW}[6/6] Reloading PM2 services...${NC}"
-pm2 reload ecosystem.config.js --only web > /dev/null 2>&1 || pm2 reload ecosystem.config.js || pm2 start ecosystem.config.js
+# MUST use exact PM2 app name from ecosystem.config.js: sih26162-web (not "web")
+pm2 reload ecosystem.config.js --only sih26162-web > /dev/null 2>&1 || pm2 reload sih26162-web > /dev/null 2>&1 || pm2 start ecosystem.config.js
 pm2 save --force > /dev/null 2>&1
 echo -e "${GREEN}✓ All services reloaded and operational!${NC}"
 
-# Sanity check: wait briefly and confirm API answers
-sleep 3
+# Sanity check: wait briefly and confirm both API and Web answer
+sleep 2
 if curl -sf http://127.0.0.1:8000/api/v1/health > /dev/null 2>&1; then
     echo -e "${GREEN}✓ Backend health check passed.${NC}"
 else
     echo -e "${RED}✗ Backend health check FAILED — inspect: pm2 logs sih26162-api${NC}"
+fi
+
+# Verify the web build actually changed (CSS chunk should start with new prefix)
+WEB_CSS_HASH=$(curl -s http://127.0.0.1:3000/ | grep -oE '[a-z0-9]+\.css' | sort -u | head -1)
+if [ -n "$WEB_CSS_HASH" ] && [ -f "$APP_DIR/apps/web/.next/static/chunks/$WEB_CSS_HASH" ]; then
+    echo -e "${GREEN}✓ Web build live (CSS: $WEB_CSS_HASH).${NC}"
+else
+    echo -e "${RED}✗ Web build may be stale — check: pm2 logs sih26162-web${NC}"
 fi
 
 # 7. Output Status
