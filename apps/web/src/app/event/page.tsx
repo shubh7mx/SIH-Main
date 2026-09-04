@@ -13,6 +13,7 @@ import { getClassificationSeverity } from "@/lib/design-tokens";
 import { useIncidentBrief } from "@/lib/hooks";
 import { getEvent } from "@/lib/api";
 import { inferAnomalyReason } from "@/lib/anomaly-inference";
+import { getEventLocation } from "@/lib/location-resolver";
 import type { HotspotEvent } from "@/lib/types";
 
 function cleanBrief(rawText?: string | null): string {
@@ -96,7 +97,8 @@ function EventDetailInner() {
 
   const sev = getClassificationSeverity(event.classification);
   const anomalyInfo = inferAnomalyReason(event);
-  const title = event.facility_name ?? "Unmapped Thermal Anomaly";
+  const locInfo = getEventLocation(event);
+  const title = event.facility_name ?? `Thermal Anomaly near ${locInfo.city}`;
 
   const timeStr = new Date(event.acq_datetime).toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata",
@@ -131,17 +133,22 @@ function EventDetailInner() {
             {title}
           </h1>
           <div className="font-mono text-xs text-mute">
-            {event.latitude.toFixed(4)}°N · {event.longitude.toFixed(4)}°E · H3 Cell:{" "}
-            <span className="text-white/80">{event.h3_index || "—"}</span> · Satellite:{" "}
+            {Number(event.latitude).toFixed(4)}°N · {Number(event.longitude).toFixed(4)}°E{event.h3_index ? ` · H3 Cell: ${event.h3_index}` : ""}{" "}
+            · {locInfo.displayLocation} · Satellite:{" "}
             <span className="text-white/80">{event.satellite_source}</span>
           </div>
           {!event.facility_name ||
           event.facility_name.includes("Unmapped") ||
           event.facility_name.includes("Thermal Anomaly") ? (
             <div className="text-xs font-mono text-cyan-300">
-              🌾 AI Probable Cause Suggestion: <span className="text-white font-medium">{anomalyInfo.probableCause}</span> ({anomalyInfo.regionLabel})
+              🌾 AI Probable Cause — {anomalyInfo.probableCause} · <span className="text-white/60 font-normal">{anomalyInfo.regionLabel}</span>
             </div>
-          ) : null}
+          ) : (
+            <div className="text-xs font-mono text-slate-300">
+              📍 <span className="text-white font-medium">{locInfo.displayLocation}</span>
+              {locInfo.isKnownFacility ? " · Known Industrial Hub" : " · Geographically Resolved"}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -170,7 +177,7 @@ function EventDetailInner() {
         <div className="surface-card p-4 rounded-xl border border-white/5">
           <div className="eyebrow mb-1">Radiative Power (FRP)</div>
           <div className="text-2xl font-bold font-mono text-cyan-300 tabular-nums">
-            {event.frp_megawatts.toFixed(1)}{" "}
+            {Number(event.frp_megawatts ?? 0).toFixed(1)}{" "}
             <span className="text-xs text-mute font-normal">MW</span>
           </div>
           <div className="text-[10px] text-mute font-mono mt-1">Satellite pixel energy</div>
@@ -178,11 +185,11 @@ function EventDetailInner() {
         <div className="surface-card p-4 rounded-xl border border-white/5">
           <div className="eyebrow mb-1">Brightness Temp</div>
           <div className="text-2xl font-bold text-white tabular-nums">
-            {event.brightness_temp_kelvin.toFixed(0)}{" "}
+            {Number(event.brightness_temp_kelvin ?? 0).toFixed(0)}{" "}
             <span className="text-xs text-mute font-normal">K</span>
           </div>
           <div className="text-[10px] text-mute mt-1">
-            {(event.brightness_temp_kelvin - 273.15).toFixed(0)}°C calibrated
+            {(Number(event.brightness_temp_kelvin ?? 0) - 273.15).toFixed(0)}°C calibrated
           </div>
         </div>
         <div className="surface-card p-4 rounded-xl border border-white/5">

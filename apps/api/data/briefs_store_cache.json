@@ -160,5 +160,11 @@
     "mode": "NEURAL",
     "generated_at": "2026-09-04T05:32:41.853615+00:00",
     "latency_ms": 22766.0
+  },
+  "test-evt-001": {
+    "text": "[TAXONOMY & THREAT SEVERITY]\n\u2022 Classification: Persistent Industrial Flare | Severity: ROUTINE (CONTROLLED OPERATIONAL)\n\u2022 Assessment: Continuous refinery/plant combustion within design thresholds\n\u2022 Multi-Agent Consensus: 94% confidence\n\n[RADIOMETRIC & THERMAL TELEMETRY]\n\u2022 Radiative Power (FRP): 120.0 MW\n\u2022 Brightness Temperature: N/A (sensor reported None)\n\u2022 CDE Sigma: N/A (sensor reported None)\n\n[SPATIAL & FACILITY CONTEXT]\n\u2022 Target Site: Reliance Jamnagar Petrochemical Complex (Industrial Sector",
+    "mode": "NEURAL",
+    "generated_at": "2026-09-04T16:05:57.009366+00:00",
+    "latency_ms": 22453.0
   }
 }

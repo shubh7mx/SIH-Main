@@ -68725,6 +68725,7 @@
     "classification": "PERSISTENT_INDUSTRIAL_FLARE",
     "confidence_score": 0.94,
     "frp_megawatts": 120.0,
-    "facility_name": "Reliance Jamnagar Petrochemical Complex"
+    "facility_name": "Reliance Jamnagar Petrochemical Complex",
+    "brightness_temp_kelvin": 620.0
   }
 ]

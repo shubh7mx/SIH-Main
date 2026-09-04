@@ -8,6 +8,7 @@ import { getClassificationSeverity } from "@/lib/design-tokens";
 import { useIncidentBrief } from "@/lib/hooks";
 import { SwarmEvidenceGrid } from "@/components/SwarmEvidenceGrid";
 import { inferAnomalyReason } from "@/lib/anomaly-inference";
+import { getEventLocation } from "@/lib/location-resolver";
 
 interface Props {
   event: HotspotEvent | null;
@@ -115,13 +116,18 @@ export function EventDrawer({ event, onClose }: Props) {
         {/* Header */}
         <div className="p-4 border-b border-white/10 bg-black/40 flex items-start justify-between gap-3 flex-shrink-0">
           <div className="space-y-1.5 min-w-0">
-            <SeverityBadge classification={activeEvent.classification} size="md" />
+            <div className="flex items-center gap-2 flex-wrap">
+              <SeverityBadge classification={activeEvent.classification} size="md" />
+              <span className="font-mono text-[10px] text-cyan-300/80 bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-500/20">
+                📍 {getEventLocation(activeEvent).displayLocation}
+              </span>
+            </div>
             <h3 className="font-sans text-base font-semibold text-white truncate">
-              {activeEvent.facility_name ?? "Unmapped Thermal Anomaly"}
+              {activeEvent.facility_name ?? `Thermal Anomaly near ${getEventLocation(activeEvent).city}`}
             </h3>
             <div className="font-mono text-[10px] text-mute">
-              {activeEvent.latitude.toFixed(4)}°N · {activeEvent.longitude.toFixed(4)}°E ·{" "}
-              {activeEvent.satellite_source}
+              {Number(activeEvent.latitude ?? 0).toFixed(4)}°N · {Number(activeEvent.longitude ?? 0).toFixed(4)}°E ·{" "}
+              {activeEvent.satellite_source ?? "VIIRS"}
             </div>
             <div className="font-mono text-[10px] text-mute">{formattedTime} IST</div>
           </div>
@@ -139,22 +145,22 @@ export function EventDrawer({ event, onClose }: Props) {
           <div className="p-3 text-center">
             <div className="eyebrow mb-1 text-[9px] text-slate-400 font-mono uppercase tracking-widest">FRP</div>
             <div className="text-lg font-bold font-mono text-cyan-300 tabular-nums">
-              {activeEvent.frp_megawatts.toFixed(1)}
+              {Number(activeEvent.frp_megawatts ?? 0).toFixed(1)}
             </div>
             <div className="text-[10px] text-mute font-mono">MW</div>
           </div>
           <div className="p-3 text-center">
             <div className="eyebrow mb-1 text-[9px] text-slate-400 font-mono uppercase tracking-widest">Brightness</div>
             <div className="text-lg font-bold font-mono text-white tabular-nums">
-              {activeEvent.brightness_temp_kelvin.toFixed(0)}
+              {Number(activeEvent.brightness_temp_kelvin ?? 300).toFixed(0)}
             </div>
             <div className="text-[10px] text-mute font-mono">Kelvin</div>
           </div>
           <div className="p-3 text-center">
             <div className="eyebrow mb-1 text-[9px] text-slate-400 font-mono uppercase tracking-widest">Confidence</div>
             <div className="text-lg font-bold font-mono text-emerald-400 tabular-nums">
-              {activeEvent.confidence_score
-                ? `${(activeEvent.confidence_score * 100).toFixed(0)}%`
+              {activeEvent.confidence_score != null
+                ? `${(Number(activeEvent.confidence_score) * 100).toFixed(0)}%`
                 : "—"}
             </div>
             <div className="text-[10px] text-mute font-mono">VIIRS/AI</div>
@@ -162,12 +168,12 @@ export function EventDrawer({ event, onClose }: Props) {
         </div>
 
         {/* Confidence meter */}
-        {activeEvent.confidence_score && (
+        {activeEvent.confidence_score != null && (
           <div className="px-4 py-3 border-b border-white/10 bg-black/20 flex-shrink-0">
             <div className="flex items-center justify-between text-xs font-mono text-mute mb-1.5">
               <span>Agent Consensus Confidence</span>
               <span className="text-white font-semibold">
-                {(activeEvent.confidence_score * 100).toFixed(0)}%
+                {(Number(activeEvent.confidence_score) * 100).toFixed(0)}%
               </span>
             </div>
             <ConfidenceMeter confidence={activeEvent.confidence_score} />
@@ -200,7 +206,7 @@ export function EventDrawer({ event, onClose }: Props) {
                 <div className="eyebrow text-[9px] font-mono uppercase tracking-widest text-slate-400">Agent Decision Summary</div>
                 <p className="text-xs text-white/90 leading-relaxed font-mono whitespace-pre-wrap">
                   {cleanBrief(brief?.brief) ||
-                    `${sev.label} detected by ${activeEvent.satellite_source} radiometer. Automated spatial containment matched facility profile with ${(activeEvent.confidence_score ? activeEvent.confidence_score * 100 : 85).toFixed(0)}% confidence.`}
+                    `${sev.label} detected by ${activeEvent.satellite_source ?? "VIIRS"} radiometer. Automated spatial containment matched facility profile with ${(Number(activeEvent.confidence_score ?? 0.85) * 100).toFixed(0)}% confidence.`}
                 </p>
               </div>
 
@@ -246,8 +252,8 @@ export function EventDrawer({ event, onClose }: Props) {
                     </div>
                     <div>
                       <span className="text-mute block text-[10px]">CDE Anomaly</span>
-                      <span className={activeEvent.cde_anomaly_score && Math.abs(activeEvent.cde_anomaly_score) >= 2 ? "text-red-400 font-bold" : "text-emerald-400"}>
-                        {activeEvent.cde_anomaly_score ? `${activeEvent.cde_anomaly_score.toFixed(1)}σ` : "Normal"}
+                      <span className={activeEvent.cde_anomaly_score != null && Math.abs(Number(activeEvent.cde_anomaly_score)) >= 2 ? "text-red-400 font-bold" : "text-emerald-400"}>
+                        {activeEvent.cde_anomaly_score != null ? `${Number(activeEvent.cde_anomaly_score).toFixed(1)}σ` : "Normal"}
                       </span>
                     </div>
                     <div>

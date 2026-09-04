@@ -12,6 +12,7 @@ import {
   type IndianPlace,
 } from "@/lib/india-places";
 import { inferAnomalyReason } from "@/lib/anomaly-inference";
+import { getEventLocation } from "@/lib/location-resolver";
 import libertyStyleSpec from "@/lib/liberty-style.json";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -1240,7 +1241,9 @@ export function TacticalMap({
           const color = props.color || "#06b6d4";
           const ev = eventsRef.current.find((item) => item.id === props.id);
           const anomalyInfo = ev ? inferAnomalyReason(ev) : null;
+          const locInfo = ev ? getEventLocation(ev) : null;
           const title = props.facility_name || "Unmapped Thermal Anomaly";
+          const locationLine = locInfo ? `<div class="hp-meta">📍 ${locInfo.displayLocation}</div>` : "";
 
           popupRef.current = new maplibregl.Popup({
             closeButton: !isHover,
@@ -1251,6 +1254,7 @@ export function TacticalMap({
             .setHTML(`
               <div class="hp-badge" style="background:${color}22; border:1px solid ${color}66; color:${color}">${props.shortLabel || props.classification}</div>
               <div class="hp-title">${title}</div>
+              ${locationLine}
               ${anomalyInfo && (!props.facility_name || props.facility_name.includes("Unmapped") || props.facility_name.includes("Thermal Anomaly")) ? `<div class="hp-meta text-cyan-300 text-[10px] mt-0.5 font-sans">🌾 Suggestion: ${anomalyInfo.probableCause}</div>` : ""}
               <div class="hp-meta">${Number(props.lat ?? coords[1]).toFixed(4)}°N · ${Number(props.lng ?? coords[0]).toFixed(4)}°E</div>
               <div class="hp-meta text-cyan-400 font-bold">${Number(props.frp ?? 10).toFixed(1)} MW FRP · ${props.confidence ?? 85}% confidence</div>
@@ -1573,6 +1577,7 @@ export function TacticalMap({
       const sev = getClassificationSeverity(ev.classification);
       const color = sev.text ?? "#06b6d4";
       const anomalyInfo = inferAnomalyReason(ev);
+      const locInfo = getEventLocation(ev);
       const title = ev.facility_name && ev.facility_name !== "Unmapped Thermal Anomaly" && ev.facility_name !== "Thermal Anomaly"
         ? ev.facility_name
         : anomalyInfo.probableCause;
@@ -1586,6 +1591,7 @@ export function TacticalMap({
         .setHTML(`
           <div class="hp-badge" style="background:${color}22; border:1px solid ${color}66; color:${color}">${sev.shortLabel}</div>
           <div class="hp-title">${title}</div>
+          ${locInfo ? `<div class="hp-meta">📍 ${locInfo.displayLocation}</div>` : ""}
           <div class="hp-meta">${Number(ev.latitude).toFixed(4)}°N · ${Number(ev.longitude).toFixed(4)}°E</div>
           <div class="hp-meta text-cyan-400 font-bold">${Number(ev.frp_megawatts).toFixed(1)} MW FRP · ${((ev.confidence_score ?? 0.8) * 100).toFixed(0)}% confidence</div>
           ${!ev.facility_name || ev.facility_name.includes("Unmapped") || ev.facility_name.includes("Thermal Anomaly") ? `<div class="hp-meta text-slate-300 text-[10px] mt-0.5">🌾 ${anomalyInfo.categoryLabel} (${anomalyInfo.regionLabel.split("(")[0].trim()})</div>` : ""}

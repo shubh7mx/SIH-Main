@@ -15,6 +15,7 @@ from apps.api.core.intelligence import (
     copilot_answer,
     intelligence_status,
 )
+from apps.api.core.quota import get_quota_status
 
 router = APIRouter(prefix="/intelligence", tags=["Tactical Intelligence"])
 
@@ -29,8 +30,10 @@ class CopilotQuestion(BaseModel):
 
 @router.get("/status")
 async def get_status() -> Dict[str, Any]:
-    """Returns tactical intelligence engine operational status."""
-    return intelligence_status()
+    """Returns tactical intelligence engine operational status + LLM daily quota usage."""
+    status = intelligence_status()
+    status["llm_quota"] = get_quota_status()
+    return status
 
 
 @router.post("/brief")
@@ -67,5 +70,6 @@ async def ask_copilot(req: CopilotQuestion) -> Dict[str, Any]:
         "generated_at": result["generated_at"],
         "latency_ms": result["latency_ms"],
         "events_considered": result["events_considered"],
+        "cached": result.get("cached", False),
         "related_events": result.get("related_events", []),
     }

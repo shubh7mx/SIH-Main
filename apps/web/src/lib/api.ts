@@ -367,9 +367,11 @@ export async function generateIncidentBrief(
 export interface CopilotRelatedEvent {
   id: string;
   facility_name: string;
+  facility_type?: string;
   classification: string;
   frp_megawatts: number;
   brightness_temp_kelvin: number;
+  cde_anomaly_score?: number;
   latitude: number;
   longitude: number;
   is_critical_alert: boolean;
@@ -382,6 +384,7 @@ export interface CopilotAnswer {
   generated_at: string;
   latency_ms: number;
   events_considered: number;
+  cached?: boolean;
   related_events?: CopilotRelatedEvent[];
 }
 

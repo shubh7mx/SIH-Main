@@ -11,18 +11,20 @@ interface MessageItem {
   id: string;
   q: string;
   a: string;
-  mode: "NEURAL" | "DOCTRINE" | "ERROR";
+  mode: "NEURAL" | "DOCTRINE" | "ERROR" | "PENDING";
   latency_ms: number;
   time: string;
+  cached?: boolean;
   related_events?: CopilotRelatedEvent[];
 }
 
 const SAMPLE_CHIPS = [
-  { label: "🚨 Critical Fires", query: "Show all critical industrial fires and nearest facilities" },
-  { label: "🔥 Top FRP", query: "List top thermal signatures by Fire Radiative Power (MW)" },
-  { label: "🏭 Jamnagar", query: "Are there any anomalous flares at Jamnagar Refinery?" },
-  { label: "🌾 Punjab Burning", query: "Give an operational brief on agricultural burning in Punjab" },
-  { label: "📊 Overview", query: "Summarize current thermal anomalies across India" },
+  { label: "🚨 Critical Threats", query: "Show all active critical industrial fire emergencies and nearest infrastructure" },
+  { label: "🏭 Jamnagar & Refineries", query: "Check CDE baseline deviation and thermal flaring metrics at Jamnagar Refinery" },
+  { label: "⚡ Top 5 FRP Energy", query: "List top 5 thermal signatures by Fire Radiative Power (MW) and coordinates" },
+  { label: "🌾 Punjab Agricultural", query: "Summarize agricultural stubble burning across Punjab and Haryana regions" },
+  { label: "🛰️ Satellite Sensors", query: "Which satellite sensors (VIIRS/Sentinel/MODIS) are detecting thermal events?" },
+  { label: "📊 National Summary", query: "Provide an executive operational summary of all thermal anomalies across India" },
 ];
 
 // Robust cleaner to strip any raw model scratchpads or thinking artifacts
@@ -79,6 +81,176 @@ function cleanWidgetAnswer(raw: string): string {
   return text.trim() || raw;
 }
 
+// Lightweight, resilient Markdown renderer for dark-tactical copilot briefs (supports tables, callouts, bold, code)
+function FormattedBrief({ content }: { content: string }) {
+  const lines = content.split("\n");
+  const elements: React.ReactNode[] = [];
+  let tableBuffer: string[] = [];
+  let inTable = false;
+
+  const flushTable = (keyPrefix: number) => {
+    if (tableBuffer.length === 0) return;
+    const headerLine = tableBuffer[0];
+    const dataLines = tableBuffer.slice(2); // Skip header & delimiter
+    const headers = headerLine.split("|").map((c) => c.trim()).filter(Boolean);
+
+    elements.push(
+      <div key={`table-${keyPrefix}`} className="my-2.5 overflow-x-auto rounded-lg border border-white/10 bg-black/40">
+        <table className="w-full text-left font-mono text-[11px] border-collapse">
+          <thead>
+            <tr className="border-b border-white/10 bg-white/[0.03] text-cyan-300 font-semibold">
+              {headers.map((h, i) => (
+                <th key={i} className="px-3 py-1.5 whitespace-nowrap">
+                  {renderInlineMarkdown(h)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5">
+            {dataLines.map((rowStr, rIdx) => {
+              const cells = rowStr.split("|").map((c) => c.trim()).filter(Boolean);
+              return (
+                <tr key={rIdx} className="hover:bg-white/[0.02] transition-colors">
+                  {cells.map((cell, cIdx) => (
+                    <td key={cIdx} className="px-3 py-1.5 whitespace-nowrap text-slate-200">
+                      {renderInlineMarkdown(cell)}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+    tableBuffer = [];
+    inTable = false;
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Check if line is a markdown table row
+    if (trimmed.startsWith("|") && trimmed.endsWith("|")) {
+      inTable = true;
+      tableBuffer.push(trimmed);
+      continue;
+    } else if (inTable) {
+      flushTable(i);
+    }
+
+    if (!trimmed) {
+      elements.push(<div key={`empty-${i}`} className="h-2" />);
+      continue;
+    }
+
+    // Callout / Warning Quote Block
+    if (trimmed.startsWith(">")) {
+      const quoteText = trimmed.replace(/^>\s*/, "");
+      elements.push(
+        <div
+          key={`quote-${i}`}
+          className="my-2 p-2.5 rounded-lg bg-amber-500/10 border-l-4 border-amber-400 text-amber-200 font-sans text-xs flex items-start gap-2 shadow-sm"
+        >
+          <div className="flex-1 leading-relaxed">{renderInlineMarkdown(quoteText)}</div>
+        </div>
+      );
+      continue;
+    }
+
+    // Headings
+    if (trimmed.startsWith("### ")) {
+      elements.push(
+        <h4 key={`h4-${i}`} className="text-xs font-mono font-bold text-cyan-300 uppercase tracking-wider mt-3 mb-1">
+          {renderInlineMarkdown(trimmed.slice(4))}
+        </h4>
+      );
+      continue;
+    }
+    if (trimmed.startsWith("## ")) {
+      elements.push(
+        <h3 key={`h3-${i}`} className="text-sm font-sans font-bold text-white tracking-wide mt-3 mb-1.5 flex items-center gap-1.5 border-b border-white/5 pb-1">
+          {renderInlineMarkdown(trimmed.slice(3))}
+        </h3>
+      );
+      continue;
+    }
+    if (trimmed.startsWith("# ")) {
+      elements.push(
+        <h2 key={`h2-${i}`} className="text-base font-sans font-bold text-white tracking-wide mt-2 mb-2">
+          {renderInlineMarkdown(trimmed.slice(2))}
+        </h2>
+      );
+      continue;
+    }
+
+    // Bullet points
+    if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+      elements.push(
+        <div key={`bullet-${i}`} className="flex items-start gap-2 text-xs text-slate-200 font-sans ml-1 my-0.5">
+          <span className="text-cyan-400 font-bold shrink-0 mt-0.5">•</span>
+          <div className="flex-1 leading-relaxed">{renderInlineMarkdown(trimmed.slice(2))}</div>
+        </div>
+      );
+      continue;
+    }
+
+    // Standard paragraph
+    elements.push(
+      <p key={`p-${i}`} className="text-xs text-slate-200 font-sans leading-relaxed my-1">
+        {renderInlineMarkdown(trimmed)}
+      </p>
+    );
+  }
+
+  if (inTable) {
+    flushTable(lines.length);
+  }
+
+  return <div className="space-y-1">{elements}</div>;
+}
+
+// Inline Markdown parser (bold, inline code, links)
+function renderInlineMarkdown(text: string): React.ReactNode {
+  if (!text) return text;
+  // Tokens: `code`, **bold**, *italic*
+  const parts: React.ReactNode[] = [];
+  let remaining = text;
+  let key = 0;
+
+  while (remaining.length > 0) {
+    // Check for inline code `...`
+    const codeMatch = remaining.match(/^(.*?)`([^`]+)`(.*)$/);
+    // Check for bold **...**
+    const boldMatch = remaining.match(/^(.*?)\*\*([^*]+)\*\*(.*)$/);
+
+    if (boldMatch && (!codeMatch || boldMatch[1].length < codeMatch[1].length)) {
+      if (boldMatch[1]) parts.push(<span key={key++}>{boldMatch[1]}</span>);
+      parts.push(
+        <strong key={key++} className="font-semibold text-white">
+          {renderInlineMarkdown(boldMatch[2])}
+        </strong>
+      );
+      remaining = boldMatch[3];
+    } else if (codeMatch) {
+      if (codeMatch[1]) parts.push(<span key={key++}>{codeMatch[1]}</span>);
+      parts.push(
+        <code key={key++} className="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-[11px]">
+          {codeMatch[2]}
+        </code>
+      );
+      remaining = codeMatch[3];
+    } else {
+      parts.push(<span key={key++}>{remaining}</span>);
+      break;
+    }
+  }
+
+  return parts.length === 1 ? parts[0] : <>{parts}</>;
+}
+
+
 export function CopilotWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -132,16 +304,35 @@ export function CopilotWidget() {
     setLoading(true);
     setQuery("");
 
+    // Append the user bubble IMMEDIATELY (optimistic rendering, before network)
+    const pendingId = `user-${Date.now()}`;
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: pendingId,
+        q,
+        a: "",
+        mode: "PENDING",
+        latency_ms: 0,
+        time: new Date().toLocaleTimeString("en-IN", { hour12: false }),
+      },
+    ]);
+    setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+    }, 30);
+
     try {
       const res: CopilotAnswer = await askCopilot(q);
       const cleanAnswer = cleanWidgetAnswer(res.answer);
 
-      // Collect related events from backend or parse from answer/events query
+      // Collect related events strictly from backend response
       const related: CopilotRelatedEvent[] = [...(res.related_events ?? [])];
       const seenIds = new Set(related.map((r) => r.id));
 
-      // Match referenced event IDs (e.g. 9d773dc2, c55ef691, or full UUIDs) in the text
-      const hexPattern = /\b[0-9a-f]{8}(?:-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?\b/gi;
+      // Match referenced event IDs (e.g. 9d773dc2, c55ef691, or full UUIDs) in the text only if explicitly mentioned
+      const hexPattern = /\b[0-9a-f]{8}(?:-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?\b/gi;
       const idMatches = Array.from(cleanAnswer.matchAll(hexPattern)).map((m) => m[0].toLowerCase());
 
       for (const rawId of idMatches) {
@@ -161,62 +352,35 @@ export function CopilotWidget() {
         }
       }
 
-      // If still empty and query was asking about top/critical/flares, extract top candidates
-      if (related.length === 0 && allEvents.length > 0) {
-        const qLow = q.toLowerCase();
-        let candidates = allEvents;
-        if (qLow.includes("critical") || qLow.includes("emergency")) {
-          candidates = allEvents.filter((e) => e.is_critical_alert);
-        } else if (qLow.includes("flare") || qLow.includes("refinery") || qLow.includes("plant")) {
-          candidates = allEvents.filter((e) => e.classification.includes("FLARE"));
-        } else if (qLow.includes("agri") || qLow.includes("punjab")) {
-          candidates = allEvents.filter((e) => e.classification.includes("AGRICULTURAL"));
-        }
-
-        if (candidates.length === 0) candidates = allEvents;
-        const sorted = [...candidates].sort((a, b) => (b.frp_megawatts || 0) - (a.frp_megawatts || 0));
-
-        for (const e of sorted.slice(0, 3)) {
-          if (!seenIds.has(e.id)) {
-            seenIds.add(e.id);
-            related.push({
-              id: e.id,
-              facility_name: e.facility_name || "Unmapped Cluster",
-              classification: e.classification,
-              frp_megawatts: Number(e.frp_megawatts?.toFixed(1) ?? 0),
-              brightness_temp_kelvin: Number(e.brightness_temp_kelvin?.toFixed(1) ?? 0),
-              latitude: e.latitude,
-              longitude: e.longitude,
-              is_critical_alert: Boolean(e.is_critical_alert),
-            });
-          }
-        }
-      }
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: String(Date.now()),
-          q,
-          a: cleanAnswer || res.answer,
-          mode: res.mode,
-          latency_ms: res.latency_ms,
-          time: new Date().toLocaleTimeString("en-IN", { hour12: false }),
-          related_events: related.slice(0, 4),
-        },
-      ]);
+      // Replace the pending placeholder with the completed answer
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === pendingId
+            ? {
+                ...m,
+                a: cleanAnswer || res.answer,
+                mode: res.mode,
+                latency_ms: res.latency_ms,
+                cached: res.cached,
+                related_events: related.slice(0, 4),
+              }
+            : m
+        )
+      );
     } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: String(Date.now()),
-          q,
-          a: `Intelligence query failed: ${err instanceof Error ? err.message : String(err)}`,
-          mode: "ERROR",
-          latency_ms: 0,
-          time: new Date().toLocaleTimeString("en-IN", { hour12: false }),
-        },
-      ]);
+      const errMsg = `Intelligence query failed: ${err instanceof Error ? err.message : String(err)}`;
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === pendingId
+            ? {
+                ...m,
+                a: errMsg,
+                mode: "ERROR",
+                latency_ms: 0,
+              }
+            : m
+        )
+      );
     } finally {
       setLoading(false);
       setTimeout(() => {
@@ -320,26 +484,33 @@ export function CopilotWidget() {
               className="flex-1 overflow-y-auto p-4 space-y-4 font-mono text-xs min-h-0 bg-gradient-to-b from-[#040812] to-[#02050b]"
             >
               {messages.map((msg) => (
-                <div key={msg.id} className="space-y-2">
-                  {/* User Query Bubble */}
+                <div key={msg.id} className="space-y-3">
+                  {/* ── User Message (Right-Aligned Cyan Bubble) ── */}
                   {msg.id !== "init" && (
-                    <div className="flex justify-end">
-                      <div className="max-w-[85%] rounded-lg px-3.5 py-2 bg-cyan-950/40 border border-cyan-500/30 text-cyan-200 shadow-sm">
-                        <div className="text-[10px] text-cyan-400/70 mb-0.5 uppercase tracking-wider">
-                          Duty Officer
+                    <div className="flex justify-end items-end gap-2.5 group">
+                      <div className="max-w-[80%] rounded-2xl rounded-br-md px-4 py-2.5 bg-gradient-to-br from-cyan-600/90 to-cyan-700/80 text-white shadow-lg shadow-cyan-900/30 border border-cyan-400/30">
+                        <div className="font-sans text-[13px] leading-snug text-white">{msg.q}</div>
+                        <div className="text-[9px] text-cyan-200/70 mt-1 text-right font-mono">
+                          You · {msg.time}
                         </div>
-                        <div className="font-sans text-sm text-slate-100">{msg.q}</div>
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-slate-700/80 border border-white/20 flex items-center justify-center text-xs font-bold text-slate-200 shrink-0 shadow-md">
+                        DO
                       </div>
                     </div>
                   )}
 
-                  {/* Copilot Response Bubble */}
-                  <div className="flex justify-start">
-                    <div className="max-w-[95%] w-full rounded-lg p-4 bg-[#080e1a]/90 border border-white/[0.08] shadow-md space-y-3">
-                      {/* Meta badge */}
-                      <div className="flex items-center justify-between text-[10px] text-mute border-b border-white/5 pb-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="text-cyan-400 font-bold">⚡ COPILOT INTELLIGENCE</span>
+                  {/* ── Copilot Message (Left-Aligned with Avatar) ── */}
+                  {msg.a && (
+                    <div className="flex justify-start items-end gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 border border-cyan-300/40 flex items-center justify-center text-[13px] shrink-0 shadow-[0_0_12px_rgba(6,182,212,0.45)]">
+                        🛰️
+                      </div>
+                      <div className="max-w-[88%] rounded-2xl rounded-bl-md px-4 py-3 bg-[#0b1220]/95 border border-white/10 shadow-lg shadow-black/40 backdrop-blur-sm space-y-3">
+                        {/* Meta badge */}
+                        <div className="flex items-center justify-between text-[10px] text-mute border-b border-white/5 pb-1.5 gap-2">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-cyan-400 font-bold tracking-wide">NTRO COPILOT</span>
                           <span
                             className={`px-1.5 py-0.2 rounded text-[9px] font-mono ${
                               msg.mode === "NEURAL"
@@ -351,16 +522,20 @@ export function CopilotWidget() {
                           >
                             {msg.mode}
                           </span>
+                          {msg.cached && (
+                            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                              ⚡ CACHE HIT
+                            </span>
+                          )}
                         </div>
-                        <div className="tabular-nums">
-                          {msg.latency_ms > 0 && `${msg.latency_ms}ms · `}
-                          {msg.time}
+                        <div className="tabular-nums shrink-0">
+                          {msg.latency_ms > 0 && `${msg.latency_ms}ms`}
                         </div>
                       </div>
 
-                      {/* Content text */}
-                      <div className="font-sans text-xs text-slate-200 leading-relaxed whitespace-pre-wrap">
-                        {msg.a}
+                      {/* Content formatted brief */}
+                      <div className="leading-relaxed">
+                        <FormattedBrief content={msg.a} />
                       </div>
 
                       {/* ── Related Tactical Target Action Cards (One-Click Redirects) ── */}
@@ -397,6 +572,11 @@ export function CopilotWidget() {
                                         {ev.frp_megawatts} MW
                                       </span>
                                       <span>{ev.brightness_temp_kelvin} K</span>
+                                      {ev.cde_anomaly_score !== undefined && (
+                                        <span className="text-amber-400 font-semibold">
+                                          {ev.cde_anomaly_score > 0 ? `+${ev.cde_anomaly_score}` : ev.cde_anomaly_score}σ CDE
+                                        </span>
+                                      )}
                                       <span className="text-slate-400">
                                         {ev.latitude.toFixed(2)}°, {ev.longitude.toFixed(2)}°
                                       </span>
@@ -428,16 +608,24 @@ export function CopilotWidget() {
                       )}
                     </div>
                   </div>
+                  )}
                 </div>
               ))}
 
-              {/* Loading indicator */}
+              {/* ── Animated Typing Indicator ── */}
               {loading && (
-                <div className="flex justify-start">
-                  <div className="rounded-lg p-3 bg-[#080e1a]/90 border border-cyan-500/30 flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                    <span className="text-xs text-cyan-300 font-mono">
-                      Querying multi-agent swarm & synthesizing telemetry…
+                <div className="flex justify-start items-end gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 border border-cyan-300/40 flex items-center justify-center text-[13px] shrink-0 shadow-[0_0_12px_rgba(6,182,212,0.45)] animate-pulse">
+                    🛰️
+                  </div>
+                  <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#0b1220]/95 border border-cyan-500/25 shadow-lg shadow-black/40 flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce [animation-delay:0ms]" />
+                      <span className="w-2 h-2 rounded-full bg-cyan-300 animate-bounce [animation-delay:150ms]" />
+                      <span className="w-2 h-2 rounded-full bg-cyan-200 animate-bounce [animation-delay:300ms]" />
+                    </div>
+                    <span className="text-[11px] text-cyan-300/90 font-mono tracking-wide">
+                      Copilot is analyzing live telemetry…
                     </span>
                   </div>
                 </div>

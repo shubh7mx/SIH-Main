@@ -142,8 +142,13 @@ class EventStore:
 
             # Skip exact duplicates
             if eid in self._events:
-                self._events[eid] = event
+                # Merge fields to avoid wiping existing properties
+                self._events[eid] = {**self._events[eid], **event}
                 return
+
+            # Backfill default brightness_temp_kelvin if missing (default ~335K for thermal anomaly)
+            if "brightness_temp_kelvin" not in event or event.get("brightness_temp_kelvin") is None:
+                event["brightness_temp_kelvin"] = 345.0
 
             self._events[eid] = event
             if eid not in self._order:

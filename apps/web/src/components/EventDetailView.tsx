@@ -13,6 +13,7 @@ import { getClassificationSeverity } from "@/lib/design-tokens";
 import { useEvents, useIncidentBrief } from "@/lib/hooks";
 import type { HotspotEvent } from "@/lib/types";
 import { inferAnomalyReason } from "@/lib/anomaly-inference";
+import { getEventLocation } from "@/lib/location-resolver";
 
 export function EventDetailView() {
   const params = useParams();
@@ -69,7 +70,8 @@ export function EventDetailView() {
   });
 
   const anomalyInfo = event ? inferAnomalyReason(event) : null;
-  const title = event?.facility_name ?? "Unmapped Thermal Anomaly";
+  const locInfo = event ? getEventLocation(event) : null;
+  const title = event?.facility_name ?? (locInfo ? `Thermal Anomaly near ${locInfo.city}` : "Unmapped Thermal Anomaly");
 
   return (
     <ConsoleShell>
@@ -94,13 +96,18 @@ export function EventDetailView() {
               {title}
             </h1>
             <div className="font-mono text-xs text-mute">
-              {event.latitude.toFixed(4)}°N · {event.longitude.toFixed(4)}°E · H3 Cell:{" "}
-              <span className="text-white/80">{event.h3_index || "—"}</span> · Satellite:{" "}
+            {Number(event.latitude).toFixed(4)}°N · {Number(event.longitude).toFixed(4)}°E{event.h3_index ? ` · H3 Cell: ${event.h3_index}` : ""}{" "}
+            {locInfo ? `· ${locInfo.displayLocation}` : ""} · Satellite:{" "}
               <span className="text-white/80">{event.satellite_source}</span>
             </div>
             {anomalyInfo && (!event.facility_name || event.facility_name.includes("Unmapped") || event.facility_name.includes("Thermal Anomaly")) ? (
               <div className="text-xs font-mono text-cyan-300">
                 🌾 Probable Reason: <span className="text-white font-medium">{anomalyInfo.probableCause}</span> ({anomalyInfo.regionLabel})
+              </div>
+            ) : locInfo ? (
+              <div className="text-xs font-mono text-slate-300">
+                📍 <span className="text-white font-medium">{locInfo.displayLocation}</span>
+                {locInfo.isKnownFacility ? " · Known Industrial Hub" : " · Geographically Resolved"}
               </div>
             ) : null}
           </div>
@@ -131,17 +138,17 @@ export function EventDetailView() {
           <div className="surface-card p-4 rounded-xl border border-white/5">
             <div className="eyebrow mb-1">Radiative Power</div>
             <div className="text-2xl font-bold text-white tabular-nums">
-              {event.frp_megawatts.toFixed(1)} <span className="text-xs text-mute font-normal">MW</span>
+              {Number(event.frp_megawatts ?? 0).toFixed(1)} <span className="text-xs text-mute font-normal">MW</span>
             </div>
             <div className="text-[10px] text-mute mt-1">VIIRS 375m pixel integration</div>
           </div>
           <div className="surface-card p-4 rounded-xl border border-white/5">
             <div className="eyebrow mb-1">Brightness Temp</div>
             <div className="text-2xl font-bold text-white tabular-nums">
-              {event.brightness_temp_kelvin.toFixed(0)} <span className="text-xs text-mute font-normal">K</span>
+              {Number(event.brightness_temp_kelvin ?? 0).toFixed(0)} <span className="text-xs text-mute font-normal">K</span>
             </div>
             <div className="text-[10px] text-mute mt-1">
-              {(event.brightness_temp_kelvin - 273.15).toFixed(0)}°C calibrated
+              {(Number(event.brightness_temp_kelvin ?? 0) - 273.15).toFixed(0)}°C calibrated
             </div>
           </div>
           <div className="surface-card p-4 rounded-xl border border-white/5">

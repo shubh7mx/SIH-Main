@@ -25,7 +25,7 @@ class Settings(BaseSettings):
 
     # AI Intelligence Engine (Tactical Copilot & Incident Analysis backend)
     OPENROUTER_API_KEY: Optional[str] = None
-    OPENROUTER_MODEL: str = "anthropic/claude-3.5-sonnet"
+    OPENROUTER_MODEL: str = "nvidia/nemotron-3.5-lightning:free"
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     SITE_URL: str = "https://sih26162.ntro.gov.in"
     SITE_NAME: str = "NTRO Thermal Intelligence"

@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { useEvents, useAlertStream } from "@/lib/hooks";
 import type { HotspotEvent, ThermalClassification } from "@/lib/types";
 import { getClassificationSeverity } from "@/lib/design-tokens";
+import { getEventLocation } from "@/lib/location-resolver";
 
 type SortKey = "acq_datetime" | "frp_megawatts" | "brightness_temp_kelvin" | "confidence_score";
 type FilterCat = "ALL" | "CRITICAL" | "PERSISTENT" | "AGRICULTURAL" | "WILDFIRE" | "DEFERRED";
@@ -163,10 +164,10 @@ export default function EventsPage() {
                     </th>
                     <SortHeader k="acq_datetime" label="Acquired" />
                     <th className="px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-mute">
-                      Facility
+                      Facility / Location
                     </th>
                     <th className="px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-mute">
-                      Coordinates
+                      State & Region
                     </th>
                     <SortHeader k="frp_megawatts" label="FRP (MW)" />
                     <SortHeader k="brightness_temp_kelvin" label="BT (K)" />
@@ -202,11 +203,18 @@ export default function EventsPage() {
                             hour12: false,
                           })}
                         </td>
-                        <td className="px-3 py-2 text-[11px] text-white/90 max-w-[200px] truncate">
-                          {ev.facility_name ?? "—"}
+                        <td className="px-3 py-2 text-[11px] max-w-[200px] truncate">
+                          <div className="text-white/90 font-medium truncate">
+                            {ev.facility_name ?? `Near ${getEventLocation(ev).city}`}
+                          </div>
+                          <div className="font-mono text-[9px] text-mute">
+                            {Number(ev.latitude ?? 0).toFixed(2)}°, {Number(ev.longitude ?? 0).toFixed(2)}°
+                          </div>
                         </td>
-                        <td className="px-3 py-2 font-mono text-[10px] text-mute whitespace-nowrap">
-                          {Number(ev.latitude ?? 0).toFixed(2)}°, {Number(ev.longitude ?? 0).toFixed(2)}°
+                        <td className="px-3 py-2 text-[11px] text-slate-300 whitespace-nowrap">
+                          <span className="inline-flex items-center gap-1 font-mono text-[10px] bg-white/[0.04] px-1.5 py-0.5 rounded border border-white/5">
+                            📍 {getEventLocation(ev).state}
+                          </span>
                         </td>
                         <td className="px-3 py-2 font-mono text-[11px] tabular-nums text-white">
                           {Number(ev.frp_megawatts ?? 0).toFixed(1)}
