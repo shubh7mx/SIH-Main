@@ -4,6 +4,60 @@ import { useState } from "react";
 import { ConsoleShell } from "@/components/ConsoleShell";
 import { askCopilot } from "@/lib/api";
 
+// Robust client-side cleaner to strip any raw model scratchpads or thinking artifacts
+function cleanCopilotAnswer(raw: string): string {
+  if (!raw) return "";
+  let text = raw
+    .replace(/<think>[\s\S]*?<\/think>/gi, "")
+    .replace(/<think>[\s\S]*$/gi, "")
+    .replace(/<thought>[\s\S]*?<\/thought>/gi, "")
+    .replace(/<reasoning>[\s\S]*?<\/reasoning>/gi, "")
+    .replace(/<!--[\s\S]*?-->/gi, "");
+
+  // Strip transition markers like "Let's craft:", "Let's write:", "Final Response:", etc.
+  const pivotRegex =
+    /(?:^|\n)(?:let's (?:craft|draft|write|produce|format|summarize|output|answer)(?:[:\s\S]*?:|\.{1,3}|\n)|final (?:response|answer|brief|summary)[:\s]*\n*|here (?:is|are) the (?:tactical brief|brief|response|summary)[:\s]*\n*)/gi;
+  const matches = Array.from(text.matchAll(pivotRegex));
+  if (matches.length > 0) {
+    const last = matches[matches.length - 1];
+    if (last.index !== undefined) {
+      const candidate = text.slice(last.index + last[0].length).trim();
+      if (candidate.length > 20) {
+        text = candidate;
+      }
+    }
+  }
+
+  // Strip line-by-line preamble thinking patterns
+  const lines = text.split("\n");
+  let startIdx = 0;
+  let inPreamble = true;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (!trimmed) continue;
+    const isScratchpad =
+      /^(?:thinking(?:\s*process)?[:\s]|thought[:\s]|analysis[:\s]|we need to|we have|we must|we should|i need to|i will|let's|note that|we'll parse|list entries|each heading|we cannot)\b/i.test(
+        trimmed
+      ) ||
+      (trimmed.startsWith("[") &&
+        trimmed.endsWith("]") &&
+        i + 1 < lines.length &&
+        lines[i + 1].trim().startsWith("["));
+
+    if (!isScratchpad) {
+      startIdx = i;
+      inPreamble = false;
+      break;
+    }
+  }
+
+  if (!inPreamble) {
+    text = lines.slice(startIdx).join("\n").trim();
+  }
+
+  return text.trim() || raw;
+}
+
 export default function CopilotPage() {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<
@@ -25,11 +79,7 @@ export default function CopilotPage() {
     setLoading(true);
     try {
       const res = await askCopilot(q);
-      // Clean any residual <think> blocks on client-side as well
-      const cleanAnswer = res.answer
-        .replace(/<think>[\s\S]*?<\/think>/gi, "")
-        .replace(/<think>[\s\S]*$/gi, "")
-        .trim();
+      const cleanAnswer = cleanCopilotAnswer(res.answer);
 
       setMessages((prev) => [
         {

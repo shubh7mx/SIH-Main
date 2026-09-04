@@ -342,6 +342,17 @@ export async function generateIncidentBrief(
   );
 }
 
+export interface CopilotRelatedEvent {
+  id: string;
+  facility_name: string;
+  classification: string;
+  frp_megawatts: number;
+  brightness_temp_kelvin: number;
+  latitude: number;
+  longitude: number;
+  is_critical_alert: boolean;
+}
+
 export interface CopilotAnswer {
   question: string;
   answer: string;
@@ -349,6 +360,7 @@ export interface CopilotAnswer {
   generated_at: string;
   latency_ms: number;
   events_considered: number;
+  related_events?: CopilotRelatedEvent[];
 }
 
 export async function askCopilot(

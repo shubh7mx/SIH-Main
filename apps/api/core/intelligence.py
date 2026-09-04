@@ -68,13 +68,15 @@ _PROVIDER_MODEL: str = settings.OPENROUTER_MODEL
 
 _INTELLIGENCE_AVAILABLE = bool(_PROVIDER_KEY)
 
-SYSTEM_PROMPT = """You are the Tactical Intelligence Analyst aboard an
+BRIEF_SYSTEM_PROMPT = """You are the Tactical Intelligence Analyst aboard an
 operational geospatial command console for thermal anomaly monitoring over
 India. You receive structured satellite-derived hotspot events from a
-multi-agent classification system. Your job: produce concise, professional
-tactical assessments for duty officers.
+multi-agent classification system.
+
+Your job: produce a concise, professional, standardized tactical incident assessment.
 
 Rules:
+- Output ONLY the final tactical brief. DO NOT output thinking steps, scratchpads, or planning outlines.
 - Be direct, factual, and calm. Operational language, no speculation.
 - Structure your brief using the exact standardized categories:
   [TAXONOMY & THREAT SEVERITY]
@@ -84,7 +86,20 @@ Rules:
   [ATMOSPHERIC & PLUME DISPERSAL]
   [TACTICAL RECOMMENDATIONS & SOP]
 - Reference concrete numbers (FRP MW, brightness temperature K, CDE sigma, coordinates).
-- DO NOT output <think> or internal reasoning scratchpads.
+- Never output <think> blocks, 'Let's craft', 'We need to', or any internal reasoning.
+"""
+
+COPILOT_SYSTEM_PROMPT = """You are the Tactical AI Copilot aboard an operational
+geospatial command console for thermal anomaly monitoring over India.
+You provide direct, operational answers to Duty Officer inquiries grounded strictly
+in the provided live satellite telemetry and system KPIs.
+
+Rules:
+- Output ONLY your direct answer to the Duty Officer.
+- DO NOT output <think> tags, thought processes, planning notes, scratchpads, 'Let's craft', 'We need to', or meta-commentary.
+- Be concise, professional, factual, and authoritative.
+- Reference concrete telemetry values (FRP MW, BT Kelvin, classifications, coordinates, facility names) when relevant.
+- Structure complex responses with clear markdown headings or bullet points.
 """
 
 
@@ -157,20 +172,68 @@ def _class_brief(event: Dict[str, Any]) -> str:
 
 
 def _clean_response(text: Optional[str]) -> Optional[str]:
-    """Strips <think>...</think> reasoning blocks, unclosed thinking tags, and reasoning preambles."""
+    """
+    Robustly strips reasoning scratchpads, unclosed <think> blocks,
+    and thought preambles across any model family (DeepSeek-R1, Qwen, etc.).
+    """
     if not text:
         return None
     import re
-    # 1. Strip think blocks (closed or open/unclosed at end of stream)
-    cleaned = re.sub(r"(?i)\x3cthink\x3e[\s\S]*?(?:\x3c/think\x3e|$)", "", text)
+
+    cleaned = text
+
+    # 1. Strip explicit thinking tags (closed or unclosed/trailing)
+    cleaned = re.sub(r"(?i)\x3cthink\x3e[\s\S]*?(?:\x3c/think\x3e|$)", "", cleaned)
+    cleaned = re.sub(r"(?i)\x3cthought\x3e[\s\S]*?(?:\x3c/thought\x3e|$)", "", cleaned)
+    cleaned = re.sub(r"(?i)\x3creasoning\x3e[\s\S]*?(?:\x3c/reasoning\x3e|$)", "", cleaned)
     cleaned = re.sub(r"(?i)\x3c!--[\s\S]*?(?:--\x3e|$)", "", cleaned)
-    # 2. Extract from standardized category header if present
-    taxonomy_idx = cleaned.find("[TAXONOMY")
-    if taxonomy_idx != -1:
-        cleaned = cleaned[taxonomy_idx:]
-    else:
-        # Strip common thinking prefixes
-        cleaned = re.sub(r"(?i)^(?:thinking process|thought|analysis|reasoning|here is the brief)[\s\S]*?\n\n", "", cleaned)
+
+    # 2. Check for transition pivot markers where model finishes scratchpad and starts output
+    pivot_patterns = [
+        r"(?i)(?:^|\n)(?:let's (?:craft|draft|write|produce|format|summarize|output|answer)(?:[:\s\S]*?:|\.{1,3}|\n))\s*",
+        r"(?i)(?:^|\n)(?:final (?:response|answer|brief|summary|assessment)[:\s]*\n*)\s*",
+        r"(?i)(?:^|\n)(?:here (?:is|are) the (?:tactical brief|brief|response|assessment|summary)[:\s]*\n*)\s*",
+        r"(?i)(?:^|\n)(?:tactical assessment[:\s]*\n*)\s*",
+    ]
+    for pat in pivot_patterns:
+        matches = list(re.finditer(pat, cleaned))
+        if matches:
+            last_match = matches[-1]
+            candidate = cleaned[last_match.end():].strip()
+            if len(candidate) > 20:
+                cleaned = candidate
+
+    # 3. If there are preamble thinking lines before the structured response, strip them
+    lines = cleaned.split("\n")
+    start_idx = 0
+    in_preamble = True
+    for i, line in enumerate(lines):
+        trimmed = line.strip()
+        if not trimmed:
+            continue
+        # Check if line looks like internal chain-of-thought chatter
+        is_scratchpad = bool(re.match(
+            r"(?i)^(?:thinking(?:\s*process)?[:\s]|thought[:\s]|analysis[:\s]|we need to|we have|we must|we should|i need to|i will|let's|note that|we'll parse|list entries|each heading|we cannot)\b",
+            trimmed
+        ))
+        # Check if line is an empty heading outline (header followed immediately by another header)
+        is_header = trimmed.startswith("[") and trimmed.endswith("]")
+        if is_header and i + 1 < len(lines) and lines[i + 1].strip().startswith("["):
+            is_scratchpad = True
+
+        if not is_scratchpad:
+            start_idx = i
+            in_preamble = False
+            break
+
+    if not in_preamble:
+        cleaned = "\n".join(lines[start_idx:]).strip()
+
+    # 4. If duplicate standardized headers exist (e.g. outline vs populated), take populated section
+    tax_matches = list(re.finditer(r"\[TAXONOMY & THREAT SEVERITY\]", cleaned))
+    if len(tax_matches) > 1:
+        cleaned = cleaned[tax_matches[-1].start():].strip()
+
     cleaned = cleaned.strip()
     return cleaned if len(cleaned) > 20 else None
 
@@ -190,15 +253,17 @@ async def _call_provider(messages: List[Dict[str, str]], max_tokens: int = 600) 
         "messages": messages,
         "max_tokens": max_tokens,
         "temperature": 0.2,
+        "include_reasoning": False,
     }
     try:
-        async with httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=4.0)) as client:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(12.0, connect=4.0)) as client:
             resp = await client.post(
                 f"{_PROVIDER_URL}/chat/completions", headers=headers, json=payload
             )
             if resp.status_code == 200:
                 data = resp.json()
-                content = data["choices"][0]["message"].get("content")
+                msg = data.get("choices", [{}])[0].get("message", {})
+                content = msg.get("content")
                 cleaned = _clean_response(content)
                 if cleaned:
                     return cleaned
@@ -400,7 +465,7 @@ async def generate_incident_brief(event: Dict[str, Any]) -> Dict[str, Any]:
             f"Refine this standardized tactical brief following the exact categories:\n{text}"
         )
         neural_text = await _call_provider(
-            [{"role": "system", "content": SYSTEM_PROMPT},
+            [{"role": "system", "content": BRIEF_SYSTEM_PROMPT},
              {"role": "user", "content": user_msg}],
             max_tokens=650,
         )
@@ -459,17 +524,72 @@ async def copilot_answer(
         f"Active thermal anomalies ({len(compact_events)} samples):\n{compact_events}\n\n"
         f"System KPIs:\n{analytics}\n\n"
         f"Duty Officer Question: {question}\n\n"
-        "Provide a concise, direct, factual operational answer."
+        "Provide a concise, direct, factual operational answer without scratchpad or thinking text."
     )
     text = await _call_provider(
-        [{"role": "system", "content": SYSTEM_PROMPT},
+        [{"role": "system", "content": COPILOT_SYSTEM_PROMPT},
          {"role": "user", "content": user_msg}],
-        max_tokens=500,
+        max_tokens=600,
     )
     mode = "NEURAL"
     if not text:
         text = _fallback_copilot(question, events, analytics)
         mode = "DOCTRINE"
+
+    # Identify related events to provide one-click redirect targets
+    q_lower = question.lower()
+    related: List[Dict[str, Any]] = []
+    seen_ids = set()
+
+    for e in events:
+        eid = e.get("id")
+        if not eid or eid in seen_ids:
+            continue
+        fac = (e.get("facility_name") or "").lower()
+        cls = (e.get("classification") or "").lower()
+        is_crit = bool(e.get("is_critical_alert"))
+
+        # Match specific mentions or high relevance
+        is_match = (
+            (fac and fac in q_lower) or
+            ("critical" in q_lower and is_crit) or
+            ("flare" in q_lower and "flare" in cls) or
+            ("agri" in q_lower and "agri" in cls) or
+            ("wildfire" in q_lower and "wildfire" in cls) or
+            ("highest" in q_lower or "top" in q_lower or "frp" in q_lower)
+        )
+        if is_match:
+            seen_ids.add(eid)
+            related.append({
+                "id": eid,
+                "facility_name": e.get("facility_name") or "Unmapped Cluster",
+                "classification": e.get("classification"),
+                "frp_megawatts": round(float(e.get("frp_megawatts") or 0.0), 1),
+                "brightness_temp_kelvin": round(float(e.get("brightness_temp_kelvin") or 0.0), 1),
+                "latitude": e.get("latitude"),
+                "longitude": e.get("longitude"),
+                "is_critical_alert": is_crit,
+            })
+            if len(related) >= 4:
+                break
+
+    # If no specific keyword match, include top 2 highest FRP anomalies as reference
+    if not related and events:
+        sorted_by_frp = sorted(events, key=lambda x: float(x.get("frp_megawatts") or 0.0), reverse=True)
+        for e in sorted_by_frp[:3]:
+            eid = e.get("id")
+            if eid and eid not in seen_ids:
+                seen_ids.add(eid)
+                related.append({
+                    "id": eid,
+                    "facility_name": e.get("facility_name") or "Unmapped Cluster",
+                    "classification": e.get("classification"),
+                    "frp_megawatts": round(float(e.get("frp_megawatts") or 0.0), 1),
+                    "brightness_temp_kelvin": round(float(e.get("brightness_temp_kelvin") or 0.0), 1),
+                    "latitude": e.get("latitude"),
+                    "longitude": e.get("longitude"),
+                    "is_critical_alert": bool(e.get("is_critical_alert")),
+                })
 
     return {
         "text": text.strip(),
@@ -477,6 +597,7 @@ async def copilot_answer(
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "latency_ms": round((time.monotonic() - started) * 1000, 1),
         "events_considered": len(compact_events),
+        "related_events": related,
     }
 
 

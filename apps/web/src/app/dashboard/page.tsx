@@ -69,7 +69,7 @@ export default function DashboardPage() {
 
   return (
     <ConsoleShell>
-      <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 max-w-[1600px] w-full mx-auto">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 max-w-[1600px] w-full mx-auto overflow-x-hidden">
         {/* ── Page heading ──────────────────────────────────────────── */}
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>

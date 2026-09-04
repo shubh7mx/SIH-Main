@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ConsoleShell } from "@/components/ConsoleShell";
 import { TacticalMap } from "@/components/TacticalMap";
 import { EventDrawer } from "@/components/EventDrawer";
@@ -18,7 +19,10 @@ const FILTERS: { id: FilterCategory; label: string }[] = [
   { id: "WILDFIRE", label: "Wildfire" },
 ];
 
-export default function MapPage() {
+function MapPageInner() {
+  const searchParams = useSearchParams();
+  const eventParam = searchParams.get("event") || searchParams.get("id");
+
   const eventsQuery = useEvents({ limit: 200 }, 30_000);
   const alertStream = useAlertStream({ enabled: true });
   const timelineQuery = useTimeline({ intervalMinutes: 60 }, 60_000);
@@ -67,6 +71,13 @@ export default function MapPage() {
     const fresh = liveEvents.filter((e) => !ids.has(e.id));
     return [...fresh, ...backend];
   }, [eventsQuery.data, liveEvents]);
+
+  // ── Deep-link support: /map?event=<id> selects & flies to the event ──────
+  useEffect(() => {
+    if (!eventParam || selected) return;
+    const target = allEvents.find((e) => e.id === eventParam);
+    if (target) setSelected(target);
+  }, [eventParam, allEvents, selected]);
 
   const filteredEvents = useMemo(() => {
     return allEvents.filter((ev) => {
@@ -170,5 +181,21 @@ export default function MapPage() {
       {/* ── Event drawer (slide-over) ─────────────────────────────────── */}
       <EventDrawer event={selected} onClose={() => setSelected(null)} />
     </ConsoleShell>
+  );
+}
+
+export default function MapPage() {
+  return (
+    <Suspense
+      fallback={
+        <ConsoleShell>
+          <div className="flex items-center justify-center h-[calc(100vh-48px)] font-mono text-xs text-mute">
+            INITIALIZING TACTICAL MAP…
+          </div>
+        </ConsoleShell>
+      }
+    >
+      <MapPageInner />
+    </Suspense>
   );
 }

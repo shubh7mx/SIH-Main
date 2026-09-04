@@ -780,3 +780,46 @@ html, body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* =============================================================================
+   GLOBAL RESPONSIVE HARDENING — No element may ever escape the viewport
+   ============================================================================= */
+
+/* Hard viewport clamp on the root document */
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* All direct page containers constrained to viewport width */
+main,
+section,
+header,
+footer,
+nav,
+aside {
+  max-width: 100vw;
+}
+
+/* Tables & preformatted content scroll within their wrapper, never the page */
+pre,
+code,
+table {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* Long unbroken strings (IDs, coords, hashes) wrap instead of stretching layout */
+.break-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Prevent 100vw-based horizontal scroll caused by vertical scrollbar overlap */
+@supports (width: 100dvw) {
+  html,
+  body {
+    max-width: 100dvw;
+  }
+}

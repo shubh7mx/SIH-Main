@@ -457,11 +457,17 @@ export function TacticalMap({
     return {
       type: "FeatureCollection",
       features: items
-        .filter((e) => typeof e.latitude === "number" && typeof e.longitude === "number")
+        .filter((e) => {
+          const lat = Number(e.latitude);
+          const lng = Number(e.longitude);
+          return !Number.isNaN(lat) && !Number.isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+        })
         .map((e) => {
           const sev = getClassificationSeverity(e.classification);
           const isCritical = e.is_critical_alert || e.classification === "INDUSTRIAL_FIRE_EMERGENCY";
-          const colorHex = sev.text ?? "#06b6d4";
+          const colorHex = sev.dot ?? "#06b6d4";
+          const frp = Number(e.frp_megawatts);
+          const bt = Number(e.brightness_temp_kelvin);
           return {
             type: "Feature",
             geometry: {
@@ -470,8 +476,8 @@ export function TacticalMap({
             },
             properties: {
               id: e.id,
-              frp: Number(e.frp_megawatts ?? 10),
-              bt: Number(e.brightness_temp_kelvin ?? 350),
+              frp: Number.isFinite(frp) ? frp : 10,
+              bt: Number.isFinite(bt) ? bt : 350,
               confidence: Number(((e.confidence_score ?? 0.8) * 100).toFixed(0)),
               classification: e.classification,
               is_critical: isCritical ? 1 : 0,
@@ -981,8 +987,8 @@ export function TacticalMap({
           clusterMaxZoom: 13,
           clusterRadius: 42,
           clusterProperties: {
-            max_frp: ["max", ["get", "frp"]],
-            has_critical: ["max", ["get", "is_critical"]],
+            max_frp: [["max", ["accumulated"], ["get", "max_frp"]], ["get", "frp"]],
+            has_critical: [["max", ["accumulated"], ["get", "has_critical"]], ["get", "is_critical"]],
           },
         });
 
@@ -1481,6 +1487,11 @@ export function TacticalMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !mapReady) return;
+
+    if (!map.getSource("hotspots")) {
+      setupLayersRef.current?.();
+      return;
+    }
 
     const source = map.getSource("hotspots") as any;
     if (source && typeof source.setData === "function") {

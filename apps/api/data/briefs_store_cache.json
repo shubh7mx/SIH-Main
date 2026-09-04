@@ -124,5 +124,17 @@
     "mode": "NEURAL",
     "generated_at": "2026-09-04T01:01:01.083384+00:00",
     "latency_ms": 10485.0
+  },
+  "a0c77bfd0fb2088f": {
+    "text": "[TAXONOMY & THREAT SEVERITY]\n\u2022 Classification: Agricultural Burning | Severity: ADVISORY (SEASONAL BIOMASS)\n\u2022 Assessment: Open-field post-harvest biomass clearance \u2014 paddy/straw residue burning.\n\u2022 Multi-Agent Consensus: 61.2% confidence. No industrial or infrastructure signature co-located.\n\n[RADIOMETRIC & THERMAL TELEMETRY]\n\u2022 Radiative Power",
+    "mode": "NEURAL",
+    "generated_at": "2026-09-04T01:25:39.104020+00:00",
+    "latency_ms": 5594.0
+  },
+  "2c00e5a057f64ff5": {
+    "text": "[TAXONOMY & THREAT SEVERITY]\n[RADIOMETRIC & THERMAL TELEMETRY]\n[SPATIAL & FACILITY CONTEXT]\n[BASELINE & TEMPORAL VARIANCE]\n[ATMOSPHERIC & PLUME DISPERSAL]\n[TACTICAL RECOMMENDATIONS & SOP]\n\nI should use the data from telemetry. The previous brief had some extra info like sensor & orbit, wind vector, etc. But I must base on the telemetry only? The user says \"Refine this standardized tactical brief following the exact categories\". They gave a sample brief but I need to refine it using the telemetry. Probably I should keep the structure but ensure numbers match telemetry. The telemetry doesn't have sensor/orbit, wind vector, etc. But the brief includes them. However, the instruction: \"Reference concrete numbers (FRP MW, brightness temperature K, CDE sigma, coordinates).\" So I must include those. The other details like sensor, wind vector might be assumed from context? The user didn't provide them. But the previous brief includes them. Since the user says \"Refine this standardized tactical brief\", I should update the brief with the exact numbers from telemetry, and keep the categories exactly as listed. I'll keep the same style but ensure numbers match.\n\nLet's check the telemetry: frp_mw 60.92, brightness_k 357.12, cde_sigma 0.0, coords [30.41004, 75.50409]. Classification AGRICULTURAL_BURNING, confidence 0.612.\n\nI'll produce the brief with the exact categories. I'll include the sensor/orbit info from previous brief? The telemetry doesn't have it. But the user might expect it as part of the brief. However, the instruction: \"You receive structured satellite-derived hotspot events from a multi-agent classification system.\" The telemetry is the event. The brief should be based on that. The previous brief includes \"Sensor & Orbit: VIIRS_NOAA20_NRT \u00b7 Day Pass (13:30 IST Window)\" and wind vector. Those might be derived from other sources. Since the user didn't provide them, I should not invent. But the user gave a sample brief with those details",
+    "mode": "NEURAL",
+    "generated_at": "2026-09-04T01:48:20.838628+00:00",
+    "latency_ms": 15843.0
   }
 }

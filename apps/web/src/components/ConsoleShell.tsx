@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CopilotWidget } from "@/components/CopilotWidget";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: "◈" },
@@ -41,11 +42,11 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#03060a] text-white flex flex-col">
+    <div className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#03060a] text-white flex flex-col">
       {/* ── Persistent Top Nav ─────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 h-12 border-b border-white/[0.07] bg-[#04070c]/95 backdrop-blur-md flex items-center justify-between px-3 sm:px-4 flex-shrink-0">
+      <header className="sticky top-0 z-30 h-12 w-full border-b border-white/[0.07] bg-[#04070c]/95 backdrop-blur-md flex items-center justify-between gap-2 px-2 sm:px-4 flex-shrink-0">
         {/* Brand */}
-        <Link href="/dashboard" className="flex items-center gap-2.5 group">
+        <Link href="/dashboard" className="flex items-center gap-2.5 group shrink-0">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#06b6d4]" />
           <span className="font-mono text-[11px] font-bold tracking-[0.15em] text-white uppercase">
             NTRO GEOINT
@@ -54,14 +55,17 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
         </Link>
 
         {/* Page switcher */}
-        <nav className="flex items-center gap-0.5 overflow-x-auto" aria-label="Console sections">
+        <nav
+          className="flex items-center gap-0.5 min-w-0 flex-1 overflow-x-auto no-scrollbar"
+          aria-label="Console sections"
+        >
           {NAV_ITEMS.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md font-mono text-[11px] transition-all whitespace-nowrap focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-400 ${
+                className={`flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md font-mono text-[11px] transition-all whitespace-nowrap focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-400 ${
                   isActive
                     ? "bg-white/[0.10] text-white border border-white/[0.12]"
                     : "text-mute hover:text-white/90 hover:bg-white/[0.05] border border-transparent"
@@ -83,6 +87,9 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
 
       {/* ── Page content ───────────────────────────────────────────────── */}
       <main className="flex-1 flex flex-col min-h-0">{children}</main>
+
+      {/* ── Global On-Demand Copilot Widget (⌘K / Ctrl+K) ───────────────── */}
+      <CopilotWidget />
     </div>
   );
 }

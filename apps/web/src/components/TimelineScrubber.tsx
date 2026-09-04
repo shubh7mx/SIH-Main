@@ -53,9 +53,9 @@ export function TimelineScrubber({
       }`}
     >
       {/* Header with scrub status + connection telemetry */}
-      <div className="flex items-center justify-between text-[11px] font-mono">
-        <div className="flex items-center gap-2">
-          <span className="text-slate-400 uppercase tracking-[0.14em] text-[10px] font-mono font-semibold">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] font-mono">
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
+          <span className="text-slate-400 uppercase tracking-[0.14em] text-[10px] font-mono font-semibold whitespace-nowrap">
             🕒 24H Timeline Scrubber
           </span>
           {activeBucket ? (

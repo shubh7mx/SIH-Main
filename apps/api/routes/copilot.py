@@ -67,4 +67,5 @@ async def ask_copilot(req: CopilotQuestion) -> Dict[str, Any]:
         "generated_at": result["generated_at"],
         "latency_ms": result["latency_ms"],
         "events_considered": result["events_considered"],
+        "related_events": result.get("related_events", []),
     }
