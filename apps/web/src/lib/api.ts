@@ -31,7 +31,7 @@ export function getWsBase(): string {
     const wsProto = window.location.protocol === "https:" ? "wss:" : "ws:";
     const host = window.location.hostname;
     if (host !== "localhost" && host !== "127.0.0.1") {
-      return `${wsProto}//${window.location.host}/ws/alerts`;
+      return `${wsProto}//${window.location.host}/api/v1/ws/alerts`;
     }
   }
   return "ws://localhost:8000/api/v1/ws/alerts";
