@@ -57,7 +57,12 @@ class WSConnectionManager:
 
     async def connect(self, websocket: WebSocket, role: ConnectionRole = ConnectionRole.OPERATOR, filters: Optional[dict] = None) -> str:
         """Accepts a WebSocket and registers it. Returns client_id."""
-        await websocket.accept(subprotocol="v1")
+        requested_subprotocols = websocket.headers.get("sec-websocket-protocol", "").split(",")
+        requested = [s.strip() for s in requested_subprotocols if s.strip()]
+        if "v1" in requested:
+            await websocket.accept(subprotocol="v1")
+        else:
+            await websocket.accept()
 
         client_id = str(uuid.uuid4())[:12]
         client = WSClient(
