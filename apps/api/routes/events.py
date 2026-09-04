@@ -88,7 +88,7 @@ async def reseed_events():
         sys.path.insert(0, str(ROOT))
 
     from packages.ingestion.src.firms_poller import FIRMSPoller
-    from packages.agents.src.swarm import run_swarm
+    from packages.agents.src.graph import run_swarm
     from apps.api.main import process_event
 
     await event_store.clear()

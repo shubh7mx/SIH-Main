@@ -10,12 +10,6 @@ interface EarthGlobeProps {
 }
 
 // Convert geographic lat/lon to 3D Sphere Vector on untransformed sphere
-// Three.js SphereGeometry:
-// Polar angle phi: 0 at North Pole (+Y), PI at South Pole (-Y)
-// Azimuthal angle theta: (lon + 180) * PI / 180
-// x = -r * sin(phi) * cos(theta)
-// y =  r * cos(phi)
-// z =  r * sin(phi) * sin(theta)
 function latLonToVector3(lat: number, lon: number, radius: number): THREE.Vector3 {
   const phi = (90 - lat) * (Math.PI / 180);
   const theta = (lon + 180) * (Math.PI / 180);
@@ -26,11 +20,10 @@ function latLonToVector3(lat: number, lon: number, radius: number): THREE.Vector
   );
 }
 
-// Camera focus point: shifted East (~89°E) so India (78.96°E) sits left-of-center on the visible sphere,
-// accentuating the spherical curvature and 3D bulge. Latitude kept at India's 20.5937°N.
+// Camera focus point: India center (20.5937°N, 78.9629°E)
 const FOCUS_CENTER = {
   lat: 20.5937,
-  lon: 89.0,
+  lon: 78.9629,
 };
 
 // Curated Indian industrial & thermal centers
@@ -39,9 +32,15 @@ const DEFAULT_HOTSPOTS = [
   { id: "evt-haldia", name: "IOCL Haldia Petrochemicals", lat: 22.031, lon: 88.082, frp: 145, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
   { id: "evt-panipat", name: "IOCL Panipat Refinery Flare", lat: 29.390, lon: 76.963, frp: 98, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
   { id: "evt-vizag", name: "HPCL Visakh Refinery", lat: 17.724, lon: 83.265, frp: 310, type: "INDUSTRIAL_FIRE_EMERGENCY", critical: true },
-  { id: "evt-mumbai", name: "BPCL Trombay Complex", lat: 19.006, lon: 72.894, frp: 520, type: "INDUSTRIAL_FIRE_EMERGENCY", critical: true },
-  { id: "evt-bhatinda", name: "Punjab Agri Residue Cluster", lat: 30.211, lon: 74.945, frp: 76, type: "AGRICULTURAL_BURNING", critical: false },
-  { id: "evt-jamshedpur", name: "Tata Steel Blast Furnace", lat: 22.805, lon: 86.203, frp: 215, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
+  { id: "evt-tata", name: "Tata Steel Jamshedpur Works", lat: 22.804, lon: 86.202, frp: 165, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
+  { id: "evt-mumbai", name: "BPCL Mumbai Refinery", lat: 19.014, lon: 72.894, frp: 120, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
+  { id: "evt-hazira", name: "ONGC Hazira Gas Terminal", lat: 21.112, lon: 72.645, frp: 210, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
+  { id: "evt-kochi", name: "BPCL Kochi Refinery", lat: 9.992, lon: 76.358, frp: 140, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
+  { id: "evt-punjab", name: "Sangrur Agrarian Stubble Cluster", lat: 30.245, lon: 75.842, frp: 65, type: "AGRICULTURAL_BURNING", critical: false },
+  { id: "evt-bhatinda", name: "Bhatinda Agricultural Belt", lat: 30.211, lon: 74.945, frp: 55, type: "AGRICULTURAL_BURNING", critical: false },
+  { id: "evt-haryana", name: "Karnal Crop Residue Burn", lat: 29.685, lon: 76.990, frp: 48, type: "AGRICULTURAL_BURNING", critical: false },
+  { id: "evt-uk-wildfire", name: "Nainital Pine Forest Wildfire", lat: 29.380, lon: 79.463, frp: 85, type: "WILDFIRE", critical: false },
+  { id: "evt-hp-forest", name: "Shimla Ridge Wildfire", lat: 31.104, lon: 77.173, frp: 72, type: "WILDFIRE", critical: false },
 ];
 
 export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
@@ -58,6 +57,9 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
   const onSelectRef = useRef(onSelectEvent);
   onSelectRef.current = onSelectEvent;
 
+  const eventsRef = useRef(events);
+  eventsRef.current = events;
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -72,9 +74,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     const globeRadius = 1.0;
     const atmoRadius = globeRadius * 1.08;
 
-    // Strong Orbital Depth: FOV 50° provides rich 3D curvature
     const TARGET_FOV = 50;
-    // Camera distance at 2.52 provides 30-40px of breathing room at canvas top edge so the blue glow is completely uncropped
     const CAMERA_DISTANCE = 2.52;
 
     const initialAspect = width / height;
@@ -98,10 +98,9 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
 
     const TARGET_YAW_Y = -degToRad(FOCUS_CENTER.lon + 90);
     const TARGET_PITCH_X = degToRad(FOCUS_CENTER.lat);
-    const TARGET_ROLL_Z = -degToRad(26.0);
 
     const orientationGroup = new THREE.Group();
-    orientationGroup.rotation.z = TARGET_ROLL_Z;
+    orientationGroup.rotation.z = degToRad(-15);
     scene.add(orientationGroup);
 
     const globeGroup = new THREE.Group();
@@ -111,8 +110,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     const globeGeo = new THREE.SphereGeometry(globeRadius, 64, 64);
     const textureLoader = new THREE.TextureLoader();
     const earthDayMap = textureLoader.load(
-      "https://unpkg.com/three-globe@2.31.1/example/img/earth-blue-marble.jpg",
-      () => renderer.render(scene, camera)
+      "https://unpkg.com/three-globe@2.31.1/example/img/earth-blue-marble.jpg"
     );
 
     const globeMat = new THREE.MeshStandardMaterial({
@@ -150,172 +148,141 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     globeGroup.add(atmoMesh);
 
     // ── 5. 3D Light Beams with Vertical Opacity Gradient & Flat Top ──
-    const activeHotspots = events && events.length > 0
-      ? events.map((e) => ({
+    const activeHotspots = eventsRef.current && eventsRef.current.length > 0
+      ? eventsRef.current.map((e) => ({
           id: e.id,
-          name: e.facility_name ?? "Thermal Anomaly",
+          name: e.facility_name || `${e.classification.replace(/_/g, " ")}`,
           lat: e.latitude,
           lon: e.longitude,
-          frp: e.frp_megawatts ?? 100,
+          frp: e.frp_megawatts ?? 25,
           type: e.classification,
-          critical: e.is_critical_alert,
+          critical: e.is_critical_alert || e.classification === "INDUSTRIAL_FIRE_EMERGENCY",
           raw: e,
         }))
-      : DEFAULT_HOTSPOTS.map((d) => ({
-          ...d,
-          raw: undefined as unknown as HotspotEvent,
-        }));
+      : DEFAULT_HOTSPOTS.map((d) => ({ ...d, raw: null as HotspotEvent | null }));
 
-    interface RadarRing {
-      mesh: THREE.Mesh;
-      initialScale: number;
-      speed: number;
-      phase: number;
-      maxRadius: number;
-      baseOpacity: number;
-    }
-
-    interface ThermalBeamObj {
-      data: typeof activeHotspots[0];
-      group: THREE.Group;
+    const thermalBeamObjects: Array<{
       beamMesh: THREE.Mesh;
-      rings: RadarRing[];
-      targetScaleZ: number;
+      rings: Array<{ mesh: THREE.Mesh; speed: number; phase: number; maxRadius: number; baseOpacity: number }>;
       currentScaleZ: number;
+      targetScaleZ: number;
       delay: number;
-    }
+    }> = [];
 
-    const thermalBeamObjects: ThermalBeamObj[] = [];
     const interactiveMeshes: THREE.Object3D[] = [];
 
-    // Custom Vertical Opacity Gradient Shader:
-    // Ground base is 100% solid (1.0 opacity), apex fades smoothly to 0% (0.0 opacity, perfectly transparent)
-    const beamVertexShader = `
-      varying float vAltitude;
-      void main() {
-        // position.z runs from 0.0 (ground base) to 1.0 (peak apex)
-        vAltitude = clamp(position.z, 0.0, 1.0);
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `;
-
-    const beamFragmentShader = `
-      uniform vec3 uColor;
-      uniform float uEmissiveIntensity;
-      varying float vAltitude;
-      void main() {
-        // Base is 1.0 (100% solid), top fades smoothly to 0.0 (0% transparent)
-        float alpha = 1.0 - smoothstep(0.0, 1.0, vAltitude);
-        vec3 finalColor = uColor * uEmissiveIntensity;
-        gl_FragColor = vec4(finalColor, alpha);
-      }
-    `;
-
     activeHotspots.forEach((h, idx) => {
-      // Base point on sphere surface
-      const pos = latLonToVector3(h.lat, h.lon, globeRadius * 1.001);
-      const isCrit = h.critical;
-
-      // Color mapping:
-      // Critical industrial hazards: Blinding intense Neon Orange/Red (#FF3300)
-      // Standard monitoring / active flares: Blinding Neon Cyan (#00FFFF)
-      // Agricultural Burning: Vivid Gold (#FFD700)
-      let beamColor = new THREE.Color(0x00ffff); // Blinding Neon Cyan default
-      if (isCrit) {
-        beamColor = new THREE.Color(0xff3300); // Intense Neon Orange/Red
-      } else if (h.type === "PERSISTENT_INDUSTRIAL_FLARE") {
-        beamColor = new THREE.Color(0x00f0ff); // Electric Cyan
-      } else if (h.type === "AGRICULTURAL_BURNING") {
-        beamColor = new THREE.Color(0xffd700); // Vivid Gold
-      }
-
-      // Height proportional to thermal FRP intensity (min 0.10, max 0.30)
-      const frpClamped = Math.min(Math.max(h.frp, 50), 900);
-      const beamHeight = 0.10 + (frpClamped / 900) * 0.20;
-
-      // Solid beam thickness (pointRadius ~0.12 equivalent)
-      const beamRadius = 0.0075;
-
       const beamGroup = new THREE.Group();
-      beamGroup.position.copy(pos);
-      // Align +Z / normal with the outward radial vector
-      beamGroup.lookAt(pos.clone().multiplyScalar(2));
-      globeGroup.add(beamGroup);
 
-      // ── Standard Flat-Ended CylinderGeometry (Open-Ended, NO caps) ──
-      // Flat top edges become invisible as alpha fades to 0.0 at altitude 1.0
-      const cylinderGeo = new THREE.CylinderGeometry(beamRadius * 0.75, beamRadius, 1.0, 16, 1, true);
-      // Center base at origin (0, 0, 0) and extend toward +Y
-      cylinderGeo.translate(0, 0.5, 0);
-      // Rotate so it extends along +Z (outward from Earth surface)
-      cylinderGeo.rotateX(Math.PI / 2);
+      const beamRadius = 0.011;
+      const targetAltitude = Math.min(0.65, Math.max(0.18, (h.frp / 850) * 0.65));
+
+      const beamGeo = new THREE.CylinderGeometry(beamRadius, beamRadius, targetAltitude, 24, 1);
+      beamGeo.translate(0, targetAltitude / 2, 0);
+      beamGeo.rotateX(Math.PI / 2);
+
+      const colorHex = h.critical ? 0xff2200 : 0x00ffff;
+      const rgbVec = h.critical ? new THREE.Vector3(1.0, 0.13, 0.0) : new THREE.Vector3(0.0, 1.0, 1.0);
 
       const beamMat = new THREE.ShaderMaterial({
-        uniforms: {
-          uColor: { value: beamColor },
-          uEmissiveIntensity: { value: 1.85 }, // Luminous radiance
-        },
-        vertexShader: beamVertexShader,
-        fragmentShader: beamFragmentShader,
         transparent: true,
+        depthWrite: false,
         blending: THREE.AdditiveBlending,
-        depthWrite: false, // Ensures fading transparency renders cleanly without clipping
-        side: THREE.DoubleSide,
+        uniforms: {
+          uColor: { value: rgbVec },
+          uMaxAltitude: { value: targetAltitude },
+        },
+        vertexShader: `
+          varying float vHeight;
+          void main() {
+            vHeight = position.z;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 uColor;
+          uniform float uMaxAltitude;
+          varying float vHeight;
+          void main() {
+            float normH = clamp(vHeight / uMaxAltitude, 0.0, 1.0);
+            float alpha = (1.0 - normH * 0.88) * 0.95;
+            gl_FragColor = vec4(uColor, alpha);
+          }
+        `,
       });
 
-      const beamMesh = new THREE.Mesh(cylinderGeo, beamMat);
-      beamMesh.scale.set(1, 1, 0); // Start flat on ground, springs upward along Z
-      beamMesh.userData = { hotspotData: h };
+      const beamMesh = new THREE.Mesh(beamGeo, beamMat);
+      beamMesh.scale.z = 0.001;
       beamGroup.add(beamMesh);
 
-      // Invisible hit cylinder for effortless raycast hovering
-      const hitGeo = new THREE.CylinderGeometry(0.022, 0.022, 1.0, 8, 1, true);
-      hitGeo.translate(0, 0.5, 0);
+      // Flat circular disc at the exact peak altitude
+      const capGeo = new THREE.CircleGeometry(beamRadius * 1.05, 16);
+      const capMat = new THREE.MeshBasicMaterial({
+        color: colorHex,
+        transparent: true,
+        opacity: 0.88,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      });
+      const capMesh = new THREE.Mesh(capGeo, capMat);
+      capMesh.position.z = targetAltitude;
+      beamMesh.add(capMesh);
+
+      // Interactive hit cylinder for effortless hover detection
+      const hitGeo = new THREE.CylinderGeometry(0.045, 0.045, targetAltitude, 12);
+      hitGeo.translate(0, targetAltitude / 2, 0);
       hitGeo.rotateX(Math.PI / 2);
       const hitMat = new THREE.MeshBasicMaterial({ visible: false });
       const hitMesh = new THREE.Mesh(hitGeo, hitMat);
       hitMesh.userData = { hotspotData: h };
-      hitMesh.scale.set(1, 1, beamHeight);
       beamGroup.add(hitMesh);
       interactiveMeshes.push(hitMesh);
 
-      // ── High-Visibility Scanning Radar Zones ─────────────────────────
-      const ringCount = isCrit ? 2 : 1;
-      const rings: RadarRing[] = [];
+      // 2 Radar Terrain Waves expanding around the beam root
+      const rings: Array<{ mesh: THREE.Mesh; speed: number; phase: number; maxRadius: number; baseOpacity: number }> = [];
+      const ringConfigs = [
+        { initialRadius: 0.016, speed: 0.75, phase: 0.0, maxRadius: 3.4, baseOpacity: 0.75 },
+        { initialRadius: 0.016, speed: 0.75, phase: 0.5, maxRadius: 3.4, baseOpacity: 0.55 },
+      ];
 
-      for (let r = 0; r < ringCount; r++) {
-        const ringGeo = new THREE.RingGeometry(0.012, 0.018, 32);
-        const ringColor = isCrit ? new THREE.Color(0xff3300) : new THREE.Color(0x00ffff);
+      ringConfigs.forEach((cfg) => {
+        const ringGeo = new THREE.RingGeometry(cfg.initialRadius * 0.82, cfg.initialRadius, 32);
         const ringMat = new THREE.MeshBasicMaterial({
-          color: ringColor,
-          side: THREE.DoubleSide,
+          color: colorHex,
           transparent: true,
-          opacity: 0.35,
-          blending: THREE.AdditiveBlending,
+          opacity: cfg.baseOpacity,
+          side: THREE.DoubleSide,
           depthWrite: false,
+          blending: THREE.AdditiveBlending,
         });
         const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-        ringMesh.position.set(0, 0, 0.001);
+        ringMesh.position.z = 0.002;
         beamGroup.add(ringMesh);
 
         rings.push({
           mesh: ringMesh,
-          initialScale: 0.2,
-          speed: 0.40 + r * 0.15,
-          phase: (r / ringCount) * Math.PI * 2,
-          maxRadius: isCrit ? 4.5 : 3.4,
-          baseOpacity: 0.38,
+          speed: cfg.speed,
+          phase: cfg.phase,
+          maxRadius: cfg.maxRadius,
+          baseOpacity: cfg.baseOpacity,
         });
-      }
+      });
+
+      // Position beamGroup at coordinates on the sphere and orient outward along surface normal
+      const pos = latLonToVector3(h.lat, h.lon, globeRadius * 1.001);
+      beamGroup.position.copy(pos);
+
+      const normal = pos.clone().normalize();
+      beamGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+
+      globeGroup.add(beamGroup);
 
       thermalBeamObjects.push({
-        data: h,
-        group: beamGroup,
         beamMesh,
         rings,
-        targetScaleZ: beamHeight,
-        currentScaleZ: 0,
-        delay: 1.8 + idx * 0.12,
+        currentScaleZ: 0.001,
+        targetScaleZ: 1.0,
+        delay: idx * 0.08,
       });
     });
 
@@ -331,13 +298,13 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     rimLight.position.set(-4, 6, -3);
     scene.add(rimLight);
 
-    // ── 7. Fly-in Animation Setup ────────────────────────────────────
+    // ── 7. Fly-in Animation Setup (Spins on load into India focus) ─────
     const START_YAW_Y = TARGET_YAW_Y - Math.PI * 1.5;
     globeGroup.rotation.y = START_YAW_Y;
     globeGroup.rotation.x = 0;
 
     let flyInProgress = 0;
-    const FLY_IN_DURATION = 2.0;
+    const FLY_IN_DURATION = 1.8;
     let lastTime = performance.now();
     const startTime = lastTime;
 
@@ -374,9 +341,12 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     };
 
     const handleClick = () => {
-      if (hoveredHotspot && onSelectRef.current) {
-        const matched = activeHotspots.find((h) => h.name === hoveredHotspot.name);
-        if (matched?.raw) {
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(interactiveMeshes, false);
+      if (intersects.length > 0) {
+        const hit = intersects[0].object;
+        const matched = hit.userData?.hotspotData as typeof activeHotspots[0] | undefined;
+        if (matched?.raw && onSelectRef.current) {
           onSelectRef.current(matched.raw);
         }
       }
@@ -393,7 +363,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
       const delta = Math.min(rawDelta, 0.1);
       const elapsed = (now - startTime) / 1000;
 
-      // Smooth Fly-in sequence (ambient rotation strictly paused during fly-in)
+      // Smooth Fly-in sequence (spins gracefully into position on load)
       if (flyInProgress < 1) {
         flyInProgress += delta / FLY_IN_DURATION;
         const t = Math.min(1, flyInProgress);
@@ -403,7 +373,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
         globeGroup.rotation.y = START_YAW_Y + (TARGET_YAW_Y - START_YAW_Y) * ease;
         globeGroup.rotation.x = TARGET_PITCH_X * ease;
       } else {
-        // Locked stably onto India center with clockwise diagonal roll
+        // Locked stably onto India center
         globeGroup.rotation.y = TARGET_YAW_Y;
         globeGroup.rotation.x = TARGET_PITCH_X;
       }
@@ -411,17 +381,14 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
       // Progressive Laser Beam Spring Erection & Scanning Radar Waves
       thermalBeamObjects.forEach((tb) => {
         if (elapsed > tb.delay) {
-          // Smooth spring erection of laser beam along altitude Z
           tb.currentScaleZ += (tb.targetScaleZ - tb.currentScaleZ) * (delta * 5);
           tb.beamMesh.scale.z = tb.currentScaleZ;
 
-          // Animate propagating terrain scan ripples
           tb.rings.forEach((ring) => {
             const wave = ((elapsed * ring.speed + ring.phase) % 1);
             const scale = 1 + wave * ring.maxRadius;
             ring.mesh.scale.set(scale, scale, 1);
 
-            // Fade opacity outward gracefully
             const mat = ring.mesh.material as THREE.MeshBasicMaterial;
             mat.opacity = (1 - wave) * ring.baseOpacity;
           });
@@ -453,7 +420,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
       container.removeEventListener("click", handleClick);
       renderer.dispose();
     };
-  }, [events]);
+  }, []);
 
   return (
     <div className="relative w-full h-full select-none">
@@ -487,6 +454,11 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
                   {hoveredHotspot.frp} MW
                 </span>
               </div>
+              {hoveredHotspot.critical && (
+                <div className="text-[#ff3300] font-semibold tracking-wider text-[9px] mt-1 pt-1 border-t border-red-500/20">
+                  CRITICAL THERMAL ANOMALY
+                </div>
+              )}
             </div>
           </div>
         </div>
