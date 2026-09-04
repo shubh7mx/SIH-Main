@@ -68716,5 +68716,15 @@
         ]
       }
     }
+  },
+  {
+    "id": "test-evt-001",
+    "firms_id": "test-evt-001",
+    "latitude": 22.368,
+    "longitude": 69.832,
+    "classification": "PERSISTENT_INDUSTRIAL_FLARE",
+    "confidence_score": 0.94,
+    "frp_megawatts": 120.0,
+    "facility_name": "Reliance Jamnagar Petrochemical Complex"
   }
 ]

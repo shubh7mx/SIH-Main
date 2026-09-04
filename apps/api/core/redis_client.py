@@ -108,11 +108,18 @@ class RedisManager:
         return True
 
     # ── WebSocket fanout (pub/sub) ───────────────────────────────────────
-    async def publish_event(self, channel: str, event: dict):
+    async def publish_event(self, channel_or_event, event: Optional[dict] = None):
         if not self.available:
             return
+        # Support both publish_event(event) and publish_event(channel, event)
+        if event is None and isinstance(channel_or_event, dict):
+            target_channel = "events"
+            target_event = channel_or_event
+        else:
+            target_channel = str(channel_or_event)
+            target_event = event or {}
         try:
-            await self.client.publish(channel, json.dumps(event, default=str))
+            await self.client.publish(target_channel, json.dumps(target_event, default=str))
         except Exception:
             pass
 

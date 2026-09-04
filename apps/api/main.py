@@ -74,7 +74,7 @@ async def process_event(event: dict):
         # 4. Publish to Redis for cross-instance fanout
         redis = await get_redis()
         if redis.available:
-            await redis.publish_event(event)
+            await redis.publish_event("events", event)
 
     except Exception as exc:
         logger.error(f"Error processing event {event.get('id', '?')}: {exc}")
