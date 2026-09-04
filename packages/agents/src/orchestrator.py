@@ -52,14 +52,21 @@ def _spatial_class_posterior(state: SwarmState) -> dict[str, float]:
     facility_type = state.spatial.facility_type
     land_cover = state.spatial.land_cover_class
     dist_km = state.spatial.nearest_facility_km or 999.0
+    facility_id = state.spatial.facility_id
 
-    if facility_type is not None and dist_km <= 5.0:
-        # Contained within an industrial facility perimeter
-        post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.55
-        post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.35
-        post["AGRICULTURAL_BURNING"] = 0.04
-        post["WILDFIRE"] = 0.04
-        post["DEFERRED_FOR_ANALYST"] = 0.02
+    if (facility_type is not None or facility_id is not None) and dist_km <= 25.0:
+        # Contained within or adjacent to an industrial facility perimeter
+        post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.65
+        post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.30
+        post["AGRICULTURAL_BURNING"] = 0.01
+        post["WILDFIRE"] = 0.01
+        post["DEFERRED_FOR_ANALYST"] = 0.03
+    elif land_cover == 50:
+        post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.60
+        post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.25
+        post["AGRICULTURAL_BURNING"] = 0.05
+        post["WILDFIRE"] = 0.05
+        post["DEFERRED_FOR_ANALYST"] = 0.05
     elif land_cover == 40:
         post["AGRICULTURAL_BURNING"] = 0.90
         post["WILDFIRE"] = 0.03

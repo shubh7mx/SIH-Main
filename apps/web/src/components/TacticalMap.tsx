@@ -292,11 +292,31 @@ function applyDarkBasemapStyling(map: MlMap) {
 }
 
 const LEGEND = [
-  { label: "Critical / Emergency", color: SEV_CRITICAL, classKey: "INDUSTRIAL_FIRE_EMERGENCY" },
-  { label: "Wildfire", color: SEV_WILDFIRE, classKey: "WILDFIRE" },
-  { label: "Persistent Flare", color: "#f59e0b", classKey: "PERSISTENT_INDUSTRIAL_FLARE" },
-  { label: "Agricultural", color: SEV_AGRICULTURAL, classKey: "AGRICULTURAL_BURNING" },
-  { label: "Deferred Review", color: "#a855f7", classKey: "DEFERRED_FOR_ANALYST" },
+  {
+    label: "Critical / Emergency",
+    color: SEV_CRITICAL,
+    match: (e: HotspotEvent) => Boolean(e.is_critical_alert || e.classification === "INDUSTRIAL_FIRE_EMERGENCY"),
+  },
+  {
+    label: "Wildfire",
+    color: SEV_WILDFIRE,
+    match: (e: HotspotEvent) => !e.is_critical_alert && e.classification === "WILDFIRE",
+  },
+  {
+    label: "Persistent Flare",
+    color: "#f59e0b",
+    match: (e: HotspotEvent) => !e.is_critical_alert && e.classification === "PERSISTENT_INDUSTRIAL_FLARE",
+  },
+  {
+    label: "Agricultural",
+    color: SEV_AGRICULTURAL,
+    match: (e: HotspotEvent) => !e.is_critical_alert && e.classification === "AGRICULTURAL_BURNING",
+  },
+  {
+    label: "Deferred Review",
+    color: "#a855f7",
+    match: (e: HotspotEvent) => !e.is_critical_alert && e.classification === "DEFERRED_FOR_ANALYST",
+  },
 ];
 
 /** Deduplicate incoming events by ID or spatial-temporal signature */
@@ -1252,10 +1272,10 @@ export function TacticalMap({
           })
             .setLngLat(coords)
             .setHTML(`
-              <div class="hp-badge" style="background:#06b6d422; border:1px solid #06b6d466; color:#06b6d4">THERMAL CLUSTER</div>
-              <div class="hp-title font-bold text-white">${count} Active Hotspots Group</div>
+              <div class="hp-badge" style="background:#06b6d422; border:1px solid #06b6d466; color:#06b6d4">THERMAL CLUSTER (${count} SPOTS)</div>
+              <div class="hp-title font-bold text-white">${count} Hotspots in this Region</div>
               <div class="hp-meta text-cyan-400 font-mono">Max Radiative Power: ${Number(maxFrp).toFixed(1)} MW</div>
-              ${hasCritical ? '<div class="hp-meta text-red-400 font-bold text-[10px]">🚨 Includes Level-1 Critical Alerts</div>' : '<div class="hp-meta text-slate-400 text-[10px]">Click to zoom & resolve individual hotspots</div>'}
+              ${hasCritical ? '<div class="hp-meta text-red-400 font-bold text-[10px]">🚨 Contains 1+ Level-1 Critical Alert(s)</div>' : '<div class="hp-meta text-slate-400 text-[10px]">Click or zoom in to inspect individual spots</div>'}
             `)
             .addTo(map);
         };
@@ -1931,7 +1951,7 @@ export function TacticalMap({
 
       {/* ── Interactive Classification Breakdown HUD (Bottom Right) ── */}
       {!compact && showControls && !dossierMode && (
-        <div className="absolute bottom-4 right-4 z-20 bg-[#080d18]/90 backdrop-blur-md border border-cyan-500/20 rounded-md p-3 max-w-[240px] shadow-2xl">
+        <div className="absolute bottom-4 right-4 z-20 bg-[#080d18]/90 backdrop-blur-md border border-cyan-500/20 rounded-md p-3 min-w-[230px] max-w-[270px] shadow-2xl">
           <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.14em] text-slate-400 mb-2 border-b border-white/5 pb-1.5">
             <span className="text-cyan-400 font-bold">CLASSIFICATION</span>
             <span className="text-slate-500 font-mono">{totalEvents} TOTAL</span>
@@ -1939,7 +1959,7 @@ export function TacticalMap({
 
           <div className="space-y-1.5">
             {LEGEND.map((item) => {
-              const count = events.filter((e) => e.classification === item.classKey).length;
+              const count = events.filter((e) => item.match(e)).length;
               const pct = totalEvents > 0 ? Math.round((count / totalEvents) * 100) : 0;
               const isZero = count === 0;
 
@@ -1950,8 +1970,8 @@ export function TacticalMap({
                     isZero ? "opacity-35" : "opacity-100"
                   }`}
                 >
-                  <div className="flex items-center justify-between text-[11px] font-mono mb-0.5">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between text-[11px] font-mono mb-0.5 gap-4">
+                    <div className="flex items-center gap-2 min-w-0 pr-2">
                       <span
                         className="w-2 h-2 rounded-full inline-block shrink-0"
                         style={{
@@ -1959,11 +1979,11 @@ export function TacticalMap({
                           boxShadow: isZero ? "none" : `0 0 6px ${item.color}`,
                         }}
                       />
-                      <span className={isZero ? "text-slate-500" : "text-slate-200"}>
+                      <span className={`truncate ${isZero ? "text-slate-500" : "text-slate-200"}`}>
                         {item.label}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[10px] tabular-nums">
+                    <div className="flex items-center gap-1.5 text-[10px] tabular-nums shrink-0 ml-auto">
                       <span className={isZero ? "text-slate-600" : "text-slate-300 font-medium"}>
                         {count}
                       </span>
