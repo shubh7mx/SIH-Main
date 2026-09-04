@@ -46,12 +46,12 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
       {/* ── Persistent Top Nav ─────────────────────────────────────────── */}
       <header className="sticky top-0 z-30 h-12 w-full border-b border-white/[0.07] bg-[#04070c]/95 backdrop-blur-md flex items-center justify-between gap-2 px-2 sm:px-4 flex-shrink-0">
         {/* Brand */}
-        <Link href="/dashboard" className="flex items-center gap-2.5 group shrink-0">
+        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#06b6d4]" />
-          <span className="font-mono text-[11px] font-bold tracking-[0.15em] text-white uppercase">
+          <span className="font-mono text-[11px] font-bold tracking-[0.15em] text-white uppercase group-hover:text-cyan-400 transition-colors">
             NTRO GEOINT
           </span>
-          <span className="hidden md:inline text-white/20 font-mono text-[10px]">SIH26162</span>
+          <span className="hidden md:inline text-white/20 font-mono text-[10px] group-hover:text-white/40 transition-colors">SIH26162</span>
         </Link>
 
         {/* Page switcher */}

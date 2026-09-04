@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 
 interface NavbarProps {
   onLaunchConsole?: () => void;
@@ -32,23 +33,23 @@ export function ScrollNavbar({ onLaunchConsole, backendOnline = true }: NavbarPr
             : "w-full px-8 h-16 bg-transparent border-none rounded-none"
         }`}
       >
-        {/* Left: Text-based bold monospaced SIH26162 logo with live status indicator */}
-        <div className="flex items-center gap-3">
+        {/* Left: Text-based bold monospaced SIH26162 logo — links back to landing page */}
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
           <div className="flex items-center gap-2">
             <span
               className={`w-2 h-2 rounded-full ${
                 backendOnline ? "bg-[#2a75d3] shadow-[0_0_8px_#2a75d3]" : "bg-[#f5a623] shadow-[0_0_8px_#f5a623]"
               }`}
             />
-            <span className="font-mono text-[14px] font-bold tracking-[0.08em] text-white uppercase">
+            <span className="font-mono text-[14px] font-bold tracking-[0.08em] text-white uppercase group-hover:text-[#7cb3f5] transition-colors">
               SIH26162
             </span>
           </div>
           <span className="text-slate-600">·</span>
-          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-slate-400 font-medium hidden sm:inline-block">
+          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-slate-400 font-medium hidden sm:inline-block group-hover:text-slate-200 transition-colors">
             NTRO GEOINT
           </span>
-        </div>
+        </Link>
 
         {/* Center: Navigation Links */}
         <div className="hidden md:flex items-center gap-6 lg:gap-8">
