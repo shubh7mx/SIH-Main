@@ -231,8 +231,8 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Column / Mobile Visual: Interactive 3D Earth Globe */}
-            <div className="w-full lg:w-[52vw] h-[340px] sm:h-[440px] lg:h-[100vh] lg:absolute lg:right-0 lg:top-0 z-10 overflow-visible pointer-events-auto flex items-center justify-center">
+            {/* Right Column / Mobile Visual: Interactive 3D Earth Globe (shifted 200px right on desktop) */}
+            <div className="w-full lg:w-[52vw] h-[340px] sm:h-[440px] lg:h-[100vh] lg:absolute lg:right-[-200px] lg:top-0 z-10 overflow-visible pointer-events-auto flex items-center justify-center">
               <EarthGlobe events={events} />
             </div>
           </div>
