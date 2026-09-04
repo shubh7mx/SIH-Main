@@ -62,8 +62,8 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     if (!container) return;
 
     let animId: number;
-    const width = container.clientWidth || 600;
-    const height = container.clientHeight || 600;
+    const width = container.clientWidth || (typeof window !== "undefined" ? window.innerWidth : 600);
+    const height = container.clientHeight || 340;
 
     // ── 1. Three.js Scene, Camera, Renderer ──────────────────────────
     const scene = new THREE.Scene();
@@ -71,8 +71,10 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     const globeRadius = 1.0;
     const atmoRadius = globeRadius * 1.08;
 
-    const TARGET_FOV = 50;
-    const CAMERA_DISTANCE = 2.52;
+    // Adjust camera distance for mobile portrait aspect ratios so India fits comfortably in view
+    const isMobile = width < 768;
+    const TARGET_FOV = isMobile ? 56 : 50;
+    const CAMERA_DISTANCE = isMobile ? 2.85 : 2.52;
 
     const initialAspect = width / height;
     const camera = new THREE.PerspectiveCamera(TARGET_FOV, initialAspect, 0.1, 1000);
