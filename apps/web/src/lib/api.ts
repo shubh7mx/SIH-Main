@@ -444,7 +444,7 @@ export function createWsClient(opts: WsClientOptions = {}): WsClient {
   let timer: ReturnType<typeof setTimeout> | null = null;
 
   const buildUrl = () => {
-    const base = opts.url ?? WS_URL;
+    const base = opts.url ?? getWsBase();
     if (!opts.filters) return base;
     const p = new URLSearchParams();
     if (opts.filters.role) p.set("role", opts.filters.role);
