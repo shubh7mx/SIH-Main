@@ -206,28 +206,28 @@ export default function EventsPage() {
                           {ev.facility_name ?? "—"}
                         </td>
                         <td className="px-3 py-2 font-mono text-[10px] text-mute whitespace-nowrap">
-                          {ev.latitude.toFixed(2)}°, {ev.longitude.toFixed(2)}°
+                          {Number(ev.latitude ?? 0).toFixed(2)}°, {Number(ev.longitude ?? 0).toFixed(2)}°
                         </td>
                         <td className="px-3 py-2 font-mono text-[11px] tabular-nums text-white">
-                          {ev.frp_megawatts.toFixed(1)}
+                          {Number(ev.frp_megawatts ?? 0).toFixed(1)}
                         </td>
                         <td className="px-3 py-2 font-mono text-[11px] tabular-nums text-white">
-                          {ev.brightness_temp_kelvin.toFixed(0)}
+                          {Number(ev.brightness_temp_kelvin ?? 300).toFixed(0)}
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex items-center gap-1.5">
                             <span className="font-mono text-[10px] text-white/80 tabular-nums w-8">
-                              {(ev.confidence_score * 100).toFixed(0)}%
+                              {(Number(ev.confidence_score ?? 0.8) * 100).toFixed(0)}%
                             </span>
                             <div className="w-14 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
                               <div
                                 className="h-full rounded-full"
                                 style={{
-                                  width: `${ev.confidence_score * 100}%`,
+                                  width: `${Number(ev.confidence_score ?? 0.8) * 100}%`,
                                   backgroundColor:
-                                    ev.confidence_score >= 0.75
+                                    Number(ev.confidence_score ?? 0.8) >= 0.75
                                       ? "#10b981"
-                                      : ev.confidence_score >= 0.5
+                                      : Number(ev.confidence_score ?? 0.8) >= 0.5
                                       ? "#06b6d4"
                                       : "#f59e0b",
                                 }}
