@@ -15,7 +15,7 @@ export const SEVERITY_COLORS = {
     dot: "#ef4444",
     glow: "rgba(239, 68, 68, 0.45)",
     label: "Industrial Fire Emergency",
-    shortLabel: "Critical",
+    shortLabel: "Industrial Fire",
   },
   WILDFIRE: {
     bg: "rgba(249, 115, 22, 0.12)",

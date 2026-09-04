@@ -5,15 +5,16 @@ import { useSearchParams } from "next/navigation";
 import { ConsoleShell } from "@/components/ConsoleShell";
 import { TacticalMap } from "@/components/TacticalMap";
 import { EventDrawer } from "@/components/EventDrawer";
-import { TimelineScrubber } from "@/components/TimelineScrubber";
+import { TimelineScrubber, type TimelineRange } from "@/components/TimelineScrubber";
 import { useEvents, useAlertStream, useTimeline } from "@/lib/hooks";
 import type { HotspotEvent, ThermalClassification } from "@/lib/types";
 
-type FilterCategory = "ALL" | "CRITICAL" | "PERSISTENT" | "AGRICULTURAL" | "WILDFIRE";
+type FilterCategory = "ALL" | "CRITICAL" | "EMERGENCY" | "PERSISTENT" | "AGRICULTURAL" | "WILDFIRE";
 
 const FILTERS: { id: FilterCategory; label: string }[] = [
   { id: "ALL", label: "All Events" },
-  { id: "CRITICAL", label: "Critical" },
+  { id: "CRITICAL", label: "🚨 Critical Alerts" },
+  { id: "EMERGENCY", label: "Industrial Fire" },
   { id: "PERSISTENT", label: "Persistent Flares" },
   { id: "AGRICULTURAL", label: "Agricultural" },
   { id: "WILDFIRE", label: "Wildfire" },
@@ -25,7 +26,24 @@ function MapPageInner() {
 
   const eventsQuery = useEvents({ limit: 1000 }, 30_000);
   const alertStream = useAlertStream({ enabled: true });
-  const timelineQuery = useTimeline({ intervalMinutes: 60 }, 60_000);
+  const [timeRange, setTimeRange] = useState<TimelineRange>("24H");
+
+  // Dynamic timeline query config based on selected range
+  const timelineQueryConfig = useMemo(() => {
+    const now = new Date();
+    if (timeRange === "7D") {
+      const from = new Date(now.getTime() - 7 * 24 * 3600 * 1000).toISOString();
+      return { fromTime: from, toTime: now.toISOString(), intervalMinutes: 360 }; // 6-hour buckets
+    }
+    if (timeRange === "30D") {
+      const from = new Date(now.getTime() - 30 * 24 * 3600 * 1000).toISOString();
+      return { fromTime: from, toTime: now.toISOString(), intervalMinutes: 1440 }; // 24-hour daily buckets
+    }
+    // Default 24H
+    return { intervalMinutes: 60 };
+  }, [timeRange]);
+
+  const timelineQuery = useTimeline(timelineQueryConfig, 60_000);
 
   const [liveEvents, setLiveEvents] = useState<HotspotEvent[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterCategory>("ALL");
@@ -91,7 +109,12 @@ function MapPageInner() {
 
   const filteredEvents = useMemo(() => {
     return allEvents.filter((ev) => {
-      if (activeFilter === "CRITICAL" && !ev.is_critical_alert) return false;
+      if (activeFilter === "CRITICAL" && !ev.is_critical_alert && ev.classification !== "INDUSTRIAL_FIRE_EMERGENCY") return false;
+      if (
+        activeFilter === "EMERGENCY" &&
+        ev.classification !== ("INDUSTRIAL_FIRE_EMERGENCY" as ThermalClassification)
+      )
+        return false;
       if (
         activeFilter === "PERSISTENT" &&
         ev.classification !== ("PERSISTENT_INDUSTRIAL_FLARE" as ThermalClassification)
@@ -110,8 +133,14 @@ function MapPageInner() {
 
       if (selectedEpoch !== null) {
         const evTime = new Date(ev.acq_datetime || ev.created_at || "").getTime();
-        // Match events within the selected 1-hour time bucket (3600 * 1000 ms)
-        if (Math.abs(evTime - selectedEpoch) > 3600 * 1000) return false;
+        // Dynamic interval window match based on range: 1h (24H), 6h (7D), 24h (30D)
+        const windowMs =
+          timeRange === "30D"
+            ? 24 * 3600 * 1000
+            : timeRange === "7D"
+            ? 6 * 3600 * 1000
+            : 3600 * 1000;
+        if (Math.abs(evTime - selectedEpoch) > windowMs) return false;
       }
       return true;
     });
@@ -180,6 +209,11 @@ function MapPageInner() {
             onSelectEpoch={setSelectedEpoch}
             onPlayToggle={setIsPlaying}
             isPlaying={isPlaying}
+            timeRange={timeRange}
+            onRangeChange={(r) => {
+              setTimeRange(r);
+              setSelectedEpoch(null);
+            }}
             onRefresh={() => {
               timelineQuery.refresh();
               eventsQuery.refresh();
