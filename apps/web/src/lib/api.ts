@@ -184,11 +184,14 @@ export async function getHistory(
 
 export interface FacilityRisk {
   name: string;
+  type?: string;
   event_count: number;
   critical_count: number;
   mean_frp_mw: number;
   max_frp_mw: number;
   mean_cde: number | null;
+  lat?: number | null;
+  lon?: number | null;
 }
 
 export interface DetailedAnalytics {
@@ -204,15 +207,50 @@ export interface DetailedAnalytics {
   monitored_facilities: number;
 }
 
+// Backend sends raw fields (critical_alerts / max_frp / mean_frp) and may omit
+// mean_cde entirely — normalize to the UI-facing FacilityRisk shape so every
+// consumer can safely call .toFixed() without undefined/null crashes.
+function normalizeFacilityRisk(raw: any): FacilityRisk {
+  const meanCde = raw?.mean_cde ?? raw?.mean_cde_score ?? null;
+  return {
+    name: String(raw?.name ?? "Unknown Facility"),
+    type: raw?.type ?? undefined,
+    event_count: Number(raw?.event_count ?? 0),
+    critical_count: Number(raw?.critical_count ?? raw?.critical_alerts ?? 0),
+    mean_frp_mw: Number(raw?.mean_frp_mw ?? raw?.mean_frp ?? 0),
+    max_frp_mw: Number(raw?.max_frp_mw ?? raw?.max_frp ?? 0),
+    mean_cde:
+      meanCde === null || meanCde === undefined || Number.isNaN(Number(meanCde))
+        ? null
+        : Number(meanCde),
+    lat: raw?.lat ?? null,
+    lon: raw?.lon ?? null,
+  };
+}
+
 export async function getDetailedAnalytics(signal?: AbortSignal): Promise<DetailedAnalytics> {
-  return request<DetailedAnalytics>("/analytics/detailed", {}, signal);
+  const data = await request<any>("/analytics/detailed", {}, signal);
+  if (!data || !Array.isArray(data.facilities_ranking)) return data;
+  return {
+    ...data,
+    facilities_ranking: data.facilities_ranking.map(normalizeFacilityRisk),
+  };
 }
 
 export async function getFacilitiesRisk(
   limit = 20,
   signal?: AbortSignal
 ): Promise<{ facilities: FacilityRisk[]; total_monitored: number }> {
-  return request(`/analytics/facilities-risk?limit=${limit}`, {}, signal);
+  const data = await request<any>(
+    `/analytics/facilities-risk?limit=${limit}`,
+    {},
+    signal
+  );
+  if (!data || !Array.isArray(data.facilities)) return data;
+  return {
+    ...data,
+    facilities: data.facilities.map(normalizeFacilityRisk),
+  };
 }
 
 // ── Audit & Agent Logs ───────────────────────────────────────────────────────

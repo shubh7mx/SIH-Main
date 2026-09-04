@@ -508,8 +508,12 @@ class EventStore:
                         "type": ev.get("facility_type") or "industrial",
                         "event_count": 0,
                         "critical_alerts": 0,
+                        "critical_count": 0,
                         "frp_total": 0.0,
                         "max_frp": 0.0,
+                        "max_frp_mw": 0.0,
+                        "cde_total": 0.0,
+                        "cde_count": 0,
                         "lat": ev.get("latitude"),
                         "lon": ev.get("longitude"),
                     }
@@ -517,13 +521,28 @@ class EventStore:
                 f["event_count"] += 1
                 if ev.get("is_critical_alert"):
                     f["critical_alerts"] += 1
+                    f["critical_count"] += 1
                 f["frp_total"] += frp
                 if frp > f["max_frp"]:
                     f["max_frp"] = round(frp, 1)
+                    f["max_frp_mw"] = round(frp, 1)
+                if cde is not None:
+                    try:
+                        f["cde_total"] += float(cde)
+                        f["cde_count"] += 1
+                    except (ValueError, TypeError):
+                        pass
 
             rankings = []
             for f in facilities_map.values():
-                f["mean_frp"] = round(f["frp_total"] / max(1, f["event_count"]), 1)
+                mean_frp = round(f["frp_total"] / max(1, f["event_count"]), 1)
+                f["mean_frp"] = mean_frp
+                f["mean_frp_mw"] = mean_frp
+                f["mean_cde"] = (
+                    round(f["cde_total"] / f["cde_count"], 2)
+                    if f["cde_count"] > 0
+                    else None
+                )
                 rankings.append(f)
 
             rankings.sort(key=lambda x: (x["critical_alerts"], x["mean_frp"]), reverse=True)

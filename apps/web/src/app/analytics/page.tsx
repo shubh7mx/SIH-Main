@@ -249,11 +249,16 @@ export default function AnalyticsPage() {
                         ) : (
                           "0 critical"
                         )}{" "}
-                        · CDE {f.mean_cde !== null ? `+${f.mean_cde.toFixed(1)}σ` : "0.0σ"}
+                        · CDE{" "}
+                        {typeof f.mean_cde === "number" && !Number.isNaN(f.mean_cde)
+                          ? `+${f.mean_cde.toFixed(1)}σ`
+                          : "0.0σ"}
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="text-cyan-400 font-bold">{f.max_frp_mw.toFixed(0)} MW</div>
+                      <div className="text-cyan-400 font-bold">
+                        {(f.max_frp_mw ?? 0).toFixed(0)} MW
+                      </div>
                       <div className="text-[10px] text-mute">{f.event_count} hits</div>
                     </div>
                   </div>

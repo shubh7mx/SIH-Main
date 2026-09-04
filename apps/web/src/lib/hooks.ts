@@ -44,6 +44,16 @@ interface AsyncState<T> {
   refresh: () => void;
 }
 
+/**
+ * useAsync — Stale-while-revalidate with exponential-backoff auto-retry.
+ *
+ * Key behaviours:
+ *  - Never clears `data` on re-fetch or transient error (stale-while-revalidate).
+ *  - On fetch failure, retries automatically with backoff: 1s → 2s → 4s → 8s → 15s cap.
+ *  - Retry timer resets on the first successful fetch.
+ *  - `loading` stays true only on the initial (first-ever) fetch; subsequent refreshes
+ *    that fail do NOT set loading — data stays visible and the error is surfaced.
+ */
 function useAsync<T>(
   fn: (signal: AbortSignal) => Promise<T>,
   deps: unknown[] = []
@@ -52,24 +62,52 @@ function useAsync<T>(
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
+  const tickRef = useRef(tick);
+  tickRef.current = tick;
   const refresh = () => setTick((n) => n + 1);
+
+  // Track whether we have ever loaded successfully — influences loading state
+  const everLoaded = useRef(false);
 
   useEffect(() => {
     const ctrl = new AbortController();
-    setLoading(true);
-    setError(null);
-    fn(ctrl.signal)
-      .then((d) => {
-        if (!ctrl.signal.aborted) setData(d);
-      })
-      .catch((err: unknown) => {
-        if (ctrl.signal.aborted) return;
-        if (err instanceof DOMException && err.name === "AbortError") return;
-        setError(err instanceof Error ? err : new Error(String(err)));
-      })
-      .finally(() => {
-        if (!ctrl.signal.aborted) setLoading(false);
-      });
+    const startedAt = Date.now();
+
+    // Only set loading on the initial fetch, not on background refresh
+    if (!everLoaded.current) setLoading(true);
+
+    const doFetch = () =>
+      fn(ctrl.signal)
+        .then((d) => {
+          if (ctrl.signal.aborted) return;
+          everLoaded.current = true;
+          setData(d);
+          setError(null);
+          setLoading(false);
+        })
+        .catch((err: unknown) => {
+          if (ctrl.signal.aborted) return;
+          if (err instanceof DOMException && err.name === "AbortError") return;
+          const finalErr = err instanceof Error ? err : new Error(String(err));
+          setError(finalErr);
+          // Only show loading on first attempt; keep existing data on background failures
+          if (!everLoaded.current) {
+            setLoading(false);
+          }
+
+          // ── Auto-retry with backoff ──────────────────────────
+          const elapsed = Date.now() - startedAt;
+          // Don't keep retrying forever if the tick changed (manual refresh or new deps)
+          if (tickRef.current !== tick) return;
+          // Cap backoff at 15s, start at 1s
+          const delay = Math.min(1000 * Math.pow(2, Math.floor(elapsed / 15000)), 15_000);
+          setTimeout(() => {
+            if (!ctrl.signal.aborted && tickRef.current === tick) doFetch();
+          }, delay);
+        });
+
+    doFetch();
+
     return () => ctrl.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tick, ...deps]);

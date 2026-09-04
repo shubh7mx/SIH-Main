@@ -4,8 +4,15 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import type { Map as MlMap, Popup as MlPopup } from "maplibre-gl";
 import type { HotspotEvent } from "@/lib/types";
 import { getClassificationSeverity } from "@/lib/design-tokens";
-import { getIndiaStatesGeoJSON, getIndiaCitiesGeoJSON } from "@/lib/india-places";
+import {
+  getIndiaStatesGeoJSON,
+  getIndiaCitiesGeoJSON,
+  INDIAN_STATES_AND_UTS,
+  INDIAN_CITIES,
+  type IndianPlace,
+} from "@/lib/india-places";
 import { inferAnomalyReason } from "@/lib/anomaly-inference";
+import libertyStyleSpec from "@/lib/liberty-style.json";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 export type TacticalMapStyleId = "dark" | "satellite" | "3d";
@@ -135,9 +142,9 @@ const DARK_STYLE_SPEC: any = {
   ],
 };
 
-// 3D Mode uses the full daylight OpenFreeMap Liberty style with complete street grid,
-// landcover, waterways, and 3D building extrusions.
-const LIBERTY_3D_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
+// 3D Mode uses the pre-styled inlined Liberty vector style (Google Maps white theme with 3D buildings)
+// Inlined locally for 0ms style switching without network latency.
+const LIBERTY_3D_STYLE_SPEC = libertyStyleSpec as any;
 
 const SATELLITE_STYLE_SPEC: any = {
   version: 8,
@@ -358,13 +365,92 @@ export function TacticalMap({
   }, [persistKey]);
   const [cursorPos, setCursorPos] = useState<{ lat: number; lng: number } | null>(null);
   const [activeSector, setActiveSector] = useState<string>("all");
-  const [showSectorMenu, setShowSectorMenu] = useState(false);
+  const [activePlaceName, setActivePlaceName] = useState<string>("All India");
+  const [showPlacesMenu, setShowPlacesMenu] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState<boolean>(true);
+  const [showLayerSettings, setShowLayerSettings] = useState(false);
+  const [placeSearchQuery, setPlaceSearchQuery] = useState("");
+  const [placeFilterCategory, setPlaceFilterCategory] = useState<"all" | "sectors" | "states" | "industrial" | "cities">("all");
+  const placesDropdownRef = useRef<HTMLDivElement>(null);
+  const layerSettingsRef = useRef<HTMLDivElement>(null);
+  const showHeatmapRef = useRef(showHeatmap);
+  showHeatmapRef.current = showHeatmap;
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
   const setupLayersRef = useRef<() => void>(() => {});
 
+  // Sync persisted showHeatmap preference
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = window.localStorage.getItem("tactical-map-show-heatmap");
+      if (saved !== null) {
+        const val = saved !== "false";
+        setShowHeatmap(val);
+        showHeatmapRef.current = val;
+      }
+    } catch {
+      /* localStorage unavailable */
+    }
+  }, []);
+
+  // Close places dropdown and layer settings on click outside
+  useEffect(() => {
+    if (!showPlacesMenu && !showLayerSettings) return;
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (
+        showPlacesMenu &&
+        placesDropdownRef.current &&
+        !placesDropdownRef.current.contains(e.target as Node)
+      ) {
+        setShowPlacesMenu(false);
+      }
+      if (
+        showLayerSettings &&
+        layerSettingsRef.current &&
+        !layerSettingsRef.current.contains(e.target as Node)
+      ) {
+        setShowLayerSettings(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [showPlacesMenu, showLayerSettings]);
+
+  // Imperative toggle for heatmap visibility (leaving circles only when off)
+  const toggleHeatmap = (visible?: boolean) => {
+    const nextVal = visible !== undefined ? visible : !showHeatmapRef.current;
+    setShowHeatmap(nextVal);
+    showHeatmapRef.current = nextVal;
+    try {
+      window.localStorage.setItem("tactical-map-show-heatmap", String(nextVal));
+    } catch {
+      /* non-fatal */
+    }
+    const map = mapRef.current;
+    if (map && map.getLayer("thermal-heatmap")) {
+      try {
+        map.setLayoutProperty("thermal-heatmap", "visibility", nextVal ? "visible" : "none");
+      } catch (err) {
+        console.warn("[Map] Failed to toggle heatmap visibility:", err);
+      }
+    }
+  };
+
   // Deduplicate events cleanly
   const events = useMemo(() => deduplicateEvents(rawEvents), [rawEvents]);
+
+  // Always-fresh events for imperative style.load handlers (never stale closures)
+  const eventsRef = useRef(events);
+  eventsRef.current = events;
+
+  // Always-fresh active style for imperative handlers (never stale closures)
+  const activeStyleRef = useRef(activeStyle);
+  activeStyleRef.current = activeStyle;
 
   // ─── Convert Events to Clustered GeoJSON ─────────────────────────────
   const toGeoJSON = (items: HotspotEvent[]): import("geojson").FeatureCollection => {
@@ -424,7 +510,7 @@ export function TacticalMap({
           startStyle === "satellite"
             ? SATELLITE_STYLE_SPEC
             : startStyle === "3d"
-            ? LIBERTY_3D_STYLE_URL
+            ? LIBERTY_3D_STYLE_SPEC
             : DARK_STYLE_SPEC,
         center: startCenter,
         zoom: startZoom,
@@ -492,11 +578,12 @@ export function TacticalMap({
     };
   }, [compact, initialStyle, initialCenter, initialZoom, persistKey]);
 
-  // ─── Instant Map Style Switch ─────────────────────────────────────────
+  // ─── Instant Map Style Switch (0ms with transformStyle layer preservation) ───
   const handleStyleChange = (newStyle: TacticalMapStyleId) => {
     if (newStyle === activeStyle || !mapRef.current) return;
     const map = mapRef.current;
     setActiveStyle(newStyle);
+    activeStyleRef.current = newStyle;
 
     // Persist the user's explicit style choice (only when opted-in via persistKey)
     if (persistKey) {
@@ -507,15 +594,76 @@ export function TacticalMap({
       }
     }
 
+    const targetSpec =
+      newStyle === "satellite"
+        ? SATELLITE_STYLE_SPEC
+        : newStyle === "3d"
+        ? LIBERTY_3D_STYLE_SPEC
+        : DARK_STYLE_SPEC;
+
+    // Custom overlay source and layer IDs that must be preserved seamlessly across style changes
+    const CUSTOM_SOURCE_IDS = new Set([
+      "hotspots",
+      "heat",
+      "monitored-facilities-src",
+      "india-states-src",
+      "india-cities-src",
+      "english-country-label-src",
+    ]);
+
+    const CUSTOM_LAYER_PREFIXES = [
+      "thermal-",
+      "clusters",
+      "cluster-",
+      "unclustered-",
+      "monitored-facilities",
+      "tactical-india-",
+      "english-country-",
+      "3d-buildings-extruded",
+    ];
+
+    try {
+      map.setStyle(targetSpec, {
+        diff: false,
+        validate: false,
+        transformStyle: (previousStyle: any, nextStyle: any) => {
+          if (!previousStyle) return nextStyle;
+          const mergedSources = { ...nextStyle.sources };
+          for (const sid of CUSTOM_SOURCE_IDS) {
+            if (previousStyle.sources && previousStyle.sources[sid]) {
+              mergedSources[sid] = previousStyle.sources[sid];
+            }
+          }
+          const preservedLayers = (previousStyle.layers || []).filter((l: any) =>
+            CUSTOM_LAYER_PREFIXES.some((p) => l.id.startsWith(p))
+          );
+          return {
+            ...nextStyle,
+            sources: mergedSources,
+            layers: [...nextStyle.layers, ...preservedLayers],
+          };
+        },
+      } as any);
+    } catch {
+      // Fallback if setStyle with options fails
+      map.setStyle(targetSpec);
+    }
+
+    // Immediately re-attach or refresh layers as soon as style loads
+    map.once("style.load", () => {
+      try {
+        setupLayersRef.current?.();
+      } catch (err) {
+        console.warn("[Map] Error re-attaching layers on style change:", err);
+      }
+    });
+
     if (newStyle === "dark") {
-      map.setStyle(DARK_STYLE_SPEC);
-      map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
+      map.easeTo({ pitch: 0, bearing: 0, duration: 400 });
     } else if (newStyle === "satellite") {
-      map.setStyle(SATELLITE_STYLE_SPEC);
-      map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
+      map.easeTo({ pitch: 0, bearing: 0, duration: 400 });
     } else if (newStyle === "3d") {
-      map.setStyle(LIBERTY_3D_STYLE_URL);
-      map.easeTo({ pitch: 60, bearing: -15, duration: 750 });
+      map.easeTo({ pitch: 60, bearing: -15, duration: 550 });
     }
   };
 
@@ -531,7 +679,8 @@ export function TacticalMap({
       }
 
       // If active style is dark, apply custom dark basemap styling (water, borders)
-      if (activeStyle === "dark") {
+      const currentStyle = activeStyleRef.current;
+      if (currentStyle === "dark") {
         applyDarkBasemapStyling(map);
       }
 
@@ -539,7 +688,7 @@ export function TacticalMap({
       // Liberty's native "building-3d" layer is beige (hsl(35,8%,85%)) with
       // opacity 0.8. We override it to a crisp white extrusion theme with
       // grey side accents — the classic Google Maps 3D look.
-      if (activeStyle === "3d") {
+      if (currentStyle === "3d") {
         try {
           // 2D building footprint fill (zoom 13-14) -> light grey, subtle
           if (map.getLayer("building")) {
@@ -706,7 +855,7 @@ export function TacticalMap({
             "text-padding": 8,
           },
           paint: {
-            "text-color": activeStyle === "satellite" ? "#f8fafc" : "#cbd5e1",
+            "text-color": currentStyle === "satellite" ? "#f8fafc" : "#cbd5e1",
             "text-halo-color": "#020617",
             "text-halo-width": 2.2,
             "text-opacity": [
@@ -792,9 +941,9 @@ export function TacticalMap({
       }
 
       // 5. 3D Building Extrusions (Active in 3D Mode)
-      if (activeStyle === "3d") {
+      if (currentStyle === "3d") {
         const hasOpenMapTiles = map.getSource("openmaptiles");
-        if (hasOpenMapTiles && !map.getLayer("3d-buildings-extruded")) {
+        if (hasOpenMapTiles && !map.getLayer("3d-buildings-extruded") && !map.getLayer("building-3d")) {
           map.addLayer({
             id: "3d-buildings-extruded",
             source: "openmaptiles",
@@ -802,21 +951,13 @@ export function TacticalMap({
             type: "fill-extrusion",
             minzoom: 12,
             paint: {
-              "fill-extrusion-color": [
-                "interpolate",
-                ["linear"],
-                ["coalesce", ["get", "render_height"], ["get", "height"], 18],
-                0, "#38bdf8",
-                20, "#0284c7",
-                50, "#0369a1",
-                100, "#0c4a6e",
-              ],
+              "fill-extrusion-color": "#ffffff",
               "fill-extrusion-height": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
                 12, 0,
-                14.5, ["coalesce", ["get", "render_height"], ["get", "height"], 18],
+                14.5, ["coalesce", ["get", "render_height"], ["get", "height"], 12],
               ],
               "fill-extrusion-base": [
                 "interpolate",
@@ -825,7 +966,7 @@ export function TacticalMap({
                 12, 0,
                 14.5, ["coalesce", ["get", "render_min_height"], ["get", "min_height"], 0],
               ],
-              "fill-extrusion-opacity": 0.85,
+              "fill-extrusion-opacity": 0.95,
             },
           });
         }
@@ -835,7 +976,7 @@ export function TacticalMap({
       if (!map.getSource("hotspots")) {
         map.addSource("hotspots", {
           type: "geojson",
-          data: toGeoJSON(events),
+          data: toGeoJSON(eventsRef.current),
           cluster: true,
           clusterMaxZoom: 13,
           clusterRadius: 42,
@@ -849,7 +990,7 @@ export function TacticalMap({
         if (!map.getSource("heat")) {
           map.addSource("heat", {
             type: "geojson",
-            data: toGeoJSON(events),
+            data: toGeoJSON(eventsRef.current),
           });
         }
 
@@ -859,6 +1000,9 @@ export function TacticalMap({
           type: "heatmap",
           source: "heat",
           maxzoom: 14,
+          layout: {
+            visibility: showHeatmapRef.current ? "visible" : "none",
+          },
           paint: {
             // Thermal color ramp: low FRP fires visibly glow on dark map
             "heatmap-color": [
@@ -1049,7 +1193,7 @@ export function TacticalMap({
           const mlModule = await import("maplibre-gl");
           const maplibregl: any = (mlModule as any).default || mlModule;
           const color = props.color || "#06b6d4";
-          const ev = events.find((item) => item.id === props.id);
+          const ev = eventsRef.current.find((item) => item.id === props.id);
           const anomalyInfo = ev ? inferAnomalyReason(ev) : null;
           const title = props.facility_name || "Unmapped Thermal Anomaly";
 
@@ -1211,7 +1355,7 @@ export function TacticalMap({
               map.easeTo({
                 center: clusterCoords,
                 zoom: Math.min(16.5, targetZoom),
-                pitch: activeStyle === "3d" ? 45 : 0,
+                pitch: activeStyleRef.current === "3d" ? 45 : 0,
                 duration: 650,
                 essential: true,
               });
@@ -1267,14 +1411,14 @@ export function TacticalMap({
             if (f && f.properties) {
               const props = f.properties;
               const coords = (f.geometry as any).coordinates.slice() as [number, number];
-              const ev = events.find((item) => item.id === props.id);
+              const ev = eventsRef.current.find((item) => item.id === props.id);
               if (ev) onSelectRef.current?.(ev);
 
               // Smooth fly-in towards clicked hotspot to building level (15.8)
               map.flyTo({
                 center: coords,
                 zoom: 15.8,
-                pitch: activeStyle === "3d" ? 45 : 0,
+                pitch: activeStyleRef.current === "3d" ? 45 : 0,
                 duration: 750,
                 essential: true,
               });
@@ -1289,12 +1433,23 @@ export function TacticalMap({
       } else {
         const source = map.getSource("hotspots") as any;
         if (source && typeof source.setData === "function") {
-          source.setData(toGeoJSON(events));
+          source.setData(toGeoJSON(eventsRef.current));
         }
         const heatSource = map.getSource("heat") as any;
         if (heatSource && typeof heatSource.setData === "function") {
-          heatSource.setData(toGeoJSON(events));
+          heatSource.setData(toGeoJSON(eventsRef.current));
         }
+      }
+
+      // Synchronize heatmap layer visibility with user preference
+      if (map.getLayer("thermal-heatmap")) {
+        try {
+          map.setLayoutProperty(
+            "thermal-heatmap",
+            "visibility",
+            showHeatmapRef.current ? "visible" : "none"
+          );
+        } catch {}
       }
     };
 
@@ -1305,7 +1460,37 @@ export function TacticalMap({
     return () => {
       map.off("style.load", setupLayers);
     };
-  }, [activeStyle, mapReady, events]);
+  }, [activeStyle, mapReady]);
+
+  // ─── Heatmap Visibility Effect ───────────────────────────────────────
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
+    if (map.getLayer("thermal-heatmap")) {
+      try {
+        map.setLayoutProperty(
+          "thermal-heatmap",
+          "visibility",
+          showHeatmap ? "visible" : "none"
+        );
+      } catch {}
+    }
+  }, [showHeatmap, mapReady]);
+
+  // ─── Instant GeoJSON Data Sync on Events / Timeline Scrub ─────────────
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
+
+    const source = map.getSource("hotspots") as any;
+    if (source && typeof source.setData === "function") {
+      source.setData(toGeoJSON(eventsRef.current));
+    }
+    const heatSource = map.getSource("heat") as any;
+    if (heatSource && typeof heatSource.setData === "function") {
+      heatSource.setData(toGeoJSON(eventsRef.current));
+    }
+  }, [events, mapReady]);
 
   // ─── Selection Sync (Fly to Selected Event) ──────────────────────────
   useEffect(() => {
@@ -1318,10 +1503,9 @@ export function TacticalMap({
     map.flyTo({
       center: [Number(ev.longitude), Number(ev.latitude)],
       zoom: 15.8, // Building-level zoom
-      pitch: activeStyle === "3d" ? 45 : 0,
+      pitch: activeStyleRef.current === "3d" ? 45 : 0,
       duration: 750,
     });
-
     (async () => {
       if (popupRef.current) popupRef.current.remove();
       const mlModule = await import("maplibre-gl");
@@ -1353,7 +1537,8 @@ export function TacticalMap({
   // ─── Sector Quick-Jump Handler ───────────────────────────────────────
   const handleSectorSelect = (sector: typeof REGIONAL_SECTORS[number]) => {
     setActiveSector(sector.id);
-    setShowSectorMenu(false);
+    setActivePlaceName(sector.label);
+    setShowPlacesMenu(false);
     if (!mapRef.current) return;
 
     if (sector.type === "bounds" && sector.bounds) {
@@ -1371,6 +1556,23 @@ export function TacticalMap({
     }
   };
 
+  // ─── Place Quick-Jump Handler (States, Industrial Hubs, Cities) ──────
+  const handlePlaceSelect = (place: IndianPlace) => {
+    setActivePlaceName(place.name);
+    setShowPlacesMenu(false);
+    setPlaceSearchQuery("");
+    setPlaceFilterCategory("all");
+    if (!mapRef.current) return;
+
+    const zoomFor = place.type === "state" ? place.minZoom + 1.6 : Math.max(9, place.minZoom + 1.8);
+    mapRef.current.flyTo({
+      center: place.coordinates,
+      zoom: zoomFor,
+      duration: 900,
+      essential: true,
+    });
+  };
+
   // Recenter on India when resetSignal fires
   useEffect(() => {
     if (resetSignal > 0 && mapRef.current) {
@@ -1380,6 +1582,7 @@ export function TacticalMap({
         duration: 600,
       });
       setActiveSector("all");
+      setActivePlaceName("All India");
     }
   }, [resetSignal, compact]);
 
@@ -1392,6 +1595,7 @@ export function TacticalMap({
       duration: 600,
     });
     setActiveSector("all");
+    setActivePlaceName("All India");
   };
 
   const totalEvents = events.length;
@@ -1406,7 +1610,7 @@ export function TacticalMap({
     <div
       className={`relative w-full h-full bg-[#020617] overflow-hidden select-none ${className}`}
       onClick={() => {
-        if (showSectorMenu) setShowSectorMenu(false);
+        if (showPlacesMenu) setShowPlacesMenu(false);
       }}
     >
       {/* ── Map Container ── */}
@@ -1417,7 +1621,7 @@ export function TacticalMap({
 
       {/* ── Floating Controls Bar (Top Left): Style Switcher (Icons Only) + Recenter + Sector Quick-Jump ── */}
       {!compact && (
-        <div className="absolute top-3 left-3 z-20 flex flex-wrap items-center gap-2">
+        <div className="absolute top-3 left-3 z-20 flex flex-col items-start gap-2">
           {/* Map Style Switcher — Icons Only (Dark / Satellite / 3D Buildings) */}
           <div className="flex items-center bg-[#080d18]/90 backdrop-blur-md border border-cyan-500/25 rounded-md p-0.5 shadow-lg">
             {MAP_STYLES.map((st) => (
@@ -1437,6 +1641,72 @@ export function TacticalMap({
             ))}
           </div>
 
+          {/* ── Layer Settings Cog — Heatmap Toggle (below style switcher) ── */}
+          <div className="relative" ref={layerSettingsRef}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowLayerSettings((prev) => !prev);
+              }}
+              className={`flex items-center justify-center w-8 h-8 bg-[#080d18]/90 hover:bg-white/10 text-slate-300 hover:text-white backdrop-blur-md border rounded-md font-mono text-[15px] transition-all shadow-lg cursor-pointer ${
+                showLayerSettings
+                  ? "border-cyan-400/50 bg-cyan-500/30 text-white"
+                  : "border-cyan-500/20"
+              }`}
+              title="Layer Settings (Heatmap / Circles)"
+              aria-label="Layer Settings"
+            >
+              <span>⚙️</span>
+            </button>
+
+            {showLayerSettings && (
+              <div className="absolute top-full left-0 mt-1 w-[16rem] bg-[#080d18]/98 backdrop-blur-xl border border-cyan-500/30 rounded-md shadow-2xl z-30 font-mono text-[10px] overflow-hidden">
+                <div className="px-3 py-2 text-cyan-400 border-b border-cyan-500/20 tracking-wider">
+                  LAYER SETTINGS
+                </div>
+                <div className="p-2">
+                  <label className="flex items-center justify-between gap-2 px-2 py-2 rounded hover:bg-white/5 cursor-pointer select-none">
+                    <span className="flex items-center gap-2 text-slate-300">
+                      <span>🔥</span>
+                      <span>Thermal Heatmap</span>
+                    </span>
+                    <span
+                      role="switch"
+                      aria-checked={showHeatmap}
+                      tabIndex={0}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toggleHeatmap();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          toggleHeatmap();
+                        }
+                      }}
+                      className={`relative inline-flex items-center h-4 w-8 rounded-full transition-colors cursor-pointer shrink-0 ${
+                        showHeatmap ? "bg-cyan-500/80" : "bg-slate-600/60"
+                      }`}
+                    >
+                      <span
+                        className={`absolute h-3 w-3 rounded-full bg-white transition-transform ${
+                          showHeatmap ? "translate-x-4" : "translate-x-0.5"
+                        }`}
+                      />
+                    </span>
+                  </label>
+                  <div className="px-2 pt-1 pb-2 text-[8px] text-slate-500 leading-relaxed">
+                    {showHeatmap
+                      ? "Thermal heatmap + fire circles visible."
+                      : "Heatmap off — showing fire marker circles only."}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Row: Recenter + Sector Quick-Jump (below style switcher / settings) */}
+          <div className="flex flex-wrap items-center gap-2">
           {!dossierMode && (
             <>
               {/* Recenter India Button */}
@@ -1450,41 +1720,151 @@ export function TacticalMap({
               </button>
 
               {/* Regional Sector Quick-Jump Dropdown */}
-              <div className="relative">
+              <div className="relative" ref={placesDropdownRef}>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setShowSectorMenu((prev) => !prev);
+                    setShowPlacesMenu((prev) => !prev);
                   }}
-                  className="flex items-center gap-1.5 bg-[#080d18]/90 hover:bg-white/10 text-slate-300 hover:text-white backdrop-blur-md border border-cyan-500/20 rounded-md px-2.5 py-1.5 font-mono text-[10px] transition-all shadow-lg cursor-pointer"
+                  className="flex items-center gap-1.5 bg-[#080d18]/90 hover:bg-white/10 text-slate-300 hover:text-white backdrop-blur-md border border-cyan-500/20 rounded-md px-2.5 py-1.5 font-mono text-[10px] transition-all shadow-lg cursor-pointer max-w-[10rem]"
                 >
-                  <span className="text-cyan-400">⚡</span>
-                  <span>Sectors</span>
+                  <span className="text-cyan-400">📍</span>
+                  <span className="truncate">{activePlaceName}</span>
                   <span className="text-slate-500 text-[8px]">▼</span>
                 </button>
 
-                {showSectorMenu && (
-                  <div className="absolute top-full left-0 mt-1 w-52 bg-[#080d18]/95 backdrop-blur-xl border border-cyan-500/30 rounded-md shadow-2xl py-1 z-30 font-mono text-[10px]">
-                    <div className="px-3 py-1 text-[9px] text-slate-500 uppercase tracking-widest border-b border-white/5">
-                      Regional Focus
+                {showPlacesMenu && (
+                  <div className="absolute top-full left-0 mt-1 w-[22rem] bg-[#080d18]/98 backdrop-blur-xl border border-cyan-500/30 rounded-md shadow-2xl z-30 font-mono text-[10px] overflow-hidden">
+                    {/* Search input */}
+                    <div className="sticky top-0 bg-[#080d18] px-3 py-2 border-b border-cyan-500/20">
+                      <input
+                        type="text"
+                        value={placeSearchQuery}
+                        onChange={(e) => setPlaceSearchQuery(e.target.value)}
+                        placeholder="Search states, hubs, cities…"
+                        className="w-full bg-[#0d162b] border border-white/10 rounded px-2 py-1.5 text-[10px] text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-400/60"
+                        autoFocus
+                      />
+                      {/* Category filter chips */}
+                      <div className="flex gap-1 mt-1.5 overflow-x-auto no-scrollbar">
+                        {([
+                          { id: "all", label: "All" },
+                          { id: "sectors", label: "⚡ Sectors" },
+                          { id: "states", label: "🏛 States/UT" },
+                          { id: "industrial", label: "🏭 Industrial Hubs" },
+                          { id: "cities", label: "🏙 Cities" },
+                        ] as const).map((chip) => (
+                          <button
+                            key={chip.id}
+                            onClick={() => setPlaceFilterCategory(chip.id)}
+                            className={`shrink-0 px-2 py-0.5 rounded-full border transition-all cursor-pointer ${
+                              placeFilterCategory === chip.id
+                                ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-300"
+                                : "bg-transparent border-white/10 text-slate-400 hover:text-white hover:border-white/30"
+                            }`}
+                          >
+                            {chip.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    {REGIONAL_SECTORS.map((sec) => (
-                      <button
-                        key={sec.id}
-                        onClick={() => handleSectorSelect(sec)}
-                        className={`w-full text-left px-3 py-1.5 flex items-center justify-between hover:bg-cyan-500/15 cursor-pointer transition-colors ${
-                          activeSector === sec.id ? "text-cyan-300 bg-cyan-500/10 font-bold" : "text-slate-300"
-                        }`}
-                      >
-                        <span>{sec.label}</span>
-                        {activeSector === sec.id && <span className="text-cyan-400 text-[10px]">●</span>}
-                      </button>
-                    ))}
+
+                    {/* Scrollable list */}
+                    <div className="max-h-[16rem] overflow-y-auto py-1">
+                      {/* Sectors section */}
+                      {(placeFilterCategory === "all" || placeFilterCategory === "sectors") && (
+                        <>
+                          <div className="px-3 py-1 text-[9px] text-cyan-500/80 uppercase tracking-widest border-b border-white/5 sticky top-0 bg-[#080d18]">
+                            ⚡ Regional Sectors
+                          </div>
+                          {REGIONAL_SECTORS.filter((sec) =>
+                            sec.label.toLowerCase().includes(placeSearchQuery.toLowerCase())
+                          ).map((sec) => (
+                            <button
+                              key={sec.id}
+                              onClick={() => handleSectorSelect(sec)}
+                              className={`w-full text-left px-3 py-1.5 flex items-center justify-between hover:bg-cyan-500/15 cursor-pointer transition-colors ${
+                                activeSector === sec.id ? "text-cyan-300 bg-cyan-500/10 font-bold" : "text-slate-300"
+                              }`}
+                            >
+                              <span>{sec.label}</span>
+                              {activeSector === sec.id && <span className="text-cyan-400 text-[10px]">●</span>}
+                            </button>
+                          ))}
+                        </>
+                      )}
+
+                      {/* States/UT section */}
+                      {(placeFilterCategory === "all" || placeFilterCategory === "states") && (
+                        <>
+                          <div className="px-3 py-1 text-[9px] text-cyan-500/80 uppercase tracking-widest border-b border-white/5 mt-1">
+                            🏛 States & Union Territories
+                          </div>
+                          {INDIAN_STATES_AND_UTS.filter((s) =>
+                            s.name.toLowerCase().includes(placeSearchQuery.toLowerCase())
+                          ).map((s) => (
+                            <button
+                              key={s.name}
+                              onClick={() => handlePlaceSelect(s)}
+                              className="w-full text-left px-3 py-1.5 flex items-center justify-between gap-2 text-slate-300 hover:bg-cyan-500/15 hover:text-white cursor-pointer transition-colors"
+                            >
+                              <span>{s.name}</span>
+                              <span className="text-[8px] text-slate-500">{s.stateCode ?? "UT"}</span>
+                            </button>
+                          ))}
+                        </>
+                      )}
+
+                      {/* Industrial hubs section */}
+                      {(placeFilterCategory === "all" || placeFilterCategory === "industrial") && (
+                        <>
+                          <div className="px-3 py-1 text-[9px] text-cyan-500/80 uppercase tracking-widest border-b border-white/5 mt-1">
+                            🏭 Industrial Hubs
+                          </div>
+                          {INDIAN_CITIES.filter(
+                            (c) => c.type === "industrial_hub" && c.name.toLowerCase().includes(placeSearchQuery.toLowerCase())
+                          ).map((c) => (
+                            <button
+                              key={c.name}
+                              onClick={() => handlePlaceSelect(c)}
+                              className="w-full text-left px-3 py-1.5 flex items-center justify-between gap-2 text-slate-300 hover:bg-cyan-500/15 hover:text-white cursor-pointer transition-colors"
+                            >
+                              <span>{c.name}</span>
+                              <span className="text-[8px] text-orange-400">IND</span>
+                            </button>
+                          ))}
+                        </>
+                      )}
+
+                      {/* Cities section */}
+                      {(placeFilterCategory === "all" || placeFilterCategory === "cities") && (
+                        <>
+                          <div className="px-3 py-1 sticky top-0 bg-[#080d18] text-[9px] text-cyan-500/80 uppercase tracking-widest border-b border-white/5 mt-1">
+                            🏙 Major Cities & Ports
+                          </div>
+                          {INDIAN_CITIES.filter(
+                            (c) =>
+                              c.type !== "industrial_hub" &&
+                              c.name.toLowerCase().includes(placeSearchQuery.toLowerCase())
+                          ).map((c) => (
+                            <button
+                              key={c.name}
+                              onClick={() => handlePlaceSelect(c)}
+                              className="w-full text-left px-3 py-1.5 flex items-center justify-between gap-2 text-slate-300 hover:bg-cyan-500/15 hover:text-white cursor-pointer transition-colors"
+                            >
+                              <span>{c.name}</span>
+                              <span className="text-[8px] text-blue-400">CITY</span>
+                            </button>
+                          ))}
+                        </>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
             </>
           )}
+          </div>
         </div>
       )}
 

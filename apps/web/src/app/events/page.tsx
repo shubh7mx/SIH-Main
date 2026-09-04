@@ -121,14 +121,14 @@ export default function EventsPage() {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value as FilterCat)}
-              className="bg-white/[0.04] border border-white/10 rounded-lg px-2.5 py-1.5 font-mono text-[11px] text-white/90 focus:outline-none focus:border-cyan-400/50"
+              className="bg-[#0b1324] border border-cyan-500/30 rounded-lg px-2.5 py-1.5 font-mono text-[11px] text-white focus:outline-none focus:border-cyan-400 cursor-pointer shadow-sm"
             >
-              <option value="ALL">All Classifications</option>
-              <option value="CRITICAL">Critical Only</option>
-              <option value="PERSISTENT">Persistent Flares</option>
-              <option value="AGRICULTURAL">Agricultural</option>
-              <option value="WILDFIRE">Wildfire</option>
-              <option value="DEFERRED">Analyst Review</option>
+              <option className="bg-[#0b1324] text-slate-100" value="ALL">All Classifications</option>
+              <option className="bg-[#0b1324] text-red-400 font-semibold" value="CRITICAL">🚨 Critical Only</option>
+              <option className="bg-[#0b1324] text-orange-400" value="PERSISTENT">🏭 Persistent Flares</option>
+              <option className="bg-[#0b1324] text-yellow-400" value="AGRICULTURAL">🌾 Agricultural</option>
+              <option className="bg-[#0b1324] text-blue-400" value="WILDFIRE">🔥 Wildfire</option>
+              <option className="bg-[#0b1324] text-slate-300" value="DEFERRED">📋 Analyst Review</option>
             </select>
           </div>
         </div>

@@ -96,11 +96,11 @@ export function TacticalMissionControl({ onExit }: { onExit: () => void }) {
   // Apply filters + timeline scrub window
   const filteredEvents = useMemo(() => {
     return rawEvents.filter((ev) => {
-      // Timeline scrubber window filter (±30m from selected epoch)
+      // Timeline scrubber window filter (1-hour window matching bucket interval)
       if (selectedEpoch !== null) {
-        const evEpoch = Math.floor(new Date(ev.acq_datetime || ev.created_at).getTime() / 1000);
-        // show events in a 1.5h window around the epoch
-        if (Math.abs(evEpoch - selectedEpoch) > 3600 * 1.5) {
+        const evTime = new Date(ev.acq_datetime || ev.created_at || "").getTime();
+        // show events in the 1-hour bucket window (in milliseconds)
+        if (Math.abs(evTime - selectedEpoch) > 3600 * 1000) {
           return false;
         }
       }

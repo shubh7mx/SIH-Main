@@ -107,28 +107,28 @@ export default function AuditLogsPage() {
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="bg-white/[0.04] border border-white/10 rounded-lg px-3 py-1.5 font-mono text-[11px] text-white focus:outline-none focus:border-cyan-400/50"
+            className="bg-[#0b1324] border border-cyan-500/30 rounded-lg px-3 py-1.5 font-mono text-[11px] text-white focus:outline-none focus:border-cyan-400 cursor-pointer shadow-sm"
           >
-            <option value="ALL">All Agents / Sources</option>
-            <option value="ORCHESTRATOR">Orchestrator</option>
-            <option value="FIRMS_POLLER">FIRMS Poller</option>
-            <option value="SPATIAL_AGENT">Spatial Agent</option>
-            <option value="TEMPORAL_AGENT">Temporal Agent</option>
-            <option value="VISION_AGENT">Vision Agent</option>
-            <option value="DISPERSION_AGENT">Dispersion Agent</option>
-            <option value="DISPATCHER">Dispatcher</option>
+            <option className="bg-[#0b1324] text-slate-100" value="ALL">All Agents / Sources</option>
+            <option className="bg-[#0b1324] text-slate-100" value="ORCHESTRATOR">Orchestrator</option>
+            <option className="bg-[#0b1324] text-slate-100" value="FIRMS_POLLER">FIRMS Poller</option>
+            <option className="bg-[#0b1324] text-slate-100" value="SPATIAL_AGENT">Spatial Agent</option>
+            <option className="bg-[#0b1324] text-slate-100" value="TEMPORAL_AGENT">Temporal Agent</option>
+            <option className="bg-[#0b1324] text-slate-100" value="VISION_AGENT">Vision Agent</option>
+            <option className="bg-[#0b1324] text-slate-100" value="DISPERSION_AGENT">Dispersion Agent</option>
+            <option className="bg-[#0b1324] text-slate-100" value="DISPATCHER">Dispatcher</option>
           </select>
 
           <select
             value={levelFilter}
             onChange={(e) => setLevelFilter(e.target.value)}
-            className="bg-white/[0.04] border border-white/10 rounded-lg px-3 py-1.5 font-mono text-[11px] text-white focus:outline-none focus:border-cyan-400/50"
+            className="bg-[#0b1324] border border-cyan-500/30 rounded-lg px-3 py-1.5 font-mono text-[11px] text-white focus:outline-none focus:border-cyan-400 cursor-pointer shadow-sm"
           >
-            <option value="ALL">All Severity Levels</option>
-            <option value="CRITICAL">Critical Only</option>
-            <option value="ERROR">Errors</option>
-            <option value="WARNING">Warnings</option>
-            <option value="INFO">Info</option>
+            <option className="bg-[#0b1324] text-slate-100" value="ALL">All Severity Levels</option>
+            <option className="bg-[#0b1324] text-red-400 font-semibold" value="CRITICAL">🚨 Critical Only</option>
+            <option className="bg-[#0b1324] text-red-300" value="ERROR">❌ Errors</option>
+            <option className="bg-[#0b1324] text-yellow-400" value="WARNING">⚠️ Warnings</option>
+            <option className="bg-[#0b1324] text-cyan-300" value="INFO">ℹ️ Info</option>
           </select>
         </div>
 

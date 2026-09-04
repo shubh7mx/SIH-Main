@@ -88,8 +88,9 @@ export default function MapPage() {
         return false;
 
       if (selectedEpoch !== null) {
-        const evEpoch = Math.floor(new Date(ev.acq_datetime).getTime() / 1000);
-        if (Math.abs(evEpoch - selectedEpoch) > 5400) return false;
+        const evTime = new Date(ev.acq_datetime || ev.created_at || "").getTime();
+        // Match events within the selected 1-hour time bucket (3600 * 1000 ms)
+        if (Math.abs(evTime - selectedEpoch) > 3600 * 1000) return false;
       }
       return true;
     });
@@ -153,10 +154,15 @@ export default function MapPage() {
           <TimelineScrubber
             timeline={timelineQuery.data}
             loading={timelineQuery.loading}
+            error={timelineQuery.error}
             selectedEpoch={selectedEpoch}
             onSelectEpoch={setSelectedEpoch}
             onPlayToggle={setIsPlaying}
             isPlaying={isPlaying}
+            onRefresh={() => {
+              timelineQuery.refresh();
+              eventsQuery.refresh();
+            }}
           />
         </div>
       </div>

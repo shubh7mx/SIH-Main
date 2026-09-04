@@ -87,29 +87,29 @@ export function SystemLogsTerminal({ logs, wsState, onClear }: Props) {
           <select
             value={filterSource}
             onChange={(e) => setFilterSource(e.target.value)}
-            className="bg-black border border-white/10 text-white/80 rounded px-2 py-0.5 text-[10px]"
+            className="bg-[#0b1324] border border-cyan-500/30 text-white rounded px-2 py-0.5 text-[10px] focus:outline-none focus:border-cyan-400 cursor-pointer"
           >
-            <option value="ALL">All Agents</option>
-            <option value="ORCHESTRATOR">Orchestrator</option>
-            <option value="FIRMS_POLLER">FIRMS Poller</option>
-            <option value="SPATIAL_AGENT">Spatial Agent</option>
-            <option value="TEMPORAL_AGENT">Temporal Agent</option>
-            <option value="VISION_AGENT">Vision Agent</option>
-            <option value="DISPERSION_AGENT">Dispersion</option>
-            <option value="DISPATCHER">Dispatcher</option>
+            <option className="bg-[#0b1324] text-slate-100" value="ALL">All Agents</option>
+            <option className="bg-[#0b1324] text-slate-100" value="ORCHESTRATOR">Orchestrator</option>
+            <option className="bg-[#0b1324] text-slate-100" value="FIRMS_POLLER">FIRMS Poller</option>
+            <option className="bg-[#0b1324] text-slate-100" value="SPATIAL_AGENT">Spatial Agent</option>
+            <option className="bg-[#0b1324] text-slate-100" value="TEMPORAL_AGENT">Temporal Agent</option>
+            <option className="bg-[#0b1324] text-slate-100" value="VISION_AGENT">Vision Agent</option>
+            <option className="bg-[#0b1324] text-slate-100" value="DISPERSION_AGENT">Dispersion</option>
+            <option className="bg-[#0b1324] text-slate-100" value="DISPATCHER">Dispatcher</option>
           </select>
 
           {/* Level filter */}
           <select
             value={filterLevel}
             onChange={(e) => setFilterLevel(e.target.value)}
-            className="bg-black border border-white/10 text-white/80 rounded px-2 py-0.5 text-[10px]"
+            className="bg-[#0b1324] border border-cyan-500/30 text-white rounded px-2 py-0.5 text-[10px] focus:outline-none focus:border-cyan-400 cursor-pointer"
           >
-            <option value="ALL">All Levels</option>
-            <option value="CRITICAL">Critical Only</option>
-            <option value="ERROR">Errors</option>
-            <option value="WARNING">Warnings</option>
-            <option value="INFO">Info</option>
+            <option className="bg-[#0b1324] text-slate-100" value="ALL">All Levels</option>
+            <option className="bg-[#0b1324] text-red-400 font-semibold" value="CRITICAL">🚨 Critical Only</option>
+            <option className="bg-[#0b1324] text-red-300" value="ERROR">❌ Errors</option>
+            <option className="bg-[#0b1324] text-yellow-400" value="WARNING">⚠️ Warnings</option>
+            <option className="bg-[#0b1324] text-cyan-300" value="INFO">ℹ️ Info</option>
           </select>
 
           {onClear && (
