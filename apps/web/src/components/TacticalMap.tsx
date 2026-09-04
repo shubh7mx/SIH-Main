@@ -1294,21 +1294,25 @@ export function TacticalMap({
         map.on("mouseleave", "clusters", handlePointMouseLeave);
         map.on("mouseleave", "cluster-count", handlePointMouseLeave);
 
-        // Global hover sweep: instantly clears popup when cursor drifts off ALL interactive features
+        // Global hover sweep: automatically hides popup as soon as cursor moves off interactive markers
         const handleGlobalMouseMove = (e: any) => {
           const checkLayers = [
             "unclustered-point",
             "unclustered-hitbox",
+            "unclustered-glow",
             "clusters",
             "cluster-count",
+            "clusters-glow",
           ].filter((id) => Boolean(map.getLayer(id)));
 
           if (checkLayers.length === 0) return;
 
-          const overInteractive =
-            map.queryRenderedFeatures(e.point, {
-              layers: checkLayers,
-            }).length > 0;
+          // Query a tight 8x8px bounding box around the cursor
+          const queryBox: [[number, number], [number, number]] = [
+            [e.point.x - 4, e.point.y - 4],
+            [e.point.x + 4, e.point.y + 4],
+          ];
+          const overInteractive = map.queryRenderedFeatures(queryBox, { layers: checkLayers }).length > 0;
 
           if (!overInteractive) {
             map.getCanvas().style.cursor = "";
@@ -1321,7 +1325,7 @@ export function TacticalMap({
         };
         map.on("mousemove", handleGlobalMouseMove);
 
-        // Clear popup whenever the cursor fully exits the map canvas
+        // Clear popup whenever cursor leaves the map container or window
         const handleCanvasMouseOut = () => {
           map.getCanvas().style.cursor = "";
           hoveredFeatureId = null;
@@ -1330,6 +1334,7 @@ export function TacticalMap({
             popupRef.current = null;
           }
         };
+        map.getCanvas().addEventListener("mouseleave", handleCanvasMouseOut);
         map.getCanvas().addEventListener("mouseout", handleCanvasMouseOut);
 
         // Unified Click Handler for Clusters, Cluster Counts, Glows & Hotspots
@@ -1430,6 +1435,13 @@ export function TacticalMap({
               });
 
               showHotspotPopup(coords, props);
+            }
+          } else {
+            // Clicked on empty terrain / ocean on map: trigger unselect callback (e.g. to close sidebar/drawer)
+            onSelectRef.current?.(null as any);
+            if (popupRef.current) {
+              popupRef.current.remove();
+              popupRef.current = null;
             }
           }
         };

@@ -74,10 +74,12 @@ function MapPageInner() {
 
   // ── Deep-link support: /map?event=<id> selects & flies to the event ──────
   useEffect(() => {
-    if (!eventParam || selected) return;
+    if (!eventParam) return;
     const target = allEvents.find((e) => e.id === eventParam);
-    if (target) setSelected(target);
-  }, [eventParam, allEvents, selected]);
+    if (target) {
+      setSelected(target);
+    }
+  }, [eventParam, allEvents]);
 
   const filteredEvents = useMemo(() => {
     return allEvents.filter((ev) => {

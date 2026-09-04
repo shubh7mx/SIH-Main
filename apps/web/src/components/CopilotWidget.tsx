@@ -229,7 +229,8 @@ export function CopilotWidget() {
 
   const handleRedirectToMap = (eventId: string) => {
     setIsOpen(false);
-    router.push(`/map?event=${eventId}`);
+    // Push new timestamp / query param so map page picks it up cleanly even if already on /map
+    router.push(`/map?event=${eventId}&t=${Date.now()}`);
   };
 
   const handleRedirectToDossier = (eventId: string) => {
