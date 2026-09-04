@@ -139,10 +139,20 @@ Thermal Sources Using NASA FIRMS, OSM & Satellite Data
     lifespan=lifespan,
 )
 
-# CORS
+# CORS Configuration with Explicit Whitelist for Local and Production Domains
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://26162.codepegst.xyz",
+    "http://26162.codepegst.xyz",
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1|.*\.codepegst\.xyz)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -73,8 +73,8 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
 
     // Adjust camera distance for mobile portrait aspect ratios so India fits comfortably in view
     const isMobile = width < 768;
-    const TARGET_FOV = isMobile ? 56 : 50;
-    const CAMERA_DISTANCE = isMobile ? 2.85 : 2.52;
+    const TARGET_FOV = isMobile ? 62 : 50;
+    const CAMERA_DISTANCE = isMobile ? 3.1 : 2.52;
 
     const initialAspect = width / height;
     const camera = new THREE.PerspectiveCamera(TARGET_FOV, initialAspect, 0.1, 1000);

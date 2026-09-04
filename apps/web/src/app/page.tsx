@@ -180,22 +180,18 @@ export default function LandingPage() {
 
       {/* ── Hero Section with Side-Bleed Ambient 3D Earth ──────────────── */}
       <main className="pt-20 pb-20 overflow-x-hidden">
-        <section className="relative w-full min-h-[calc(100vh-5rem)] flex flex-col lg:block justify-center overflow-hidden">
+        <section className="relative w-full min-h-[calc(100vh-5rem)] flex flex-col justify-center overflow-hidden">
           {/* Responsive Cinematic Earth canvas:
-              - Mobile & Tablet: Rendered with dedicated height and full visibility
-              - Desktop (>= lg): Absolute right half (55vw x 100vh) */}
+              - Mobile (< lg): Floating background globe visible behind hero headline
+              - Desktop (>= lg): Right half (55vw x 100vh) */}
           <div
-            className="w-full h-[320px] sm:h-[420px] lg:h-[100vh] lg:w-[55vw] lg:absolute lg:right-0 lg:top-0 order-first lg:order-none z-0 overflow-visible relative my-2 lg:my-0 pointer-events-auto"
-            style={{
-              maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 98%)",
-              WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 98%)",
-            }}
+            className="w-full h-[400px] sm:h-[500px] lg:h-[100vh] lg:w-[55vw] absolute right-0 top-16 sm:top-10 lg:top-0 z-0 overflow-visible pointer-events-auto"
           >
             <EarthGlobe events={events} />
           </div>
 
           {/* Hero Copy — floats over the screen with full responsiveness */}
-          <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-2 sm:pt-4 lg:pt-8 pb-10 lg:min-h-[calc(100vh-5rem)] flex flex-col justify-center pointer-events-none">
+          <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 lg:pt-8 pb-10 min-h-[calc(100vh-5rem)] flex flex-col justify-center pointer-events-none">
             {/* Ambient Atmospheric Blue Glow */}
             <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/4 w-[520px] h-[520px] bg-blue-500/20 blur-[130px] rounded-full pointer-events-none z-[-1]" />
             <div className="lg:max-w-[48%] relative">

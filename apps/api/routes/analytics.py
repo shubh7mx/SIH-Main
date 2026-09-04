@@ -13,12 +13,12 @@ router = APIRouter(prefix="/analytics", tags=["Analytics"])
 @router.get("/summary")
 async def get_summary() -> Dict[str, Any]:
     """Returns high-level classification and system performance metrics."""
-    stats = await event_store.stats()
-    by_class = stats["by_classification"]
+    detail = await event_store.detailed_analytics()
+    by_class = detail.get("by_classification", {})
 
     return {
-        "total_events_processed": stats["total_stored"],
-        "critical_alerts_count": stats["critical_alerts"],
+        "total_events_processed": detail.get("total_events", 0),
+        "critical_alerts_count": detail.get("critical_alerts", 0),
         "class_breakdown": {
             "INDUSTRIAL_FIRE_EMERGENCY": by_class.get("INDUSTRIAL_FIRE_EMERGENCY", 0),
             "PERSISTENT_INDUSTRIAL_FLARE": by_class.get("PERSISTENT_INDUSTRIAL_FLARE", 0),
@@ -28,7 +28,7 @@ async def get_summary() -> Dict[str, Any]:
         },
         "system_accuracy_metric": "94.2%",
         "mean_latency_seconds": 38.4,
-        "newest_event_id": stats["newest_event"],
+        "newest_event_id": detail.get("newest_event_at"),
     }
 
 
