@@ -91,21 +91,21 @@ export function EventDrawer({ event, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-40 flex justify-end pointer-events-auto"
+      className="fixed inset-0 z-40 flex justify-end pointer-events-none"
       style={{
         opacity: isVisible ? 1 : 0,
         transition: "opacity 280ms ease",
       }}
     >
-      {/* Backdrop */}
+      {/* Non-dimming click-away area to dismiss drawer on outer click without darkening the map */}
       <div
-        className="absolute inset-0 bg-black/60 transition-opacity duration-300"
+        className="absolute inset-0 bg-transparent pointer-events-auto"
         onClick={handleClose}
       />
 
       {/* Slide-in Sidebar Panel */}
       <aside
-        className="relative h-full w-full sm:w-[460px] bg-[#060a12] border-l border-cyan-500/20 flex flex-col shadow-2xl z-10"
+        className="relative h-full w-full sm:w-[460px] bg-[#060a12] border-l border-cyan-500/20 flex flex-col shadow-2xl z-10 pointer-events-auto"
         style={{
           transform: isVisible ? "translateX(0%)" : "translateX(100%)",
           transition: "transform 320ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 320ms ease",

@@ -1194,9 +1194,28 @@ export function TacticalMap({
         });
 
         // Helper to trigger rich popup
+        let activePopupSeq = 0;
+        const removeAllPopups = () => {
+          if (popupRef.current) {
+            popupRef.current.remove();
+            popupRef.current = null;
+          }
+          try {
+            const el = containerRef.current;
+            if (el) {
+              const popups = el.querySelectorAll(".maplibregl-popup");
+              popups.forEach((p) => p.remove());
+            }
+          } catch {
+            /* ignore DOM cleanup error */
+          }
+        };
+
         const showHotspotPopup = async (coords: [number, number], props: any, isHover: boolean = false) => {
-          if (popupRef.current) popupRef.current.remove();
+          const currentSeq = ++activePopupSeq;
+          removeAllPopups();
           const mlModule = await import("maplibre-gl");
+          if (currentSeq !== activePopupSeq) return; // Discard stale async call
           const maplibregl: any = (mlModule as any).default || mlModule;
           const color = props.color || "#06b6d4";
           const ev = eventsRef.current.find((item) => item.id === props.id);
@@ -1221,8 +1240,10 @@ export function TacticalMap({
         };
 
         const showClusterPopup = async (coords: [number, number], count: number, maxFrp: number, hasCritical: boolean) => {
-          if (popupRef.current) popupRef.current.remove();
+          const currentSeq = ++activePopupSeq;
+          removeAllPopups();
           const mlModule = await import("maplibre-gl");
+          if (currentSeq !== activePopupSeq) return; // Discard stale async call
           const maplibregl: any = (mlModule as any).default || mlModule;
           popupRef.current = new maplibregl.Popup({
             closeButton: false,
@@ -1249,26 +1270,25 @@ export function TacticalMap({
           "unclustered-glow",
         ];
 
-        let hoveredFeatureId: string | null = null;
+        let currentHoveredKey: string | null = null;
 
         // Hover on unclustered points
         const handlePointMouseEnter = (e: any) => {
           map.getCanvas().style.cursor = "pointer";
           const feat = e.features?.[0];
           if (feat && feat.properties) {
-            hoveredFeatureId = feat.properties.id;
+            const featId = feat.properties.id || `${feat.properties.lat}_${feat.properties.lng}`;
+            if (currentHoveredKey === featId) return; // already showing this point
+            currentHoveredKey = featId;
             const coords = (feat.geometry as any).coordinates.slice() as [number, number];
             showHotspotPopup(coords, feat.properties, true);
           }
         };
 
         const handlePointMouseLeave = () => {
+          currentHoveredKey = null;
           map.getCanvas().style.cursor = "";
-          hoveredFeatureId = null;
-          if (popupRef.current) {
-            popupRef.current.remove();
-            popupRef.current = null;
-          }
+          removeAllPopups();
         };
 
         // Hover on clusters
@@ -1276,6 +1296,9 @@ export function TacticalMap({
           map.getCanvas().style.cursor = "pointer";
           const feat = e.features?.[0];
           if (feat && feat.properties) {
+            const clusterKey = `cluster_${feat.properties.cluster_id || feat.properties.point_count}`;
+            if (currentHoveredKey === clusterKey) return; // already showing this cluster
+            currentHoveredKey = clusterKey;
             const coords = (feat.geometry as any).coordinates.slice() as [number, number];
             const count = feat.properties.point_count || 1;
             const maxFrp = feat.properties.max_frp || 0;
@@ -1307,32 +1330,26 @@ export function TacticalMap({
 
           if (checkLayers.length === 0) return;
 
-          // Query a tight 8x8px bounding box around the cursor
+          // Query a tight 10x10px bounding box around the cursor
           const queryBox: [[number, number], [number, number]] = [
-            [e.point.x - 4, e.point.y - 4],
-            [e.point.x + 4, e.point.y + 4],
+            [e.point.x - 5, e.point.y - 5],
+            [e.point.x + 5, e.point.y + 5],
           ];
-          const overInteractive = map.queryRenderedFeatures(queryBox, { layers: checkLayers }).length > 0;
+          const features = map.queryRenderedFeatures(queryBox, { layers: checkLayers });
 
-          if (!overInteractive) {
+          if (features.length === 0) {
+            currentHoveredKey = null;
             map.getCanvas().style.cursor = "";
-            hoveredFeatureId = null;
-            if (popupRef.current) {
-              popupRef.current.remove();
-              popupRef.current = null;
-            }
+            removeAllPopups();
           }
         };
         map.on("mousemove", handleGlobalMouseMove);
 
         // Clear popup whenever cursor leaves the map container or window
         const handleCanvasMouseOut = () => {
+          currentHoveredKey = null;
           map.getCanvas().style.cursor = "";
-          hoveredFeatureId = null;
-          if (popupRef.current) {
-            popupRef.current.remove();
-            popupRef.current = null;
-          }
+          removeAllPopups();
         };
         map.getCanvas().addEventListener("mouseleave", handleCanvasMouseOut);
         map.getCanvas().addEventListener("mouseout", handleCanvasMouseOut);

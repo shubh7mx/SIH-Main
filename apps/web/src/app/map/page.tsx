@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { ConsoleShell } from "@/components/ConsoleShell";
 import { TacticalMap } from "@/components/TacticalMap";
@@ -72,12 +72,20 @@ function MapPageInner() {
     return [...fresh, ...backend];
   }, [eventsQuery.data, liveEvents]);
 
-  // ── Deep-link support: /map?event=<id> selects & flies to the event ──────
+  // ── Deep-link support: /map?event=<id> selects & flies to the event once on trigger ──────
+  const handledEventParamRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!eventParam) return;
-    const target = allEvents.find((e) => e.id === eventParam);
-    if (target) {
-      setSelected(target);
+    if (!eventParam) {
+      handledEventParamRef.current = null;
+      return;
+    }
+    // Only auto-open on initial deep-link navigate or when target ID changes
+    if (handledEventParamRef.current !== eventParam) {
+      const target = allEvents.find((e) => e.id === eventParam);
+      if (target) {
+        handledEventParamRef.current = eventParam;
+        setSelected(target);
+      }
     }
   }, [eventParam, allEvents]);
 
