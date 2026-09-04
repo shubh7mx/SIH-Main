@@ -181,21 +181,16 @@ export default function LandingPage() {
       {/* ── Hero Section with Side-Bleed Ambient 3D Earth ──────────────── */}
       <main className="pt-20 pb-20 overflow-x-hidden">
         <section className="relative w-full min-h-[calc(100vh-5rem)] flex flex-col justify-center overflow-hidden">
-          {/* Responsive Cinematic Earth canvas:
-              - Mobile (< lg): Floating background globe visible behind hero headline
-              - Desktop (>= lg): Right half (55vw x 100vh) */}
-          <div
-            className="w-full h-[400px] sm:h-[500px] lg:h-[100vh] lg:w-[55vw] absolute right-0 top-16 sm:top-10 lg:top-0 z-0 overflow-visible pointer-events-auto"
-          >
-            <EarthGlobe events={events} />
-          </div>
+          {/* Responsive Layout:
+              - Desktop (>= lg): Absolute 52vw x 100vh on the right
+              - Mobile / Tablet (< lg): Dedicated container rendered right below hero text */}
+          <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 pt-4 lg:pt-8 pb-10 min-h-[calc(100vh-5rem)] flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
+            {/* Left Column: Hero Copy */}
+            <div className="w-full lg:max-w-[48%] relative z-20 pointer-events-auto">
+              {/* Ambient Atmospheric Blue Glow */}
+              <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/4 w-[520px] h-[520px] bg-blue-500/20 blur-[130px] rounded-full pointer-events-none z-[-1]" />
 
-          {/* Hero Copy — floats over the screen with full responsiveness */}
-          <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 lg:pt-8 pb-10 min-h-[calc(100vh-5rem)] flex flex-col justify-center pointer-events-none">
-            {/* Ambient Atmospheric Blue Glow */}
-            <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/4 w-[520px] h-[520px] bg-blue-500/20 blur-[130px] rounded-full pointer-events-none z-[-1]" />
-            <div className="lg:max-w-[48%] relative">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded border border-blue-500/20 bg-slate-900/40 text-[11px] font-mono uppercase tracking-[0.14em] text-[#2a75d3] mb-6 animate-fade-up pointer-events-auto">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded border border-blue-500/20 bg-slate-900/40 text-[11px] font-mono uppercase tracking-[0.14em] text-[#2a75d3] mb-6 animate-fade-up">
                 <StatusDot />
                 National Remote Sensing Challenge · NTRO
               </div>
@@ -204,11 +199,11 @@ export default function LandingPage() {
                 Autonomous detection of industrial thermal hazards.
               </h1>
 
-              <p className="text-[15px] leading-relaxed text-slate-300 max-w-xl mb-8 font-normal">
+              <p className="text-[15px] leading-relaxed text-slate-400 mb-8 max-w-xl font-normal">
                 Disambiguating routine refinery flaring from catastrophic industrial fires using sub-pixel satellite radiometry, temporal persistence profiling, and multi-agent Bayesian fusion.
               </p>
 
-              <div className="flex flex-wrap items-center gap-3 mb-10 pointer-events-auto">
+              <div className="flex flex-wrap items-center gap-3 mb-10">
                 <a href="/dashboard" className="btn-primary">
                   Open Mission Console
                   <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
@@ -221,7 +216,7 @@ export default function LandingPage() {
               </div>
 
               {/* Status footer pill */}
-              <div className="inline-flex items-center gap-3 px-3.5 py-2 rounded-lg border border-white/10 bg-slate-900/50 text-[12px] font-mono text-slate-400 pointer-events-auto">
+              <div className="inline-flex items-center gap-3 px-3.5 py-2 rounded-lg border border-white/10 bg-slate-900/50 text-[12px] font-mono text-slate-400">
                 <span className="flex items-center gap-1.5">
                   <span
                     className="w-2 h-2 rounded-full inline-block"
@@ -234,6 +229,11 @@ export default function LandingPage() {
                 <span className="text-slate-600">|</span>
                 <LiveClock />
               </div>
+            </div>
+
+            {/* Right Column / Mobile Visual: Interactive 3D Earth Globe */}
+            <div className="w-full lg:w-[52vw] h-[340px] sm:h-[440px] lg:h-[100vh] lg:absolute lg:right-0 lg:top-0 z-10 overflow-visible pointer-events-auto flex items-center justify-center">
+              <EarthGlobe events={events} />
             </div>
           </div>
         </section>
