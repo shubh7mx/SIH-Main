@@ -181,19 +181,21 @@ export default function LandingPage() {
       {/* ── Hero Section with Side-Bleed Ambient 3D Earth ──────────────── */}
       <main className="pt-20 pb-20 overflow-x-hidden">
         <section className="relative w-full min-h-[calc(100vh-5rem)] overflow-hidden">
-          {/* Massive cinematic Earth canvas: absolute right half (55vw x 100vh) */}
+          {/* Responsive Cinematic Earth canvas:
+              - Mobile & Tablet (< lg): Centered ambient background or dedicated mid-hero 3D visual (h-[340px] to h-[460px])
+              - Desktop (>= lg): Absolute right half (55vw x 100vh) */}
           <div
-            className="hidden lg:block absolute right-0 top-0 w-[55vw] h-[100vh] z-0 overflow-visible pt-8"
+            className="absolute right-0 top-12 sm:top-6 lg:top-0 w-full lg:w-[55vw] h-[380px] sm:h-[480px] lg:h-[100vh] z-0 overflow-visible opacity-50 sm:opacity-75 lg:opacity-100 pointer-events-auto"
             style={{
-              maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%)",
-              WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%)",
+              maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 95%)",
+              WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 95%)",
             }}
           >
             <EarthGlobe events={events} />
           </div>
 
-          {/* Hero Copy — floats over the left half of the screen */}
-          <div className="relative z-10 max-w-6xl mx-auto px-6 pt-8 pb-10 lg:min-h-[calc(100vh-5rem)] lg:flex lg:flex-col lg:justify-center pointer-events-none">
+          {/* Hero Copy — floats over the screen with full responsiveness */}
+          <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-10 min-h-[calc(100vh-5rem)] flex flex-col justify-center pointer-events-none">
             {/* Ambient Atmospheric Blue Glow */}
             <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/4 w-[520px] h-[520px] bg-blue-500/20 blur-[130px] rounded-full pointer-events-none z-[-1]" />
             <div className="lg:max-w-[48%] relative">

@@ -26,7 +26,7 @@ const FOCUS_CENTER = {
   lon: 78.9629,
 };
 
-// Curated Indian industrial & thermal centers
+// Curated representative thermal centers spanning all Indian geographical zones
 const DEFAULT_HOTSPOTS = [
   { id: "evt-jamnagar", name: "Reliance Jamnagar Refinery", lat: 22.368, lon: 69.832, frp: 842, type: "INDUSTRIAL_FIRE_EMERGENCY", critical: true },
   { id: "evt-haldia", name: "IOCL Haldia Petrochemicals", lat: 22.031, lon: 88.082, frp: 145, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
@@ -37,10 +37,7 @@ const DEFAULT_HOTSPOTS = [
   { id: "evt-hazira", name: "ONGC Hazira Gas Terminal", lat: 21.112, lon: 72.645, frp: 210, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
   { id: "evt-kochi", name: "BPCL Kochi Refinery", lat: 9.992, lon: 76.358, frp: 140, type: "PERSISTENT_INDUSTRIAL_FLARE", critical: false },
   { id: "evt-punjab", name: "Sangrur Agrarian Stubble Cluster", lat: 30.245, lon: 75.842, frp: 65, type: "AGRICULTURAL_BURNING", critical: false },
-  { id: "evt-bhatinda", name: "Bhatinda Agricultural Belt", lat: 30.211, lon: 74.945, frp: 55, type: "AGRICULTURAL_BURNING", critical: false },
-  { id: "evt-haryana", name: "Karnal Crop Residue Burn", lat: 29.685, lon: 76.990, frp: 48, type: "AGRICULTURAL_BURNING", critical: false },
   { id: "evt-uk-wildfire", name: "Nainital Pine Forest Wildfire", lat: 29.380, lon: 79.463, frp: 85, type: "WILDFIRE", critical: false },
-  { id: "evt-hp-forest", name: "Shimla Ridge Wildfire", lat: 31.104, lon: 77.173, frp: 72, type: "WILDFIRE", critical: false },
 ];
 
 export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
@@ -147,8 +144,9 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
     globeGroup.add(atmoMesh);
 
-    // ── 5. 3D Light Beams with Vertical Opacity Gradient & Flat Top ──
-    const activeHotspots = eventsRef.current && eventsRef.current.length > 0
+    // ── 5. Balanced Regional Clustering & Density Throttling ──────────
+    // Ensures clean, non-overlapping 3D beacons across all zones (preventing dense clustering in North/J&K)
+    const rawList = eventsRef.current && eventsRef.current.length > 0
       ? eventsRef.current.map((e) => ({
           id: e.id,
           name: e.facility_name || `${e.classification.replace(/_/g, " ")}`,
@@ -161,6 +159,56 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
         }))
       : DEFAULT_HOTSPOTS.map((d) => ({ ...d, raw: null as HotspotEvent | null }));
 
+    // Region classification helper for even geographic distribution
+    const getRegionKey = (lat: number, lon: number): string => {
+      if (lat >= 28.0) {
+        // North India / J&K / Punjab: large ~2.5° grid (~280km) to keep it clean and minimal
+        return `north_${Math.round(lat / 2.5)}_${Math.round(lon / 2.5)}`;
+      }
+      if (lat >= 20.0) {
+        // Central & Western India
+        return `central_${Math.round(lat / 2.0)}_${Math.round(lon / 2.0)}`;
+      }
+      // South & Coastal India
+      return `south_${Math.round(lat / 2.0)}_${Math.round(lon / 2.0)}`;
+    };
+
+    const regionalClusterMap = new Map<string, typeof rawList[0]>();
+
+    // First pass: always preserve named industrial facilities and critical alerts
+    const namedFacilities = rawList.filter((h) => h.critical || (h.name && h.name !== "AGRICULTURAL BURNING" && h.name !== "WILDFIRE"));
+    const nonFacilities = rawList.filter((h) => !h.critical && (!h.name || h.name === "AGRICULTURAL BURNING" || h.name === "WILDFIRE"));
+
+    // Add unique named facilities (at most 1 per 3° area to avoid nearby stack duplication)
+    namedFacilities.forEach((h) => {
+      const key = `fac_${Math.round(h.lat / 3)}_${Math.round(h.lon / 3)}`;
+      const existing = regionalClusterMap.get(key);
+      if (!existing || (!existing.critical && h.critical) || h.frp > existing.frp) {
+        regionalClusterMap.set(key, h);
+      }
+    });
+
+    // Add regional non-industrial beacons (max 1 per region tile)
+    nonFacilities.forEach((h) => {
+      const key = getRegionKey(h.lat, h.lon);
+      const existing = regionalClusterMap.get(key);
+      if (!existing) {
+        regionalClusterMap.set(key, h);
+      } else if (h.frp > existing.frp) {
+        regionalClusterMap.set(key, h);
+      }
+    });
+
+    // Strictly limit to a clean, well-spaced set of 6 beacons across the entire subcontinent
+    const activeHotspots = Array.from(regionalClusterMap.values())
+      .sort((a, b) => {
+        if (a.critical && !b.critical) return -1;
+        if (!a.critical && b.critical) return 1;
+        return b.frp - a.frp;
+      })
+      .slice(0, 6);
+
+    // ── 6. 3D Light Beams with Smooth Top Fade-Out ──────────────────
     const thermalBeamObjects: Array<{
       beamMesh: THREE.Mesh;
       rings: Array<{ mesh: THREE.Mesh; speed: number; phase: number; maxRadius: number; baseOpacity: number }>;
@@ -174,8 +222,8 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     activeHotspots.forEach((h, idx) => {
       const beamGroup = new THREE.Group();
 
-      const beamRadius = 0.011;
-      const targetAltitude = Math.min(0.65, Math.max(0.18, (h.frp / 850) * 0.65));
+      const beamRadius = 0.009;
+      const targetAltitude = Math.min(0.55, Math.max(0.20, (h.frp / 850) * 0.55));
 
       const beamGeo = new THREE.CylinderGeometry(beamRadius, beamRadius, targetAltitude, 24, 1);
       beamGeo.translate(0, targetAltitude / 2, 0);
@@ -184,6 +232,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
       const colorHex = h.critical ? 0xff2200 : 0x00ffff;
       const rgbVec = h.critical ? new THREE.Vector3(1.0, 0.13, 0.0) : new THREE.Vector3(0.0, 1.0, 1.0);
 
+      // Smooth cosine fade-out at top tip so the beam dissolves into space
       const beamMat = new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
@@ -205,7 +254,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
           varying float vHeight;
           void main() {
             float normH = clamp(vHeight / uMaxAltitude, 0.0, 1.0);
-            float alpha = (1.0 - normH * 0.88) * 0.95;
+            float alpha = cos(normH * 1.5707963) * 0.92;
             gl_FragColor = vec4(uColor, alpha);
           }
         `,
@@ -214,19 +263,6 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
       const beamMesh = new THREE.Mesh(beamGeo, beamMat);
       beamMesh.scale.z = 0.001;
       beamGroup.add(beamMesh);
-
-      // Flat circular disc at the exact peak altitude
-      const capGeo = new THREE.CircleGeometry(beamRadius * 1.05, 16);
-      const capMat = new THREE.MeshBasicMaterial({
-        color: colorHex,
-        transparent: true,
-        opacity: 0.88,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-      });
-      const capMesh = new THREE.Mesh(capGeo, capMat);
-      capMesh.position.z = targetAltitude;
-      beamMesh.add(capMesh);
 
       // Interactive hit cylinder for effortless hover detection
       const hitGeo = new THREE.CylinderGeometry(0.045, 0.045, targetAltitude, 12);
@@ -282,11 +318,11 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
         rings,
         currentScaleZ: 0.001,
         targetScaleZ: 1.0,
-        delay: idx * 0.08,
+        delay: idx * 0.06,
       });
     });
 
-    // ── 6. Directional 3D Space Lighting ─────────────────────────────
+    // ── 7. Directional 3D Space Lighting ─────────────────────────────
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.05);
     scene.add(ambientLight);
 
@@ -298,7 +334,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     rimLight.position.set(-4, 6, -3);
     scene.add(rimLight);
 
-    // ── 7. Fly-in Animation Setup (Spins on load into India focus) ─────
+    // ── 8. Fly-in Animation Setup (Spins on load into India focus) ─────
     const START_YAW_Y = TARGET_YAW_Y - Math.PI * 1.5;
     globeGroup.rotation.y = START_YAW_Y;
     globeGroup.rotation.x = 0;
@@ -308,7 +344,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     let lastTime = performance.now();
     const startTime = lastTime;
 
-    // ── 8. Raycasting for Hover Tooltips ──────────────────────────────
+    // ── 9. Raycasting for Hover Tooltips ──────────────────────────────
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2(-999, -999);
 
@@ -355,7 +391,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
     container.addEventListener("mousemove", handleMouseMove);
     container.addEventListener("click", handleClick);
 
-    // ── 9. Main Render Loop with Smooth Easing ────────────────────────
+    // ── 10. Main Render Loop with Smooth Easing ───────────────────────
     const animate = () => {
       const now = performance.now();
       const rawDelta = (now - lastTime) / 1000;
@@ -367,13 +403,11 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
       if (flyInProgress < 1) {
         flyInProgress += delta / FLY_IN_DURATION;
         const t = Math.min(1, flyInProgress);
-        // Quintic ease-out: 1 - (1 - t)^5
         const ease = 1 - Math.pow(1 - t, 5);
 
         globeGroup.rotation.y = START_YAW_Y + (TARGET_YAW_Y - START_YAW_Y) * ease;
         globeGroup.rotation.x = TARGET_PITCH_X * ease;
       } else {
-        // Locked stably onto India center
         globeGroup.rotation.y = TARGET_YAW_Y;
         globeGroup.rotation.x = TARGET_PITCH_X;
       }
@@ -401,7 +435,7 @@ export function EarthGlobe({ events, onSelectEvent }: EarthGlobeProps) {
 
     animate();
 
-    // ── 10. Resize Observer ──────────────────────────────────────────
+    // ── 11. Resize Observer ──────────────────────────────────────────
     const handleResize = () => {
       if (!container) return;
       const w = container.clientWidth;

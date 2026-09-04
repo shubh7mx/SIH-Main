@@ -23,7 +23,7 @@ function MapPageInner() {
   const searchParams = useSearchParams();
   const eventParam = searchParams.get("event") || searchParams.get("id");
 
-  const eventsQuery = useEvents({ limit: 200 }, 30_000);
+  const eventsQuery = useEvents({ limit: 1000 }, 30_000);
   const alertStream = useAlertStream({ enabled: true });
   const timelineQuery = useTimeline({ intervalMinutes: 60 }, 60_000);
 

@@ -10,14 +10,35 @@ import type {
   ThermalClassification,
 } from "./types";
 
-const DEFAULT_API_BASE = "http://localhost:8000/api/v1";
-const DEFAULT_WS_BASE = "ws://localhost:8000/api/v1";
+export function getApiBase(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== "undefined" && window.location) {
+    const host = window.location.hostname;
+    if (host !== "localhost" && host !== "127.0.0.1") {
+      return `${window.location.protocol}//${window.location.host}/api/v1`;
+    }
+  }
+  return "http://localhost:8000/api/v1";
+}
 
-export const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_BASE;
+export function getWsBase(): string {
+  if (process.env.NEXT_PUBLIC_WS_URL) {
+    return process.env.NEXT_PUBLIC_WS_URL;
+  }
+  if (typeof window !== "undefined" && window.location) {
+    const wsProto = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const host = window.location.hostname;
+    if (host !== "localhost" && host !== "127.0.0.1") {
+      return `${wsProto}//${window.location.host}/ws/alerts`;
+    }
+  }
+  return "ws://localhost:8000/api/v1/ws/alerts";
+}
 
-export const WS_URL =
-  process.env.NEXT_PUBLIC_WS_URL ?? `${DEFAULT_WS_BASE}/ws/alerts`;
+export const API_BASE = getApiBase();
+export const WS_URL = getWsBase();
 
 // ── HTTP helpers ─────────────────────────────────────────────────────────────
 
@@ -37,7 +58,8 @@ async function request<T>(
   init: RequestInit = {},
   signal?: AbortSignal
 ): Promise<T> {
-  const url = `${API_BASE}${path}`;
+  const base = getApiBase();
+  const url = `${base}${path}`;
   const res = await fetch(url, {
     ...init,
     signal,

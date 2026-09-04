@@ -383,8 +383,10 @@ export function useLogStream(opts: { enabled?: boolean; maxEntries?: number } = 
 
   useEffect(() => {
     if (opts.enabled === false) return;
-    const wsUrl = (process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000/api/v1/ws/alerts")
-      .replace("/ws/alerts", "/ws/logs");
+    const rawWs = process.env.NEXT_PUBLIC_WS_URL || (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1"
+      ? `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.hostname}:8000/api/v1/ws/alerts`
+      : "ws://localhost:8000/api/v1/ws/alerts");
+    const wsUrl = rawWs.replace("/ws/alerts", "/ws/logs");
 
     const client = createWsClient({
       url: wsUrl,

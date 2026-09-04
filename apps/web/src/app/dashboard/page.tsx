@@ -9,13 +9,13 @@ import { CardSkeleton } from "@/components/ui/LoadingSkeleton";
 import { useEvents, useAlertStream, useTimeline, describeError } from "@/lib/hooks";
 import type { HotspotEvent } from "@/lib/types";
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
   AreaChart, Area, CartesianGrid,
 } from "recharts";
 import { getClassificationSeverity } from "@/lib/design-tokens";
 
 export default function DashboardPage() {
-  const eventsQuery = useEvents({ limit: 100 }, 30_000);
+  const eventsQuery = useEvents({ limit: 1000 }, 30_000);
   const alertStream = useAlertStream({ enabled: true });
   const timelineQuery = useTimeline({ intervalMinutes: 60 }, 60_000);
 
@@ -304,7 +304,7 @@ export default function DashboardPage() {
                   />
                   <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={16}>
                     {classData.map((d) => (
-                      <Bar key={d.name} dataKey="count" fill={d.color} radius={[0, 4, 4, 0]} />
+                      <Cell key={d.name} fill={d.color} />
                     ))}
                   </Bar>
                 </BarChart>

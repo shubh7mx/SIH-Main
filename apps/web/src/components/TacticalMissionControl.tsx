@@ -32,7 +32,7 @@ type BottomTab = "FEED" | "LOGS" | "ANALYTICS";
 
 export function TacticalMissionControl({ onExit }: { onExit: () => void }) {
   // ── Backend queries & streams ──────────────────────────────────────────────
-  const eventsQuery = useEvents({ limit: 100 }, 30_000);
+  const eventsQuery = useEvents({ limit: 1000 }, 30_000);
   const alertStream = useAlertStream({ enabled: true });
   const timelineQuery = useTimeline({ intervalMinutes: 60 }, 30_000);
   const analyticsQuery = useDetailedAnalytics(30_000);
