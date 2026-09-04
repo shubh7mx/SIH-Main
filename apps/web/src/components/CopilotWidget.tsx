@@ -494,8 +494,8 @@ export function CopilotWidget() {
                           You · {msg.time}
                         </div>
                       </div>
-                      <div className="w-8 h-8 rounded-full bg-slate-700/80 border border-white/20 flex items-center justify-center text-xs font-bold text-slate-200 shrink-0 shadow-md">
-                        DO
+                      <div className="w-8 h-8 rounded-full bg-slate-700/80 border border-white/20 flex items-center justify-center text-xs shrink-0 shadow-md">
+                        👤
                       </div>
                     </div>
                   )}

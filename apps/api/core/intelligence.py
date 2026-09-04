@@ -124,15 +124,16 @@ Rules:
 """
 
 COPILOT_SYSTEM_PROMPT = """You are the AI Geospatial Intelligence Copilot for the sovereign NTRO Thermal Surveillance Command Console (SIH26162).
-You interact naturally, intelligently, and dynamically with Duty Officers, Defense Analysts, and Evaluators.
+You interact naturally, intelligently, and dynamically with the User and Evaluators. Address the human as "User" (never "Duty Officer").
 
 Operational & Reasoning Guidelines:
-- Analyze the user's specific inquiry and the live telemetry dataset carefully.
+- Analyze the user's specific inquiry, current time of day, and the live telemetry dataset carefully.
 - Provide a completely customized, intelligent response tailored exactly to what was asked:
+  • Greetings: When the user greets you (e.g. "hi", "hello", "good morning", "good evening"), greet them warmly and accurately based on the current time provided in context, addressing them as User, and offer helpful summary guidance.
   • If asked to rank cities/states/facilities by thermal activity or FRP: analyze all events in the telemetry, aggregate by city/state, and present a ranked breakdown with metrics and insights.
   • If asked about specific facilities (e.g. Jamnagar, Paradip, Haldia, Mundra): extract and evaluate that facility's thermodynamic profile, CDE baseline, and operational safety.
   • If asked conceptual, architectural, or algorithmic questions (e.g. how CDE works, PINN plume dispersion, satellite sensors): explain clearly and conversationally with scientific rigor without forcing unnecessary telemetry tables.
-  • If asked general or conversational questions: respond naturally and helpfully like an experienced intelligence officer.
+  • If asked general or conversational questions: respond naturally and helpfully as an intelligent geospatial AI.
 - Always be accurate to the provided live telemetry (FRP MW, Brightness Temp K, CDE deviation σ, Classifications, Coordinates, Cities/States).
 - Format multi-item comparisons, rankings, or telemetry data using clean Markdown tables.
 - Output ONLY the final answer. DO NOT output any thinking scratchpads, 'Here is the thinking process', '1. Analyze user input', or planning outlines.
@@ -719,13 +720,19 @@ async def copilot_answer(
 
     total_evt = analytics.get("total_events_processed", len(events))
     crit_evt = analytics.get("critical_alerts_count", sum(1 for e in events if e.get("is_critical_alert")))
-    kpi_summary = f"Total Detections: {total_evt} | Active Critical Emergencies: {crit_evt} | Monitored Indian Facilities: 50+"
+    now_utc = datetime.now(timezone.utc)
+    # Approximate Indian Standard Time (UTC + 5:30)
+    ist_hour = (now_utc.hour + 5 + (now_utc.minute + 30) // 60) % 24
+    time_of_day = "morning" if 5 <= ist_hour < 12 else ("afternoon" if 12 <= ist_hour < 17 else "evening")
+    current_time_str = f"{ist_hour:02d}:{(now_utc.minute + 30) % 60:02d} IST ({time_of_day.capitalize()})"
+
+    kpi_summary = f"Total Detections: {total_evt} | Active Critical Emergencies: {crit_evt} | Monitored Indian Facilities: 50+ | Current Time: {current_time_str}"
 
     user_msg = (
         f"LIVE SOVEREIGN THERMAL INTELLIGENCE TELEMETRY ({len(events[:40])} key active detections):\n"
         f"[SCHEMA: ID|CLASSIFICATION|FRP|BT|CDE_DEVIATION|FACILITY|CITY_STATE|COORDS|STATUS]\n"
         f"{dense_context_str}\n\n"
-        f"SYSTEM STATE: {kpi_summary}\n\n"
+        f"SYSTEM STATE & TIME: {kpi_summary}\n\n"
         f"USER INQUIRY:\n{question}\n\n"
         "Provide a direct, intelligent, customized answer based strictly on the user query and data above. "
         "Output ONLY the final response without any internal reasoning steps or scratchpad."

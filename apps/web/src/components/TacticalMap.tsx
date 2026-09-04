@@ -557,18 +557,30 @@ export function TacticalMap({
         });
       }
 
-      map.on("load", () => {
+      const onMapLoadOrStyle = () => {
         if (cancelled) return;
         if (startStyle === "dark") {
           applyDarkBasemapStyling(map);
         }
         setMapReady(true);
         map.resize();
-        // Force setupLayers to execute immediately on map load
         try {
           setupLayersRef.current?.();
+          const geoData = toGeoJSON(eventsRef.current);
+          const hs = map.getSource("hotspots") as any;
+          if (hs && typeof hs.setData === "function") hs.setData(geoData);
+          const ht = map.getSource("heat") as any;
+          if (ht && typeof ht.setData === "function") ht.setData(geoData);
+          map.triggerRepaint();
         } catch (err) {
           console.warn("[Map] Error in initial setupLayers:", err);
+        }
+      };
+
+      map.on("load", onMapLoadOrStyle);
+      map.on("styledata", () => {
+        if (map.isStyleLoaded() && !map.getSource("hotspots")) {
+          onMapLoadOrStyle();
         }
       });
 
@@ -1539,22 +1551,39 @@ export function TacticalMap({
   // ─── Instant GeoJSON Data Sync on Events / Timeline Scrub ─────────────
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !mapReady) return;
+    if (!map) return;
 
-    if (!map.getSource("hotspots")) {
-      setupLayersRef.current?.();
-      return;
-    }
+    const syncSources = () => {
+      if (!map.isStyleLoaded()) return;
+      if (!map.getSource("hotspots") || !map.getSource("heat")) {
+        setupLayersRef.current?.();
+      }
+      const geoData = toGeoJSON(eventsRef.current);
+      const source = map.getSource("hotspots") as any;
+      if (source && typeof source.setData === "function") {
+        source.setData(geoData);
+      }
+      const heatSource = map.getSource("heat") as any;
+      if (heatSource && typeof heatSource.setData === "function") {
+        heatSource.setData(geoData);
+      }
+      try {
+        map.resize();
+        map.triggerRepaint();
+      } catch {}
+    };
 
-    const source = map.getSource("hotspots") as any;
-    if (source && typeof source.setData === "function") {
-      source.setData(toGeoJSON(eventsRef.current));
-    }
-    const heatSource = map.getSource("heat") as any;
-    if (heatSource && typeof heatSource.setData === "function") {
-      heatSource.setData(toGeoJSON(eventsRef.current));
-    }
-  }, [events, mapReady]);
+    syncSources();
+
+    // Secondary sync after 150ms and 500ms to catch SPA container resize transitions
+    const t1 = setTimeout(syncSources, 150);
+    const t2 = setTimeout(syncSources, 500);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [events, mapReady, activeStyle]);
 
   // ─── Selection Sync (Fly to Selected Event) ──────────────────────────
   useEffect(() => {
