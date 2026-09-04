@@ -18,6 +18,7 @@ import {
   listLogs,
   generateIncidentBrief,
   askCopilot,
+  getWsBase,
   type WsClient,
   type WsMessage,
   type WsState,
@@ -311,8 +312,7 @@ export function describeError(err: Error | null | undefined): string {
     return `Backend error (${err.status}): ${detail}`;
   }
   if (err instanceof TypeError) {
-    return "Cannot reach backend. Verify FastAPI is running on " +
-      (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000");
+    return "Cannot reach backend: " + (err.message || "Network request failed");
   }
   return err.message;
 }
@@ -383,10 +383,8 @@ export function useLogStream(opts: { enabled?: boolean; maxEntries?: number } = 
 
   useEffect(() => {
     if (opts.enabled === false) return;
-    const rawWs = process.env.NEXT_PUBLIC_WS_URL || (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1"
-      ? `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.hostname}:8000/api/v1/ws/alerts`
-      : "ws://localhost:8000/api/v1/ws/alerts");
-    const wsUrl = rawWs.replace("/ws/alerts", "/ws/logs");
+    const wsBase = getWsBase();
+    const wsUrl = wsBase.replace("/ws/alerts", "/ws/logs");
 
     const client = createWsClient({
       url: wsUrl,
