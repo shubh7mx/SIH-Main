@@ -33,7 +33,13 @@ echo -e "${GREEN}✓ Redis & PostGIS Docker containers active.${NC}"
 # 2. Pull Latest Code from Git
 echo -e "\n${YELLOW}[2/6] Pulling latest code from GitHub...${NC}"
 if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-    git pull origin main || echo -e "${YELLOW}Notice: Working tree up to date or using local files.${NC}"
+    # --rebase avoids 'divergent branches' hint; works even when local+runtime-cache are dirty
+    if ! git pull --rebase origin main 2>/dev/null; then
+        # Fallback: fetch + align to remote tip
+        git fetch origin
+        git rebase origin/main 2>/dev/null || git reset --hard origin/main
+        echo -e "${YELLOW}Notice: Working tree aligned to origin/main.${NC}"
+    fi
 else
     echo -e "${YELLOW}Skipping git pull (standalone directory).${NC}"
 fi
