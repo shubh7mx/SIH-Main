@@ -90,8 +90,8 @@ def _spatial_class_posterior(state: SwarmState) -> dict[str, float]:
     dist_km = state.spatial.nearest_facility_km or 999.0
     facility_id = state.spatial.facility_id
 
-    if (facility_type is not None or facility_id is not None) and dist_km <= 25.0:
-        # Contained within or adjacent to an industrial facility perimeter
+    if (facility_type is not None or facility_id is not None) and dist_km <= 2.5:
+        # True spatial containment within industrial facility perimeter
         post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.65
         post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.30
         post["AGRICULTURAL_BURNING"] = 0.01
@@ -103,13 +103,13 @@ def _spatial_class_posterior(state: SwarmState) -> dict[str, float]:
         post["AGRICULTURAL_BURNING"] = 0.05
         post["WILDFIRE"] = 0.05
         post["DEFERRED_FOR_ANALYST"] = 0.05
-    elif land_cover == 40:
-        post["AGRICULTURAL_BURNING"] = 0.90
-        post["WILDFIRE"] = 0.03
-        post["DEFERRED_FOR_ANALYST"] = 0.04
     elif land_cover == 10:
         post["WILDFIRE"] = 0.90
         post["AGRICULTURAL_BURNING"] = 0.03
+        post["DEFERRED_FOR_ANALYST"] = 0.04
+    elif land_cover == 40:
+        post["AGRICULTURAL_BURNING"] = 0.90
+        post["WILDFIRE"] = 0.03
         post["DEFERRED_FOR_ANALYST"] = 0.04
     else:
         post["AGRICULTURAL_BURNING"] = 0.55
@@ -124,10 +124,11 @@ def _spatial_class_posterior(state: SwarmState) -> dict[str, float]:
 def _temporal_class_posterior(state: SwarmState) -> dict[str, float]:
     """Temporal agent's class-conditional likelihood distribution."""
     post = {c: 0.02 for c in _CLASSES}
+    dist_km = state.spatial.nearest_facility_km if state.spatial.nearest_facility_km is not None else 999.0
     is_industrial = (
         state.spatial.facility_id is not None
-        or (state.spatial.nearest_facility_km is not None and state.spatial.nearest_facility_km <= 5.0)
-        or state.spatial.facility_type is not None
+        or dist_km <= 5.0
+        or (state.spatial.land_cover_class == 50 and dist_km <= 10.0)
     )
     z_frp = state.temporal.frp_zscore or 0.0
     z_bt = state.temporal.bt_zscore or 0.0
@@ -139,8 +140,8 @@ def _temporal_class_posterior(state: SwarmState) -> dict[str, float]:
             post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.90
             post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.05
             post["DEFERRED_FOR_ANALYST"] = 0.05
-        elif abs(z_frp) <= 2.0 and abs(z_bt) <= 2.0:
-            # Stable within operating envelope: flare signature
+        elif z_frp <= 2.0 and z_bt <= 2.0:
+            # Stable or negative Z within normal operating envelope: flare signature
             post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.88
             post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.04
             post["DEFERRED_FOR_ANALYST"] = 0.06
@@ -158,6 +159,10 @@ def _temporal_class_posterior(state: SwarmState) -> dict[str, float]:
             post["AGRICULTURAL_BURNING"] = 0.88
             post["WILDFIRE"] = 0.06
             post["DEFERRED_FOR_ANALYST"] = 0.04
+        elif lc == 50:  # Urban / Built-up zone
+            post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.75
+            post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.15
+            post["DEFERRED_FOR_ANALYST"] = 0.05
         elif state.frp_mw > 150.0:
             # Elevated radiative energy over wildland: wildfire signature
             post["WILDFIRE"] = 0.75
@@ -246,9 +251,9 @@ def orchestrator_node(state: SwarmState) -> SwarmState:
     ml_agreement = state.vision.model_agreement
 
     # ── CDE severity override for industrial containment ───────────
-    spatial_facility = state.spatial.facility_id is not None
+    spatial_facility = state.spatial.facility_id is not None or state.spatial.facility_name is not None
     nearest_km = state.spatial.nearest_facility_km if state.spatial.nearest_facility_km is not None else 999.0
-    is_near_facility = spatial_facility and nearest_km <= 5.0
+    is_near_facility = (spatial_facility or state.spatial.facility_type is not None or state.spatial.land_cover_class == 50) and nearest_km <= 8.0
 
     severity: AlertSeverity = "INFO"
     is_critical = False
@@ -323,18 +328,18 @@ def orchestrator_node(state: SwarmState) -> SwarmState:
             f"Narrow margin between top classes (Δ={ml_margin:.2f} < 0.10)"
         )
 
-    # Rule 3: Sub-model classification conflict with high entropy
+    # Rule 3: Sub-model classification conflict with high entropy and weak fused evidence
     sub_classes = state.vision.submodel_classes
     submodels_conflict = (
         len(sub_classes) == 2 and sub_classes[0] != sub_classes[1]
     )
-    if submodels_conflict and ml_entropy > 0.60 and fused_score < 0.72 and not has_known_facility:
+    if submodels_conflict and ml_entropy > 0.70 and fused_score < 0.65 and not has_known_facility:
         uncertainty_reasons.append(
             f"XGBoost and Random Forest disagree on class (XGB→{sub_classes[0]}, RF→{sub_classes[1]})"
         )
 
-    # Rule 4: Multi-agent divergence with high predictive entropy
-    if agent_disagree >= 0.70 and ml_entropy > 0.60:
+    # Rule 4: Multi-agent divergence with high predictive entropy on unmapped terrain
+    if agent_disagree >= 0.75 and ml_entropy > 0.65 and not has_known_facility:
         uncertainty_reasons.append(
             f"Spatial/Temporal/Vision agents conflict (disagreement {agent_disagree:.2f})"
         )

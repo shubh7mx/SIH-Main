@@ -69,6 +69,9 @@ class EventStore:
             with open(CACHE_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
             if isinstance(data, list):
+                self._events.clear()
+                self._order.clear()
+                self._seen_keys.clear()
                 for ev in data:
                     if isinstance(ev, dict):
                         eid = ev.get("id")
@@ -80,6 +83,11 @@ class EventStore:
                 print(f"[EventStore] Loaded {len(self._events)} persisted events from {CACHE_FILE.name}")
         except Exception as e:
             print(f"[EventStore] Warning: Could not read cache ({e})")
+
+    def reload(self) -> int:
+        """Forces an in-memory reload from the persistent disk cache."""
+        self._load_from_disk()
+        return len(self._events)
 
     def _save_to_disk(self) -> None:
         """Saves current events to persistent disk cache."""

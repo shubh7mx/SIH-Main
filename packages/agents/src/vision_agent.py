@@ -71,9 +71,10 @@ def vision_pipeline(state: SwarmState) -> SwarmState:
     from packages.agents.src.ml_engine import predict_with_uncertainty
 
     inside_fac = state.spatial.facility_id is not None or (state.spatial.nearest_facility_km is not None and state.spatial.nearest_facility_km <= 2.5)
-    lc_class = state.spatial.land_cover_class or 40
+    lc_class = 50 if inside_fac else (state.spatial.land_cover_class or 40)
     dist_km = state.spatial.nearest_facility_km or 999.0
     z_score = state.temporal.frp_zscore or 0.0
+    persist_cnt = float(state.temporal.observation_count or (6.0 if inside_fac else 0.0))
 
     upred = predict_with_uncertainty(
         frp_mw=state.frp_mw,
@@ -86,6 +87,7 @@ def vision_pipeline(state: SwarmState) -> SwarmState:
         cde_deviation_zscore=z_score,
         latitude=state.latitude,
         longitude=state.longitude,
+        persistence_count_30d=persist_cnt,
     )
 
     ml_class = upred.winning_class

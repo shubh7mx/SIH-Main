@@ -317,6 +317,18 @@ DECISION_MAP = {
 }
 
 
+@router.post("/reload")
+async def reload_events_from_disk():
+    """Forces event store to reload its in-memory state from persistent disk cache."""
+    count = event_store.reload()
+    pending = await event_store.list_review_queue()
+    return {
+        "status": "reloaded",
+        "total_events": count,
+        "pending_review_count": len(pending),
+    }
+
+
 @router.get("/review-queue")
 async def get_review_queue(limit: int = 100):
     """
