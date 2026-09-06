@@ -32,9 +32,11 @@ type Decision = "CONFIRM_EMERGENCY" | "CONFIRM_FLARE" | "CONFIRM_AGRICULTURAL" |
 export function ReviewQueuePanel({
   events,
   onResolved,
+  onSelectEvent,
 }: {
   events: HotspotEvent[];
   onResolved: (event: HotspotEvent) => void;
+  onSelectEvent?: (event: HotspotEvent) => void;
 }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -201,6 +203,14 @@ export function ReviewQueuePanel({
 
                   {/* Decision buttons */}
                   <div className="flex flex-wrap items-center gap-2">
+                    {onSelectEvent && (
+                      <button
+                        onClick={() => onSelectEvent(ev)}
+                        className="px-3 py-1.5 rounded-lg text-[11px] font-mono font-medium text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 transition-colors flex items-center gap-1.5"
+                      >
+                        📂 Open Dossier
+                      </button>
+                    )}
                     <button
                       disabled={busyId === ev.id}
                       onClick={() => handleDecision(ev, "CONFIRM_EMERGENCY")}

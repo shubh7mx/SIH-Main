@@ -139,6 +139,7 @@ export default function EventsPage() {
         {/* Tier A: Analyst Review Queue */}
         <ReviewQueuePanel
           events={reviewQueue.data?.events ?? []}
+          onSelectEvent={(ev) => setSelected(ev)}
           onResolved={() => {
             reviewQueue.refresh();
             eventsQuery.refresh();
