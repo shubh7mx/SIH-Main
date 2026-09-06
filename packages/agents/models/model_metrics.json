@@ -1,13 +1,13 @@
 {
   "model_name": "Calibrated XGBoost + Random Forest Multi-Modal Ensemble",
-  "trained_at": "2026-09-06T08:53:03.710274+00:00",
+  "trained_at": "2026-09-06T09:38:32.896892+00:00",
   "evaluation_method": "5-Fold Stratified Cross-Validation (every sample tested once)",
-  "total_samples": 333,
-  "test_samples": 333,
-  "accuracy_pct": 98.81,
-  "weighted_f1_pct": 98.8,
-  "accuracy_std_pct": 1.12,
-  "weighted_f1_std_pct": 1.12,
+  "total_samples": 1080,
+  "test_samples": 1080,
+  "accuracy_pct": 99.54,
+  "weighted_f1_pct": 99.53,
+  "accuracy_std_pct": 0.29,
+  "weighted_f1_std_pct": 0.29,
   "confusion_matrix": [
     [
       60,
@@ -17,20 +17,20 @@
     ],
     [
       0,
-      71,
-      1,
+      339,
+      0,
       0
     ],
     [
       0,
       0,
-      140,
+      618,
       1
     ],
     [
       0,
       0,
-      2,
+      4,
       58
     ]
   ],
@@ -49,34 +49,34 @@
     },
     "PERSISTENT_INDUSTRIAL_FLARE": {
       "precision": 1.0,
-      "recall": 0.9861111111111112,
-      "f1-score": 0.993006993006993,
-      "support": 72.0
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 339.0
     },
     "AGRICULTURAL_BURNING": {
-      "precision": 0.9790209790209791,
-      "recall": 0.9929078014184397,
-      "f1-score": 0.9859154929577465,
-      "support": 141.0
+      "precision": 0.9935691318327974,
+      "recall": 0.9983844911147012,
+      "f1-score": 0.9959709911361805,
+      "support": 619.0
     },
     "WILDFIRE": {
       "precision": 0.9830508474576272,
-      "recall": 0.9666666666666667,
-      "f1-score": 0.9747899159663865,
-      "support": 60.0
+      "recall": 0.9354838709677419,
+      "f1-score": 0.9586776859504132,
+      "support": 62.0
     },
-    "accuracy": 0.987987987987988,
+    "accuracy": 0.9953703703703703,
     "macro avg": {
-      "precision": 0.9905179566196516,
-      "recall": 0.9864213947990544,
-      "f1-score": 0.9884281004827815,
-      "support": 333.0
+      "precision": 0.9941549948226062,
+      "recall": 0.9834670905206108,
+      "f1-score": 0.9886621692716484,
+      "support": 1080.0
     },
     "weighted avg": {
-      "precision": 0.9880630897580053,
-      "recall": 0.987987987987988,
-      "f1-score": 0.9879819308154023,
-      "support": 333.0
+      "precision": 0.9953411529137727,
+      "recall": 0.9953703703703703,
+      "f1-score": 0.9953185741131678,
+      "support": 1080.0
     }
   },
   "features": [
@@ -100,67 +100,67 @@
   "feature_importance_shap": [
     {
       "feature": "cde_deviation_zscore",
-      "mean_shap": 1.641371488571167
-    },
-    {
-      "feature": "dist_to_forest_km",
-      "mean_shap": 0.403799831867218
-    },
-    {
-      "feature": "dist_to_mining_km",
-      "mean_shap": 0.3743867874145508
-    },
-    {
-      "feature": "persistence_count_30d",
-      "mean_shap": 0.2814967930316925
+      "mean_shap": 1.7078630924224854
     },
     {
       "feature": "dist_to_cropland_km",
-      "mean_shap": 0.23064881563186646
+      "mean_shap": 0.7740052938461304
     },
     {
       "feature": "dist_to_power_km",
-      "mean_shap": 0.1457967609167099
-    },
-    {
-      "feature": "brightness_temp_kelvin",
-      "mean_shap": 0.13179482519626617
-    },
-    {
-      "feature": "frp_megawatts",
-      "mean_shap": 0.11554230004549026
-    },
-    {
-      "feature": "latitude",
-      "mean_shap": 0.10685476660728455
+      "mean_shap": 0.25825247168540955
     },
     {
       "feature": "dist_to_industrial_km",
-      "mean_shap": 0.09637603163719177
+      "mean_shap": 0.24236659705638885
+    },
+    {
+      "feature": "persistence_count_30d",
+      "mean_shap": 0.1988086700439453
+    },
+    {
+      "feature": "dist_to_mining_km",
+      "mean_shap": 0.17882005870342255
+    },
+    {
+      "feature": "frp_megawatts",
+      "mean_shap": 0.14903202652931213
+    },
+    {
+      "feature": "dist_to_forest_km",
+      "mean_shap": 0.1443856954574585
     },
     {
       "feature": "landcover_class",
-      "mean_shap": 0.06838977336883545
+      "mean_shap": 0.13350452482700348
     },
     {
-      "feature": "day_night_flag",
-      "mean_shap": 0.05052558332681656
-    },
-    {
-      "feature": "longitude",
-      "mean_shap": 0.04383047670125961
+      "feature": "latitude",
+      "mean_shap": 0.0901852399110794
     },
     {
       "feature": "frp_to_bt_ratio",
-      "mean_shap": 0.021815652027726173
+      "mean_shap": 0.0863071158528328
     },
     {
-      "feature": "confidence_pct",
-      "mean_shap": 0.0024071873631328344
+      "feature": "longitude",
+      "mean_shap": 0.06974110752344131
     },
     {
       "feature": "inside_osm_facility",
-      "mean_shap": 0.0
+      "mean_shap": 0.024769166484475136
+    },
+    {
+      "feature": "brightness_temp_kelvin",
+      "mean_shap": 0.01996447890996933
+    },
+    {
+      "feature": "confidence_pct",
+      "mean_shap": 0.00875330250710249
+    },
+    {
+      "feature": "day_night_flag",
+      "mean_shap": 0.0061941626481711864
     }
   ],
   "shap_chart_url": "/ml/shap_feature_importance.png",

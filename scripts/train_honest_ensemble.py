@@ -72,8 +72,11 @@ FEATURE_NAMES = [
 
 
 def load_dataset() -> tuple[np.ndarray, np.ndarray]:
-    """Loads the real hand-labeled FIRMS detections + natural boundary anchors."""
+    """Loads the merged ground-truth dataset:
+    hand-verified FIRMS + LANCE archive rule-labeled samples with
+    REAL per-location persistence + registry distances."""
     csv_paths = [
+        ROOT / "packages" / "data" / "ground_truth" / "merged_ground_truth.csv",
         ROOT / "packages" / "data" / "ground_truth" / "real_plus_aug.csv",
         ROOT / "packages" / "data" / "ground_truth" / "firms_north_labeled_v2.csv",
     ]
@@ -290,7 +293,14 @@ def train_honest_evaluation():
         "features": FEATURE_NAMES,
         "feature_importance_shap": feature_ranking,
         "shap_chart_url": "/ml/shap_feature_importance.png",
-        "dataset_provenance": "333 Real NASA FIRMS VIIRS Detections (North India BBox) + Google Earth Optical Ground Truth + OpenStreetMap Geodesic Infrastructure Network",
+        "dataset_provenance": (
+            f"Merged ground truth: 221 hand-verified (Google Earth optical) + "
+            f"112 physical boundary anchors + 746 NASA LANCE VIIRS C2 archive samples "
+            f"(India, rule-labeled via 50-facility OSM registry containment + "
+            f"geographic fire-regime zones; persistence_count_30d derived from real "
+            f"per-location archive detection counts). Labels: 0=Industrial Fire Emergency, "
+            f"1=Persistent Industrial Flare, 2=Agricultural Burning, 3=Wildfire."
+        ),
     }
 
     with open(model_dir / "model_metrics.json", "w", encoding="utf-8") as f:
