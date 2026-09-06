@@ -389,14 +389,19 @@ async def submit_analyst_review(event_id: str, payload: dict):
     updated = await event_store.update(event_id, patch)
 
     # Log to immutable audit store
-    log_store.add_entry(
-        event_id=event_id,
+    await log_store.add(
         level="CRITICAL" if is_crit else "INFO",
-        agent_name="AnalystDesk",
-        action=f"HITL_REVIEW_{decision}",
-        reasoning=f"Analyst resolution: {target_class} ({note})",
-        confidence=float(event.get("confidence_score") or 0.95),
-        cde_score=float(event.get("cde_anomaly_score") or 0.0),
+        source="system",
+        message=f"HITL_REVIEW_{decision}: {target_class} ({note[:200]})",
+        event_id=event_id,
+        metadata={
+            "action": f"HITL_REVIEW_{decision}",
+            "analyst": "AnalystDesk",
+            "classification": target_class,
+            "note": note,
+            "previous_confidence": float(event.get("confidence_score") or 0.95),
+            "cde_score": float(event.get("cde_anomaly_score") or 0.0),
+        },
     )
 
     # Broadcast on analyst channel + general events channel
