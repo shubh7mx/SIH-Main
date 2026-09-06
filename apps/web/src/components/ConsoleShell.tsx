@@ -4,12 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CopilotWidget } from "@/components/CopilotWidget";
+import { LiveStreamStatus } from "@/components/LiveStreamStatus";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: "◈" },
   { href: "/map", label: "Live Map", icon: "◉" },
   { href: "/events", label: "Events", icon: "▤" },
   { href: "/analytics", label: "Analytics", icon: "▦" },
+  { href: "/model-validation", label: "ML Model", icon: "◎" },
   { href: "/audit-logs", label: "Audit Logs", icon: "≡" },
   { href: "/copilot", label: "Copilot", icon: "⚡" },
 ];
@@ -78,10 +80,15 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        {/* Clock */}
-        <div className="font-mono text-[10px] text-mute tabular-nums hidden sm:flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span>{now} IST</span>
+        {/* Right Action Tools & Clock */}
+        <div className="flex items-center gap-3">
+          <LiveStreamStatus />
+
+          {/* Clock */}
+          <div className="font-mono text-[10px] text-mute tabular-nums hidden sm:flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>{now} IST</span>
+          </div>
         </div>
       </header>
 

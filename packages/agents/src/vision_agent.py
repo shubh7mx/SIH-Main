@@ -67,25 +67,29 @@ def vision_pipeline(state: SwarmState) -> SwarmState:
     tile_id = _generate_sentinel2_tile_id(state.latitude, state.longitude, dt)
     patch_url = f"/satellite/patches/{state.hotspot_id}-swir-256.png"
 
-    # Predict class consistent with multi-sensor physical context
-    spatial_facility = state.spatial.facility_type
-    frp = state.frp_mw
-    z_frp = state.temporal.frp_zscore
+    # Predict class using the trained Multi-Modal Geospatial ML Engine
+    from packages.agents.src.ml_engine import predict_thermal_anomaly
 
-    if spatial_facility is not None:
-        if z_frp > 3.0 or frp > 400.0:
-            predicted_class: ThermalClass = "INDUSTRIAL_FIRE_EMERGENCY"
-            vision_conf = 0.96 if cloud_free else 0.91  # SAR confirmed
-        else:
-            predicted_class = "PERSISTENT_INDUSTRIAL_FLARE"
-            vision_conf = 0.95 if cloud_free else 0.90
-    elif state.spatial.land_cover_class == 10:  # Forest / Tree cover
-        predicted_class = "WILDFIRE"
-        vision_conf = 0.94 if cloud_free else 0.89
-    else:
-        # Cropland / Agricultural
-        predicted_class = "AGRICULTURAL_BURNING"
-        vision_conf = 0.93 if cloud_free else 0.88
+    inside_fac = state.spatial.facility_id is not None or (state.spatial.nearest_facility_km is not None and state.spatial.nearest_facility_km <= 2.5)
+    lc_class = state.spatial.land_cover_class or 40
+    dist_km = state.spatial.nearest_facility_km or 999.0
+    z_score = state.temporal.frp_zscore or 0.0
+
+    ml_class, ml_conf, _ = predict_thermal_anomaly(
+        frp_mw=state.frp_mw,
+        brightness_temp_k=state.brightness_temp_k,
+        day_night=state.day_night,
+        confidence_pct=state.confidence_pct,
+        dist_to_industrial_km=dist_km,
+        inside_osm_facility=inside_fac,
+        landcover_class=lc_class,
+        cde_deviation_zscore=z_score,
+        latitude=state.latitude,
+        longitude=state.longitude,
+    )
+
+    predicted_class = ml_class
+    vision_conf = ml_conf if cloud_free else max(0.85, ml_conf * 0.92)
 
     state.vision = VisionScores(
         cloud_free=cloud_free,

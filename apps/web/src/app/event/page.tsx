@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ConsoleShell } from "@/components/ConsoleShell";
 import { TacticalMap } from "@/components/TacticalMap";
+import { ExportBriefModal } from "@/components/ExportBriefModal";
+import { FacilityBaselineChart } from "@/components/FacilityBaselineChart";
 import { IncidentAssessmentCard } from "@/components/IncidentAssessmentCard";
 import { SeverityBadge } from "@/components/ui/SeverityBadge";
 import { ConfidenceMeter } from "@/components/ui/ConfidenceMeter";
@@ -38,6 +40,7 @@ function EventDetailInner() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const { brief, loading: briefLoading } = useIncidentBrief(id);
   const [escalated, setEscalated] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -153,6 +156,12 @@ function EventDetailInner() {
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setIsExportOpen(true)}
+            className="py-2 px-3.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md"
+          >
+            <span>📄</span> Export Brief
+          </button>
+          <button
             onClick={() => setEscalated(true)}
             disabled={escalated}
             className={`py-2 px-4 rounded-lg font-mono text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
@@ -236,11 +245,22 @@ function EventDetailInner() {
         />
       </div>
 
+      {/* 30-Day Facility CDE Thermodynamic Profile & Baseline Chart */}
+      <FacilityBaselineChart event={event} />
+
       {/* 6-Agent Reasoning Grid */}
       <div className="space-y-3">
         <h2 className="eyebrow">Multi-Agent Swarm Evidence</h2>
         <SwarmEvidenceGrid event={event} />
       </div>
+
+      {/* NTRO Classified Intelligence Brief Export Modal */}
+      <ExportBriefModal
+        event={event}
+        briefText={brief?.brief ?? null}
+        isOpen={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+      />
     </div>
   );
 }

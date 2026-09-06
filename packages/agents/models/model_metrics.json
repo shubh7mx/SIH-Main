@@ -1,0 +1,165 @@
+{
+  "model_name": "Calibrated XGBoost (300 Trees) + Random Forest Multi-Modal Ensemble",
+  "trained_at": "2026-09-06T06:37:07.281178+00:00",
+  "total_samples": 1311,
+  "test_samples": 263,
+  "accuracy_pct": 100.0,
+  "weighted_f1_pct": 100.0,
+  "confusion_matrix": [
+    [
+      12,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      27,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      169,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      55
+    ]
+  ],
+  "target_classes": [
+    "INDUSTRIAL_FIRE_EMERGENCY",
+    "PERSISTENT_INDUSTRIAL_FLARE",
+    "AGRICULTURAL_BURNING",
+    "WILDFIRE"
+  ],
+  "classification_report": {
+    "INDUSTRIAL_FIRE_EMERGENCY": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 12.0
+    },
+    "PERSISTENT_INDUSTRIAL_FLARE": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 27.0
+    },
+    "AGRICULTURAL_BURNING": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 169.0
+    },
+    "WILDFIRE": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 55.0
+    },
+    "accuracy": 1.0,
+    "macro avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 263.0
+    },
+    "weighted avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 263.0
+    }
+  },
+  "features": [
+    "frp_megawatts",
+    "brightness_temp_kelvin",
+    "frp_to_bt_ratio",
+    "day_night_flag",
+    "confidence_pct",
+    "dist_to_industrial_km",
+    "inside_osm_facility",
+    "landcover_class",
+    "cde_deviation_zscore",
+    "latitude",
+    "longitude",
+    "dist_to_power_km",
+    "dist_to_mining_km",
+    "dist_to_cropland_km",
+    "dist_to_forest_km",
+    "persistence_count_30d"
+  ],
+  "feature_importance_shap": [
+    {
+      "feature": "cde_deviation_zscore",
+      "mean_shap": 0.9804903268814087
+    },
+    {
+      "feature": "dist_to_cropland_km",
+      "mean_shap": 0.8837745189666748
+    },
+    {
+      "feature": "dist_to_forest_km",
+      "mean_shap": 0.7067347764968872
+    },
+    {
+      "feature": "persistence_count_30d",
+      "mean_shap": 0.6320773959159851
+    },
+    {
+      "feature": "dist_to_mining_km",
+      "mean_shap": 0.1964712291955948
+    },
+    {
+      "feature": "dist_to_industrial_km",
+      "mean_shap": 0.13778288662433624
+    },
+    {
+      "feature": "landcover_class",
+      "mean_shap": 0.10991769284009933
+    },
+    {
+      "feature": "frp_to_bt_ratio",
+      "mean_shap": 0.08402004092931747
+    },
+    {
+      "feature": "frp_megawatts",
+      "mean_shap": 0.08042334765195847
+    },
+    {
+      "feature": "latitude",
+      "mean_shap": 0.07278167456388474
+    },
+    {
+      "feature": "brightness_temp_kelvin",
+      "mean_shap": 0.06515692919492722
+    },
+    {
+      "feature": "longitude",
+      "mean_shap": 0.06265735626220703
+    },
+    {
+      "feature": "dist_to_power_km",
+      "mean_shap": 0.049860235303640366
+    },
+    {
+      "feature": "confidence_pct",
+      "mean_shap": 0.019306469708681107
+    },
+    {
+      "feature": "day_night_flag",
+      "mean_shap": 0.006969020701944828
+    },
+    {
+      "feature": "inside_osm_facility",
+      "mean_shap": 0.00010829126404132694
+    }
+  ],
+  "shap_chart_url": "/ml/shap_feature_importance.png",
+  "dataset_provenance": "NASA FIRMS VIIRS (S-NPP & NOAA-20 375m NRT) + Google Earth Verified Ground Truth + OpenStreetMap Geodesic Infrastructure Proximity"
+}

@@ -74,37 +74,100 @@ async def get_history(
     )
 
 
-@router.post("/reseed")
-async def reseed_events():
+@router.post("/inject")
+async def inject_event(payload: dict):
     """
-    Clears current in-memory events and reseeds with 200 high-fidelity
-    Indian mainland agricultural, industrial, and forest hotspots.
+    Live Interactive Injection Engine (for evaluator/judge testing & live demo).
+    Simulates a newly detected satellite thermal anomaly passing through
+    the multi-agent swarm pipeline, CDE baseline engine, and WebSocket broadcaster.
     """
     import sys
+    from datetime import datetime, timezone
     from pathlib import Path
 
     ROOT = Path(__file__).resolve().parents[3]
     if str(ROOT) not in sys.path:
         sys.path.insert(0, str(ROOT))
 
-    from packages.ingestion.src.firms_poller import FIRMSPoller
     from packages.agents.src.graph import run_swarm
     from apps.api.main import process_event
 
-    await event_store.clear()
-    poller = FIRMSPoller()
-    hotspots = poller.generate_simulated_hotspots(count=200)
+    scenario = payload.get("scenario", "jamnagar_emergency")
 
-    added = 0
-    for h in hotspots:
-        try:
-            classified = run_swarm(h)
-            await process_event(classified)
-            added += 1
-        except Exception:
-            continue
+    # Scenarios curated for live judge demonstration
+    scenarios = {
+        "jamnagar_emergency": {
+            "firms_id": f"sim-jam-{int(datetime.now().timestamp())}",
+            "latitude": 22.368,
+            "longitude": 69.832,
+            "frp_megawatts": payload.get("frp_megawatts", 892.0),
+            "brightness_temp_kelvin": payload.get("brightness_temp_kelvin", 942.5),
+            "confidence_pct": 99,
+            "satellite_source": payload.get("satellite_source", "VIIRS_SNPP_NRT"),
+            "day_night": "N",
+            "acq_datetime": datetime.now(timezone.utc).isoformat(),
+        },
+        "haldia_flare": {
+            "firms_id": f"sim-hal-{int(datetime.now().timestamp())}",
+            "latitude": 22.031,
+            "longitude": 88.082,
+            "frp_megawatts": payload.get("frp_megawatts", 145.0),
+            "brightness_temp_kelvin": payload.get("brightness_temp_kelvin", 780.0),
+            "confidence_pct": 92,
+            "satellite_source": "VIIRS_NOAA20_NRT",
+            "day_night": "N",
+            "acq_datetime": datetime.now(timezone.utc).isoformat(),
+        },
+        "punjab_stubble": {
+            "firms_id": f"sim-pb-{int(datetime.now().timestamp())}",
+            "latitude": 30.342,
+            "longitude": 75.832,
+            "frp_megawatts": payload.get("frp_megawatts", 48.0),
+            "brightness_temp_kelvin": payload.get("brightness_temp_kelvin", 372.0),
+            "confidence_pct": 88,
+            "satellite_source": "VIIRS_SNPP_NRT",
+            "day_night": "D",
+            "acq_datetime": datetime.now(timezone.utc).isoformat(),
+        },
+        "uttarakhand_wildfire": {
+            "firms_id": f"sim-uk-{int(datetime.now().timestamp())}",
+            "latitude": 30.082,
+            "longitude": 79.241,
+            "frp_megawatts": payload.get("frp_megawatts", 75.0),
+            "brightness_temp_kelvin": payload.get("brightness_temp_kelvin", 418.0),
+            "confidence_pct": 90,
+            "satellite_source": "VIIRS_SNPP_NRT",
+            "day_night": "D",
+            "acq_datetime": datetime.now(timezone.utc).isoformat(),
+        },
+        "custom": {
+            "firms_id": f"sim-custom-{int(datetime.now().timestamp())}",
+            "latitude": float(payload.get("latitude", 22.368)),
+            "longitude": float(payload.get("longitude", 69.832)),
+            "frp_megawatts": float(payload.get("frp_megawatts", 500.0)),
+            "brightness_temp_kelvin": float(payload.get("brightness_temp_kelvin", 800.0)),
+            "confidence_pct": int(payload.get("confidence_pct", 95)),
+            "satellite_source": payload.get("satellite_source", "VIIRS_SNPP_NRT"),
+            "day_night": payload.get("day_night", "N"),
+            "acq_datetime": datetime.now(timezone.utc).isoformat(),
+        }
+    }
 
-    return {"status": "ok", "reseeded_count": added}
+    selected = scenarios.get(scenario, scenarios["jamnagar_emergency"])
+
+    # Run multi-agent swarm pipeline
+    classified = run_swarm(selected)
+
+    # Process and broadcast through WebSocket
+    await process_event(classified)
+
+    return {
+        "status": "success",
+        "scenario": scenario,
+        "event": classified,
+        "message": f"Event {classified.get('id')} injected and broadcast via WebSocket to live map",
+    }
+
 
 
 @router.get("/{event_id}")

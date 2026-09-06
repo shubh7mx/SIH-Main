@@ -11,6 +11,7 @@ import {
   createWsClient,
   getAnalytics,
   getDetailedAnalytics,
+  getModelValidation,
   getHealth,
   getTimeline,
   listEvents,
@@ -351,6 +352,16 @@ export function useDetailedAnalytics(refreshMs = 20_000): AsyncState<DetailedAna
     const id = setInterval(() => refreshRef.current(), refreshMs);
     return () => clearInterval(id);
   }, [refreshMs]);
+  return { data, error, loading, refresh };
+}
+
+// ── ML Model Validation & Accuracy Metrics hook ──────────────────────────────
+
+export function useModelValidation(): AsyncState<any> {
+  const { data, error, loading, refresh } = useAsync<any>(
+    (signal) => getModelValidation(signal),
+    []
+  );
   return { data, error, loading, refresh };
 }
 

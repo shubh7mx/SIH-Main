@@ -275,6 +275,10 @@ export async function getFacilitiesRisk(
   };
 }
 
+export async function getModelValidation(signal?: AbortSignal): Promise<any> {
+  return request<any>("/analytics/model-validation", {}, signal);
+}
+
 // ── Audit & Agent Logs ───────────────────────────────────────────────────────
 
 export interface AgentLogEntry {

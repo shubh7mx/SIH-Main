@@ -335,6 +335,111 @@ function deduplicateEvents(rawEvents: HotspotEvent[]): HotspotEvent[] {
   return clean;
 }
 
+
+// ─── Gaussian Plume Dispersion GeoJSON Generator ─────────────────────────────
+function calculateDestination(lat: number, lon: number, distanceKm: number, bearingDeg: number): [number, number] {
+  const R = 6371.0;
+  const rad = Math.PI / 180;
+  const bRad = bearingDeg * rad;
+  const lat1 = lat * rad;
+  const lon1 = lon * rad;
+
+  const lat2 = Math.asin(
+    Math.sin(lat1) * Math.cos(distanceKm / R) +
+      Math.cos(lat1) * Math.sin(distanceKm / R) * Math.cos(bRad)
+  );
+  const lon2 =
+    lon1 +
+    Math.atan2(
+      Math.sin(bRad) * Math.sin(distanceKm / R) * Math.cos(lat1),
+      Math.cos(distanceKm / R) - Math.sin(lat1) * Math.sin(lat2)
+    );
+
+  return [lon2 / rad, lat2 / rad];
+}
+
+function generateHazardCircle(lat: number, lon: number, radiusKm: number, points = 36): number[][] {
+  const ring: number[][] = [];
+  for (let i = 0; i <= points; i++) {
+    const bearing = (i * 360) / points;
+    ring.push(calculateDestination(lat, lon, radiusKm, bearing));
+  }
+  return ring;
+}
+
+function generatePlumeGeoJSON(events: HotspotEvent[]): GeoJSON.FeatureCollection {
+  const features: GeoJSON.Feature[] = [];
+
+  for (const ev of events) {
+    // Only generate dispersion plumes for critical industrial emergencies or high FRP events (>200MW)
+    const isCritical = ev.is_critical_alert || ev.classification === "INDUSTRIAL_FIRE_EMERGENCY" || (ev.frp_megawatts && ev.frp_megawatts >= 250);
+    if (!isCritical || typeof ev.latitude !== "number" || typeof ev.longitude !== "number") continue;
+
+    const lat = ev.latitude;
+    const lon = ev.longitude;
+    const frp = ev.frp_megawatts || 500;
+
+    // Simulated wind vector: direction wind is coming FROM (e.g., 230° SW monsoon) -> downwind TO is (230+180)%360 = 50° NE
+    const windFrom = 230.0;
+    const windTo = (windFrom + 180.0) % 360.0;
+    const plumeLengthKm = Math.min(35.0, Math.max(8.0, Math.sqrt(frp) * 0.9));
+
+    // Gaussian envelope vertices
+    const pOrigin: [number, number] = [lon, lat];
+    const pApex = calculateDestination(lat, lon, plumeLengthKm, windTo);
+    const pLeftMid = calculateDestination(lat, lon, plumeLengthKm * 0.5, (windTo - 45 + 360) % 360);
+    const pRightMid = calculateDestination(lat, lon, plumeLengthKm * 0.5, (windTo + 45) % 360);
+
+    // 1. Plume Cone Polygon
+    features.push({
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [[pOrigin, pLeftMid, pApex, pRightMid, pOrigin]],
+      },
+      properties: {
+        id: `plume-${ev.id}`,
+        type: "plume_cone",
+        facility: ev.facility_name || "Industrial Facility",
+        frp: frp,
+      },
+    });
+
+    // 2. 5km Immediate Evacuation Zone
+    features.push({
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [generateHazardCircle(lat, lon, 5.0)],
+      },
+      properties: {
+        id: `zone-5km-${ev.id}`,
+        type: "hazard_zone_5km",
+        facility: ev.facility_name || "Industrial Facility",
+      },
+    });
+
+    // 3. 10km Atmospheric Advisory Zone
+    features.push({
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [generateHazardCircle(lat, lon, 10.0)],
+      },
+      properties: {
+        id: `zone-10km-${ev.id}`,
+        type: "hazard_zone_10km",
+        facility: ev.facility_name || "Industrial Facility",
+      },
+    });
+  }
+
+  return {
+    type: "FeatureCollection",
+    features,
+  };
+}
+
 export function TacticalMap({
   events: rawEvents,
   onSelect,
@@ -1191,6 +1296,72 @@ export function TacticalMap({
           },
         });
 
+        // ── Plume Dispersion & Evacuation Zones ──────────────────────
+        if (!map.getSource("plume_dispersion")) {
+          map.addSource("plume_dispersion", {
+            type: "geojson",
+            data: generatePlumeGeoJSON(eventsRef.current),
+          });
+        }
+
+        if (!map.getLayer("plume-cone-fill")) {
+          map.addLayer({
+            id: "plume-cone-fill",
+            type: "fill",
+            source: "plume_dispersion",
+            filter: ["==", ["get", "type"], "plume_cone"],
+            paint: {
+              "fill-color": "#ef4444",
+              "fill-opacity": 0.28,
+            },
+          });
+        }
+
+        if (!map.getLayer("plume-cone-line")) {
+          map.addLayer({
+            id: "plume-cone-line",
+            type: "line",
+            source: "plume_dispersion",
+            filter: ["==", ["get", "type"], "plume_cone"],
+            paint: {
+              "line-color": "#ff2047",
+              "line-width": 2.0,
+              "line-dasharray": [2, 2],
+              "line-opacity": 0.9,
+            },
+          });
+        }
+
+        if (!map.getLayer("plume-5km-zone")) {
+          map.addLayer({
+            id: "plume-5km-zone",
+            type: "line",
+            source: "plume_dispersion",
+            filter: ["==", ["get", "type"], "hazard_zone_5km"],
+            paint: {
+              "line-color": "#ef4444",
+              "line-width": 1.5,
+              "line-dasharray": [3, 2],
+              "line-opacity": 0.85,
+            },
+          });
+        }
+
+        if (!map.getLayer("plume-10km-zone")) {
+          map.addLayer({
+            id: "plume-10km-zone",
+            type: "line",
+            source: "plume_dispersion",
+            filter: ["==", ["get", "type"], "hazard_zone_10km"],
+            paint: {
+              "line-color": "#f59e0b",
+              "line-width": 1.2,
+              "line-dasharray": [4, 3],
+              "line-opacity": 0.7,
+            },
+          });
+        }
+
         // Unclustered Point Body (Solid Vibrant Marker + White Halo)
         map.addLayer({
           id: "unclustered-point",
@@ -1566,6 +1737,10 @@ export function TacticalMap({
       const heatSource = map.getSource("heat") as any;
       if (heatSource && typeof heatSource.setData === "function") {
         heatSource.setData(geoData);
+      }
+      const plumeSource = map.getSource("plume_dispersion") as any;
+      if (plumeSource && typeof plumeSource.setData === "function") {
+        plumeSource.setData(generatePlumeGeoJSON(eventsRef.current));
       }
       try {
         map.resize();
