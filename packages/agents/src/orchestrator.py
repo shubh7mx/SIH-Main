@@ -98,11 +98,16 @@ def _spatial_class_posterior(state: SwarmState) -> dict[str, float]:
         post["WILDFIRE"] = 0.01
         post["DEFERRED_FOR_ANALYST"] = 0.03
     elif land_cover == 50:
-        post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.60
-        post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.25
-        post["AGRICULTURAL_BURNING"] = 0.05
-        post["WILDFIRE"] = 0.05
-        post["DEFERRED_FOR_ANALYST"] = 0.05
+        if dist_km <= 2.5:
+            post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.60
+            post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.25
+        else:
+            # General urban/built-up zone (village/town periphery)
+            post["PERSISTENT_INDUSTRIAL_FLARE"] = 0.25
+            post["INDUSTRIAL_FIRE_EMERGENCY"] = 0.10
+        post["AGRICULTURAL_BURNING"] = 0.20
+        post["WILDFIRE"] = 0.20
+        post["DEFERRED_FOR_ANALYST"] = 0.10
     elif land_cover == 10:
         post["WILDFIRE"] = 0.90
         post["AGRICULTURAL_BURNING"] = 0.03
@@ -249,6 +254,7 @@ def orchestrator_node(state: SwarmState) -> SwarmState:
     ml_margin = state.vision.prediction_margin
     ml_entropy = state.vision.prediction_entropy
     ml_agreement = state.vision.model_agreement
+    uncertainty_reasons: list[str] = []
 
     # ── CDE severity override for industrial containment ───────────
     spatial_facility = state.spatial.facility_id is not None or state.spatial.facility_name is not None
@@ -272,6 +278,9 @@ def orchestrator_node(state: SwarmState) -> SwarmState:
             classification = "DEFERRED_FOR_ANALYST"
             severity = "WARNING"
             fused_score = max(fused_score, 0.86)
+            uncertainty_reasons.append(
+                f"Elevated facility thermal deviation (+{cde_output.cde_score:.1f}σ above baseline)"
+            )
         elif cde_output.severity == "WATCH":
             # Elevated but within operational range: persistent flare under watch
             classification = "PERSISTENT_INDUSTRIAL_FLARE"
@@ -312,8 +321,6 @@ def orchestrator_node(state: SwarmState) -> SwarmState:
     fused_score = max(0.70, min(0.99, round(fused_score, 3)))
 
     # ── Tier A: Calibrated Deferral rules (on final evidence) ──────
-    uncertainty_reasons: list[str] = []
-
     # Rule 1: Truly low fused confidence on unconfirmed ground
     has_known_facility = bool(state.spatial.facility_name and (state.spatial.nearest_facility_km or 999.0) <= 5.0)
     conf_floor = 0.60 if has_known_facility else 0.65

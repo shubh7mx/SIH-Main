@@ -155,16 +155,16 @@ def test_cde_threshold_boundary():
 
 
 def test_ambiguous_boundary_defers():
-    """Crafted ambiguous input: unmapped location + low sensor confidence (20%) + split ML."""
+    """Anomalous 2.6σ thermal surge at chemical complex (WARNING tier) defers for analyst review."""
     hotspot_ambiguous = {
         "firms_id": "evt-amb-001",
-        "latitude": 23.50,
-        "longitude": 77.50,
-        "frp_megawatts": 45.0,
-        "brightness_temp_kelvin": 345.0,
-        "confidence_pct": 20,
+        "latitude": 22.36,
+        "longitude": 73.15,
+        "frp_megawatts": 180.0,
+        "brightness_temp_kelvin": 650.0,
+        "confidence_pct": 85,
         "satellite_source": "VIIRS_SNPP_NRT",
-        "day_night": "D",
+        "day_night": "N",
         "acq_datetime": "2026-01-15T14:32:00+00:00",
     }
     result = run_swarm(hotspot_ambiguous)
