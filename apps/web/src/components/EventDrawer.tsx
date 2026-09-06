@@ -210,32 +210,43 @@ export function EventDrawer({ event, onClose }: Props) {
                 </p>
               </div>
 
-              {/* Probable Cause & Metric Reason (Especially for Unmapped / Agrarian / Wildfire Anomaly) */}
-              <div className="card p-3.5 space-y-2 border border-cyan-500/20 bg-cyan-950/20">
-                <div className="flex items-center justify-between">
-                  <div className="eyebrow text-[9px] font-mono uppercase tracking-widest text-cyan-400">
-                    Probable Cause & Field Analysis
+              {/* Probable Cause & Metric Reason (Contextual & Radiometric Analysis) */}
+              {(() => {
+                const isEmerg = anomalyInfo.category === "INDUSTRIAL_EMERGENCY";
+                const isFlare = anomalyInfo.category === "INDUSTRIAL_FLARE";
+                const isWild = anomalyInfo.category === "FOREST_WILDFIRE";
+                const isDefer = anomalyInfo.category === "ANALYST_DEFERRED";
+                const accentBorder = isEmerg ? "border-red-500/30 bg-red-950/20" : isFlare ? "border-orange-500/30 bg-orange-950/20" : isWild ? "border-purple-500/30 bg-purple-950/20" : isDefer ? "border-amber-500/30 bg-amber-950/20" : "border-cyan-500/20 bg-cyan-950/20";
+                const tagColor = isEmerg ? "bg-red-500/20 text-red-300 border-red-500/30" : isFlare ? "bg-orange-500/20 text-orange-300 border-orange-500/30" : isWild ? "bg-purple-500/20 text-purple-300 border-purple-500/30" : isDefer ? "bg-amber-500/20 text-amber-300 border-amber-500/30" : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
+                const eyebrowColor = isEmerg ? "text-red-400" : isFlare ? "text-orange-400" : isWild ? "text-purple-400" : isDefer ? "text-amber-400" : "text-cyan-400";
+                return (
+                  <div className={`card p-3.5 space-y-2 border ${accentBorder}`}>
+                    <div className="flex items-center justify-between">
+                      <div className={`eyebrow text-[9px] font-mono uppercase tracking-widest ${eyebrowColor}`}>
+                        {anomalyInfo.categoryIcon} Probable Cause & Field Analysis
+                      </div>
+                      <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${tagColor}`}>
+                        {anomalyInfo.categoryLabel}
+                      </span>
+                    </div>
+                    <div className="text-xs font-semibold text-white">
+                      {anomalyInfo.probableCause}
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
+                      {anomalyInfo.metricAnalysis}
+                    </p>
+                    <div className="space-y-1 pt-1 border-t border-white/5">
+                      <div className="text-[10px] text-slate-400 font-mono">Geographic Belt: <span className="text-slate-200">{anomalyInfo.regionLabel}</span></div>
+                      <div className="text-[10px] text-slate-400 font-mono">Telemetry Key Indicators:</div>
+                      <ul className="space-y-0.5 text-[10px] text-slate-300 list-disc list-inside">
+                        {anomalyInfo.indicators.map((ind, i) => (
+                          <li key={i} className="text-slate-300 font-mono">{ind}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                    {anomalyInfo.categoryLabel}
-                  </span>
-                </div>
-                <div className="text-xs font-semibold text-white">
-                  {anomalyInfo.probableCause}
-                </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
-                  {anomalyInfo.metricAnalysis}
-                </p>
-                <div className="space-y-1 pt-1 border-t border-white/5">
-                  <div className="text-[10px] text-slate-400 font-mono">Geographic Belt: <span className="text-slate-200">{anomalyInfo.regionLabel}</span></div>
-                  <div className="text-[10px] text-slate-400 font-mono">Telemetry Key Indicators:</div>
-                  <ul className="space-y-0.5 text-[10px] text-slate-300 list-disc list-inside">
-                    {anomalyInfo.indicators.map((ind, i) => (
-                      <li key={i} className="text-slate-300 font-mono">{ind}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* Facility context */}
               {activeEvent.facility_name ? (

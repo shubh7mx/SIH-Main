@@ -79,9 +79,13 @@ export function EventDetailPanel({ event }: Props) {
         </div>
         {!event.facility_name || event.facility_name.includes("Unmapped") || event.facility_name.includes("Thermal Anomaly") ? (
           <div className="mt-1 text-[10px] font-mono text-cyan-300">
-            🌾 Probable Cause: {anomalyInfo.categoryLabel} ({anomalyInfo.regionLabel.split("(")[0].trim()})
+            {anomalyInfo.categoryIcon} Probable Cause: {anomalyInfo.categoryLabel} ({anomalyInfo.regionLabel.split("(")[0].trim()})
           </div>
-        ) : null}
+        ) : (
+          <div className="mt-1 text-[10px] font-mono text-slate-400">
+            {anomalyInfo.categoryIcon} Context: {anomalyInfo.probableCause}
+          </div>
+        )}
       </div>
 
       {/* ── Metric Grid ─────────────────────────────────────────────────── */}

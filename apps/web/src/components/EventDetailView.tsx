@@ -101,9 +101,9 @@ export function EventDetailView() {
             {locInfo ? `· ${locInfo.displayLocation}` : ""} · Satellite:{" "}
               <span className="text-white/80">{event.satellite_source}</span>
             </div>
-            {anomalyInfo && (!event.facility_name || event.facility_name.includes("Unmapped") || event.facility_name.includes("Thermal Anomaly")) ? (
+            {anomalyInfo ? (
               <div className="text-xs font-mono text-cyan-300">
-                🌾 Probable Reason: <span className="text-white font-medium">{anomalyInfo.probableCause}</span> ({anomalyInfo.regionLabel})
+                {anomalyInfo.categoryIcon} Probable Reason: <span className="text-white font-medium">{anomalyInfo.probableCause}</span> ({anomalyInfo.regionLabel})
               </div>
             ) : locInfo ? (
               <div className="text-xs font-mono text-slate-300">

@@ -142,18 +142,9 @@ function EventDetailInner() {
             · {locInfo.displayLocation} · Satellite:{" "}
             <span className="text-white/80">{event.satellite_source}</span>
           </div>
-          {!event.facility_name ||
-          event.facility_name.includes("Unmapped") ||
-          event.facility_name.includes("Thermal Anomaly") ? (
-            <div className="text-xs font-mono text-cyan-300">
-              🌾 AI Probable Cause — {anomalyInfo.probableCause} · <span className="text-white/60 font-normal">{anomalyInfo.regionLabel}</span>
-            </div>
-          ) : (
-            <div className="text-xs font-mono text-slate-300">
-              📍 <span className="text-white font-medium">{locInfo.displayLocation}</span>
-              {locInfo.isKnownFacility ? " · Known Industrial Hub" : " · Geographically Resolved"}
-            </div>
-          )}
+          <div className="text-xs font-mono text-cyan-300">
+            {anomalyInfo.categoryIcon} AI Probable Cause — {anomalyInfo.probableCause} · <span className="text-white/60 font-normal">{anomalyInfo.regionLabel}</span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">

@@ -1438,7 +1438,7 @@ export function TacticalMap({
               <div class="hp-badge" style="background:${color}22; border:1px solid ${color}66; color:${color}">${props.shortLabel || props.classification}</div>
               <div class="hp-title">${title}</div>
               ${locationLine}
-              ${anomalyInfo && (!props.facility_name || props.facility_name.includes("Unmapped") || props.facility_name.includes("Thermal Anomaly")) ? `<div class="hp-meta text-cyan-300 text-[10px] mt-0.5 font-sans">🌾 Suggestion: ${anomalyInfo.probableCause}</div>` : ""}
+              ${anomalyInfo && (!props.facility_name || props.facility_name.includes("Unmapped") || props.facility_name.includes("Thermal Anomaly")) ? `<div class="hp-meta text-cyan-300 text-[10px] mt-0.5 font-sans">${anomalyInfo.categoryIcon} Suggestion: ${anomalyInfo.probableCause}</div>` : ""}
               <div class="hp-meta">${Number(props.lat ?? coords[1]).toFixed(4)}°N · ${Number(props.lng ?? coords[0]).toFixed(4)}°E</div>
               <div class="hp-meta text-cyan-400 font-bold">${Number(props.frp ?? 10).toFixed(1)} MW FRP · ${props.confidence ?? 85}% confidence</div>
               ${props.cde_score && Math.abs(props.cde_score) >= 2.0 ? `<div class="hp-meta text-red-400 font-mono text-[9px] mt-0.5">⚠️ CDE Anomaly Score: ${Number(props.cde_score).toFixed(1)}σ</div>` : ""}
@@ -1798,7 +1798,7 @@ export function TacticalMap({
           ${locInfo ? `<div class="hp-meta">📍 ${locInfo.displayLocation}</div>` : ""}
           <div class="hp-meta">${Number(ev.latitude).toFixed(4)}°N · ${Number(ev.longitude).toFixed(4)}°E</div>
           <div class="hp-meta text-cyan-400 font-bold">${Number(ev.frp_megawatts).toFixed(1)} MW FRP · ${((ev.confidence_score ?? 0.8) * 100).toFixed(0)}% confidence</div>
-          ${!ev.facility_name || ev.facility_name.includes("Unmapped") || ev.facility_name.includes("Thermal Anomaly") ? `<div class="hp-meta text-slate-300 text-[10px] mt-0.5">🌾 ${anomalyInfo.categoryLabel} (${anomalyInfo.regionLabel.split("(")[0].trim()})</div>` : ""}
+          ${!ev.facility_name || ev.facility_name.includes("Unmapped") || ev.facility_name.includes("Thermal Anomaly") ? `<div class="hp-meta text-slate-300 text-[10px] mt-0.5">${anomalyInfo.categoryIcon} ${anomalyInfo.categoryLabel} (${anomalyInfo.regionLabel.split("(")[0].trim()})</div>` : ""}
         `)
         .addTo(map);
     })();
