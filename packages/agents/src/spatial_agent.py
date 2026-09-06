@@ -88,6 +88,16 @@ _FACILITY_REGISTRY: list[dict] = [
     {"id": "fac-048", "name": "GAIL Haryana Gas Processing", "type": "gas_processing", "lat": 28.450, "lon": 77.020},
     {"id": "fac-049", "name": "Adani Mundra Thermal Power & Port", "type": "power_plant", "lat": 22.828, "lon": 69.697},
     {"id": "fac-050", "name": "JSW Steel Vijayanagar", "type": "metal_works", "lat": 15.178, "lon": 76.671},
+    {"id": "fac-051", "name": "GIDA Industrial Complex & Gallantt Ispat Gorakhpur", "type": "metal_works", "lat": 26.760, "lon": 83.200},
+    {"id": "fac-052", "name": "HURL Gorakhpur Fertilizer Plant", "type": "chemical", "lat": 26.790, "lon": 83.360},
+    {"id": "fac-053", "name": "Jindal Steel & Power Raigarh", "type": "metal_works", "lat": 21.905, "lon": 83.398},
+    {"id": "fac-054", "name": "Vedanta Aluminium Jharsuguda", "type": "metal_works", "lat": 21.821, "lon": 84.032},
+    {"id": "fac-055", "name": "IFFCO Phulpur Fertilizer Complex", "type": "chemical", "lat": 25.550, "lon": 82.070},
+    {"id": "fac-056", "name": "IFFCO Aonla Fertilizer Complex", "type": "chemical", "lat": 28.280, "lon": 79.250},
+    {"id": "fac-057", "name": "Tata Chemicals Mithapur", "type": "chemical", "lat": 22.417, "lon": 68.995},
+    {"id": "fac-058", "name": "NTPC Ramagundam Super Thermal", "type": "power_plant", "lat": 18.756, "lon": 79.467},
+    {"id": "fac-059", "name": "NTPC Singrauli Super Thermal", "type": "power_plant", "lat": 24.103, "lon": 82.684},
+    {"id": "fac-060", "name": "NTPC Vindhyachal Super Thermal", "type": "power_plant", "lat": 24.100, "lon": 82.667},
 ]
 
 

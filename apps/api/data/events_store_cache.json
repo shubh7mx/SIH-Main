@@ -2508,7 +2508,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 320.434,
+    "distance_to_facility_km": 240.462,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -2517,7 +2517,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 320.434,
+        "distance_km": 240.462,
         "score": 0.95
       },
       "temporal": {
@@ -3150,7 +3150,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 340.561,
+    "distance_to_facility_km": 294.84,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -3159,7 +3159,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 340.561,
+        "distance_km": 294.84,
         "score": 0.95
       },
       "temporal": {
@@ -3364,7 +3364,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 319.981,
+    "distance_to_facility_km": 227.688,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -3373,7 +3373,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 319.981,
+        "distance_km": 227.688,
         "score": 0.95
       },
       "temporal": {
@@ -3792,7 +3792,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 386.594,
+    "distance_to_facility_km": 337.173,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -3801,7 +3801,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 386.594,
+        "distance_km": 337.173,
         "score": 0.95
       },
       "temporal": {
@@ -3899,7 +3899,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 231.77,
+    "distance_to_facility_km": 81.009,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -3908,7 +3908,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 231.77,
+        "distance_km": 81.009,
         "score": 0.95
       },
       "temporal": {
@@ -3925,18 +3925,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 45.7,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.801,
-        "score": 0.801,
+        "vision_class_confidence": 0.819,
+        "score": 0.819,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T214500_N0500_R019_T44F9397_20260904T214500",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.012144363010302186,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.029763483727971714,
-          "AGRICULTURAL_BURNING": 0.8005780617396037,
-          "WILDFIRE": 0.1575140833730499
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011338666304945946,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0347978400796031,
+          "AGRICULTURAL_BURNING": 0.8189126165707906,
+          "WILDFIRE": 0.13495084922139844
         },
-        "prediction_margin": 0.6431,
-        "prediction_entropy": 0.4525,
-        "model_agreement": 0.6655
+        "prediction_margin": 0.684,
+        "prediction_entropy": 0.4339,
+        "model_agreement": 0.6693
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -3977,15 +3977,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.012144363010302186,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.029763483727971714,
-      "AGRICULTURAL_BURNING": 0.8005780617396037,
-      "WILDFIRE": 0.1575140833730499
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011338666304945946,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0347978400796031,
+      "AGRICULTURAL_BURNING": 0.8189126165707906,
+      "WILDFIRE": 0.13495084922139844
     },
-    "model_agreement": 0.6655,
-    "prediction_entropy": 0.4525,
-    "prediction_margin": 0.6431,
-    "agent_disagreement": 0.0317
+    "model_agreement": 0.6693,
+    "prediction_entropy": 0.4339,
+    "prediction_margin": 0.684,
+    "agent_disagreement": 0.0264
   },
   {
     "id": "12aa1dd298428806",
@@ -4113,7 +4113,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 383.871,
+    "distance_to_facility_km": 339.759,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -4122,7 +4122,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 383.871,
+        "distance_km": 339.759,
         "score": 0.95
       },
       "temporal": {
@@ -4642,13 +4642,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T21:09:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.869,
+    "confidence_score": 0.867,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 190.692,
+    "distance_to_facility_km": 28.424,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -4657,7 +4657,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 190.692,
+        "distance_km": 28.424,
         "score": 0.95
       },
       "temporal": {
@@ -4674,18 +4674,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 45.7,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.908,
-        "score": 0.908,
+        "vision_class_confidence": 0.904,
+        "score": 0.904,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T210900_N0500_R019_T44F4050_20260904T210900",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.011616051769815386,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.02902451884874501,
-          "AGRICULTURAL_BURNING": 0.9084581912749381,
-          "WILDFIRE": 0.050901261971642575
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.01151892309077084,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03860364045889475,
+          "AGRICULTURAL_BURNING": 0.9040039671652884,
+          "WILDFIRE": 0.04587343645592531
         },
-        "prediction_margin": 0.8576,
-        "prediction_entropy": 0.2837,
-        "model_agreement": 0.8629
+        "prediction_margin": 0.8581,
+        "prediction_entropy": 0.2955,
+        "model_agreement": 0.8455
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -4696,7 +4696,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.869,
+        "final_confidence": 0.867,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -4726,15 +4726,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.011616051769815386,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.02902451884874501,
-      "AGRICULTURAL_BURNING": 0.9084581912749381,
-      "WILDFIRE": 0.050901261971642575
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.01151892309077084,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03860364045889475,
+      "AGRICULTURAL_BURNING": 0.9040039671652884,
+      "WILDFIRE": 0.04587343645592531
     },
-    "model_agreement": 0.8629,
-    "prediction_entropy": 0.2837,
-    "prediction_margin": 0.8576,
-    "agent_disagreement": 0.0174
+    "model_agreement": 0.8455,
+    "prediction_entropy": 0.2955,
+    "prediction_margin": 0.8581,
+    "agent_disagreement": 0.0167
   },
   {
     "id": "7f052dd8e0dce2a4",
@@ -4969,7 +4969,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 319.804,
+    "distance_to_facility_km": 237.653,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -4978,7 +4978,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 319.804,
+        "distance_km": 237.653,
         "score": 0.95
       },
       "temporal": {
@@ -6253,7 +6253,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 384.663,
+    "distance_to_facility_km": 336.07,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -6262,7 +6262,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 384.663,
+        "distance_km": 336.07,
         "score": 0.95
       },
       "temporal": {
@@ -6788,7 +6788,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 332.974,
+    "distance_to_facility_km": 233.671,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -6797,7 +6797,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 332.974,
+        "distance_km": 233.671,
         "score": 0.95
       },
       "temporal": {
@@ -7751,7 +7751,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 308.91,
+    "distance_to_facility_km": 232.177,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -7760,7 +7760,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 308.91,
+        "distance_km": 232.177,
         "score": 0.95
       },
       "temporal": {
@@ -9356,7 +9356,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 383.01,
+    "distance_to_facility_km": 340.082,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -9365,7 +9365,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 383.01,
+        "distance_km": 340.082,
         "score": 0.95
       },
       "temporal": {
@@ -9570,7 +9570,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 344.445,
+    "distance_to_facility_km": 297.761,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -9579,7 +9579,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 344.445,
+        "distance_km": 297.761,
         "score": 0.95
       },
       "temporal": {
@@ -9998,7 +9998,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 331.565,
+    "distance_to_facility_km": 223.564,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -10007,7 +10007,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 331.565,
+        "distance_km": 223.564,
         "score": 0.95
       },
       "temporal": {
@@ -10640,7 +10640,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 380.029,
+    "distance_to_facility_km": 338.585,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -10649,7 +10649,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 380.029,
+        "distance_km": 338.585,
         "score": 0.95
       },
       "temporal": {
@@ -11068,7 +11068,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 185.626,
+    "distance_to_facility_km": 23.401,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -11077,7 +11077,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 185.626,
+        "distance_km": 23.401,
         "score": 0.95
       },
       "temporal": {
@@ -11098,14 +11098,14 @@
         "score": 0.85,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T180200_N0500_R019_T44F3945_20260904T180200",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.008142610501187544,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.03181923897320885,
-          "AGRICULTURAL_BURNING": 0.9062836914453278,
-          "WILDFIRE": 0.05375446757859429
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.00818559173649798,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.041672010627275304,
+          "AGRICULTURAL_BURNING": 0.8973931749661763,
+          "WILDFIRE": 0.052749184835070774
         },
-        "prediction_margin": 0.8525,
-        "prediction_entropy": 0.2851,
-        "model_agreement": 0.8539
+        "prediction_margin": 0.8446,
+        "prediction_entropy": 0.3059,
+        "model_agreement": 0.8323
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -11146,14 +11146,14 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.008142610501187544,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.03181923897320885,
-      "AGRICULTURAL_BURNING": 0.9062836914453278,
-      "WILDFIRE": 0.05375446757859429
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.00818559173649798,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.041672010627275304,
+      "AGRICULTURAL_BURNING": 0.8973931749661763,
+      "WILDFIRE": 0.052749184835070774
     },
-    "model_agreement": 0.8539,
-    "prediction_entropy": 0.2851,
-    "prediction_margin": 0.8525,
+    "model_agreement": 0.8323,
+    "prediction_entropy": 0.3059,
+    "prediction_margin": 0.8446,
     "agent_disagreement": 0.018
   },
   {
@@ -11817,7 +11817,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 323.836,
+    "distance_to_facility_km": 232.378,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -11826,7 +11826,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 323.836,
+        "distance_km": 232.378,
         "score": 0.95
       },
       "temporal": {
@@ -12138,7 +12138,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 378.059,
+    "distance_to_facility_km": 340.939,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -12147,7 +12147,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 378.059,
+        "distance_km": 340.939,
         "score": 0.95
       },
       "temporal": {
@@ -13445,7 +13445,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 388.217,
+    "distance_to_facility_km": 331.82,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -13454,7 +13454,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 388.217,
+        "distance_km": 331.82,
         "score": 0.95
       },
       "temporal": {
@@ -13873,7 +13873,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 338.982,
+    "distance_to_facility_km": 234.571,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -13882,7 +13882,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 338.982,
+        "distance_km": 234.571,
         "score": 0.95
       },
       "temporal": {
@@ -14194,7 +14194,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 384.96,
+    "distance_to_facility_km": 337.524,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -14203,7 +14203,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 384.96,
+        "distance_km": 337.524,
         "score": 0.95
       },
       "temporal": {
@@ -15900,13 +15900,13 @@
     "day_night": "N",
     "acq_datetime": "2026-09-04T15:42:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.883,
+    "confidence_score": 0.888,
     "cde_anomaly_score": 0.11,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 231.597,
+    "distance_to_facility_km": 86.209,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -15915,7 +15915,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 231.597,
+        "distance_km": 86.209,
         "score": 0.95
       },
       "temporal": {
@@ -15932,18 +15932,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 57.5,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.89,
-        "score": 0.89,
+        "vision_class_confidence": 0.902,
+        "score": 0.902,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T154200_N0500_R019_T44F8699_20260904T154200",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.01219454849138856,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.03306880747663704,
-          "AGRICULTURAL_BURNING": 0.8897727229531832,
-          "WILDFIRE": 0.06496390105535588
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011371492515318096,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03471387279294657,
+          "AGRICULTURAL_BURNING": 0.9019606318410464,
+          "WILDFIRE": 0.051954003199934956
         },
-        "prediction_margin": 0.8248,
-        "prediction_entropy": 0.3232,
-        "model_agreement": 0.8479
+        "prediction_margin": 0.85,
+        "prediction_entropy": 0.2988,
+        "model_agreement": 0.8372
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -15954,7 +15954,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.883,
+        "final_confidence": 0.888,
         "cde_score": 0.11,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -15984,15 +15984,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.01219454849138856,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.03306880747663704,
-      "AGRICULTURAL_BURNING": 0.8897727229531832,
-      "WILDFIRE": 0.06496390105535588
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011371492515318096,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03471387279294657,
+      "AGRICULTURAL_BURNING": 0.9019606318410464,
+      "WILDFIRE": 0.051954003199934956
     },
-    "model_agreement": 0.8479,
-    "prediction_entropy": 0.3232,
-    "prediction_margin": 0.8248,
-    "agent_disagreement": 0.0146
+    "model_agreement": 0.8372,
+    "prediction_entropy": 0.2988,
+    "prediction_margin": 0.85,
+    "agent_disagreement": 0.0164
   },
   {
     "id": "cc7f40967f2c0491",
@@ -17832,7 +17832,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 312.501,
+    "distance_to_facility_km": 235.795,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -17841,7 +17841,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 312.501,
+        "distance_km": 235.795,
         "score": 0.95
       },
       "temporal": {
@@ -19651,7 +19651,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 382.554,
+    "distance_to_facility_km": 339.828,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -19660,7 +19660,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 382.554,
+        "distance_km": 339.828,
         "score": 0.95
       },
       "temporal": {
@@ -19972,7 +19972,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 335.212,
+    "distance_to_facility_km": 234.418,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -19981,7 +19981,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 335.212,
+        "distance_km": 234.418,
         "score": 0.95
       },
       "temporal": {
@@ -20851,7 +20851,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 329.406,
+    "distance_to_facility_km": 231.355,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -20860,7 +20860,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 329.406,
+        "distance_km": 231.355,
         "score": 0.95
       },
       "temporal": {
@@ -21921,7 +21921,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 330.135,
+    "distance_to_facility_km": 224.31,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -21930,7 +21930,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 330.135,
+        "distance_km": 224.31,
         "score": 0.95
       },
       "temporal": {
@@ -22563,7 +22563,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 330.838,
+    "distance_to_facility_km": 234.354,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -22572,7 +22572,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 330.838,
+        "distance_km": 234.354,
         "score": 0.95
       },
       "temporal": {
@@ -22991,7 +22991,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 308.83,
+    "distance_to_facility_km": 222.737,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -23000,7 +23000,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 308.83,
+        "distance_km": 222.737,
         "score": 0.95
       },
       "temporal": {
@@ -23306,13 +23306,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T12:18:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.898,
+    "confidence_score": 0.895,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 178.074,
+    "distance_to_facility_km": 17.897,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -23321,7 +23321,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 178.074,
+        "distance_km": 17.897,
         "score": 0.95
       },
       "temporal": {
@@ -23338,18 +23338,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 53.5,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.893,
-        "score": 0.893,
+        "vision_class_confidence": 0.88,
+        "score": 0.88,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T121800_N0500_R019_T44F3937_20260904T121800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.008100784105869632,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.031759643175997915,
-          "AGRICULTURAL_BURNING": 0.8932429871155193,
-          "WILDFIRE": 0.0668965477676336
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.008183691722030442,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.04193534394789298,
+          "AGRICULTURAL_BURNING": 0.8804718474547069,
+          "WILDFIRE": 0.06940912549010356
         },
-        "prediction_margin": 0.8263,
-        "prediction_entropy": 0.3104,
-        "model_agreement": 0.8266
+        "prediction_margin": 0.8111,
+        "prediction_entropy": 0.3387,
+        "model_agreement": 0.7995
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -23360,7 +23360,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.898,
+        "final_confidence": 0.895,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -23390,15 +23390,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.008100784105869632,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.031759643175997915,
-      "AGRICULTURAL_BURNING": 0.8932429871155193,
-      "WILDFIRE": 0.0668965477676336
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.008183691722030442,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.04193534394789298,
+      "AGRICULTURAL_BURNING": 0.8804718474547069,
+      "WILDFIRE": 0.06940912549010356
     },
-    "model_agreement": 0.8266,
-    "prediction_entropy": 0.3104,
-    "prediction_margin": 0.8263,
-    "agent_disagreement": 0.0149
+    "model_agreement": 0.7995,
+    "prediction_entropy": 0.3387,
+    "prediction_margin": 0.8111,
+    "agent_disagreement": 0.0146
   },
   {
     "id": "3340a9280b15e451",
@@ -23847,7 +23847,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 333.678,
+    "distance_to_facility_km": 220.766,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -23856,7 +23856,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 333.678,
+        "distance_km": 220.766,
         "score": 0.95
       },
       "temporal": {
@@ -23954,7 +23954,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 334.573,
+    "distance_to_facility_km": 294.267,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -23963,7 +23963,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 334.573,
+        "distance_km": 294.267,
         "score": 0.95
       },
       "temporal": {
@@ -24596,7 +24596,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 337.27,
+    "distance_to_facility_km": 223.419,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -24605,7 +24605,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 337.27,
+        "distance_km": 223.419,
         "score": 0.95
       },
       "temporal": {
@@ -25452,7 +25452,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 386.625,
+    "distance_to_facility_km": 332.355,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -25461,7 +25461,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 386.625,
+        "distance_km": 332.355,
         "score": 0.95
       },
       "temporal": {
@@ -27372,13 +27372,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T10:54:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.886,
+    "confidence_score": 0.881,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 177.386,
+    "distance_to_facility_km": 20.703,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -27387,7 +27387,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 177.386,
+        "distance_km": 20.703,
         "score": 0.95
       },
       "temporal": {
@@ -27404,18 +27404,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 42.7,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.903,
-        "score": 0.903,
+        "vision_class_confidence": 0.891,
+        "score": 0.891,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T105400_N0500_R019_T44F4336_20260904T105400",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.008100784105869632,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.031759643175997915,
-          "AGRICULTURAL_BURNING": 0.9032429871155192,
-          "WILDFIRE": 0.0568965477676336
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.008184270306179922,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.04174570455279012,
+          "AGRICULTURAL_BURNING": 0.8906588570276897,
+          "WILDFIRE": 0.059411174865429
         },
-        "prediction_margin": 0.8463,
-        "prediction_entropy": 0.2911,
-        "model_agreement": 0.8466
+        "prediction_margin": 0.8312,
+        "prediction_entropy": 0.3194,
+        "model_agreement": 0.8191
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -27426,7 +27426,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.886,
+        "final_confidence": 0.881,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -27456,15 +27456,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.008100784105869632,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.031759643175997915,
-      "AGRICULTURAL_BURNING": 0.9032429871155192,
-      "WILDFIRE": 0.0568965477676336
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.008184270306179922,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.04174570455279012,
+      "AGRICULTURAL_BURNING": 0.8906588570276897,
+      "WILDFIRE": 0.059411174865429
     },
-    "model_agreement": 0.8466,
-    "prediction_entropy": 0.2911,
-    "prediction_margin": 0.8463,
-    "agent_disagreement": 0.0166
+    "model_agreement": 0.8191,
+    "prediction_entropy": 0.3194,
+    "prediction_margin": 0.8312,
+    "agent_disagreement": 0.0146
   },
   {
     "id": "e1f6a6328a47af72",
@@ -27485,7 +27485,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 342.619,
+    "distance_to_facility_km": 299.204,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -27494,7 +27494,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 342.619,
+        "distance_km": 299.204,
         "score": 0.95
       },
       "temporal": {
@@ -28150,7 +28150,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 332.309,
+    "distance_to_facility_km": 230.591,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -28159,7 +28159,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 332.309,
+        "distance_km": 230.591,
         "score": 0.95
       },
       "temporal": {
@@ -28899,7 +28899,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 160.162,
+    "distance_to_facility_km": 147.181,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -28908,7 +28908,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 160.162,
+        "distance_km": 147.181,
         "score": 0.94
       },
       "temporal": {
@@ -28929,14 +28929,14 @@
         "score": 0.974,
         "sentinel2_tile_id": "S2A_MSIL2A_20260904T101700_N0500_R019_T44F5376_20260904T101700",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.003464684420808529,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.00012255499314051121,
-          "AGRICULTURAL_BURNING": 0.022221933785412047,
-          "WILDFIRE": 0.9741908282703824
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.003467102832704162,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.00012481144221965224,
+          "AGRICULTURAL_BURNING": 0.022252615625556145,
+          "WILDFIRE": 0.9741554827160306
         },
-        "prediction_margin": 0.952,
-        "prediction_entropy": 0.0943,
-        "model_agreement": 0.9558
+        "prediction_margin": 0.9519,
+        "prediction_entropy": 0.0945,
+        "model_agreement": 0.9559
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -28977,14 +28977,14 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.003464684420808529,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.00012255499314051121,
-      "AGRICULTURAL_BURNING": 0.022221933785412047,
-      "WILDFIRE": 0.9741908282703824
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.003467102832704162,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.00012481144221965224,
+      "AGRICULTURAL_BURNING": 0.022252615625556145,
+      "WILDFIRE": 0.9741554827160306
     },
-    "model_agreement": 0.9558,
-    "prediction_entropy": 0.0943,
-    "prediction_margin": 0.952,
+    "model_agreement": 0.9559,
+    "prediction_entropy": 0.0945,
+    "prediction_margin": 0.9519,
     "agent_disagreement": 0.0441
   },
   {
@@ -29428,13 +29428,13 @@
     "day_night": "N",
     "acq_datetime": "2026-09-04T10:05:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.888,
+    "confidence_score": 0.892,
     "cde_anomaly_score": 0.11,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 228.471,
+    "distance_to_facility_km": 78.224,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -29443,7 +29443,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 228.471,
+        "distance_km": 78.224,
         "score": 0.95
       },
       "temporal": {
@@ -29460,18 +29460,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 48.2,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.883,
-        "score": 0.883,
+        "vision_class_confidence": 0.895,
+        "score": 0.895,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T100500_N0500_R019_T44F9394_20260904T100500",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.01219454849138856,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.03306880747663704,
-          "AGRICULTURAL_BURNING": 0.8831060562865165,
-          "WILDFIRE": 0.07163056772202253
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011371492515318096,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03471387279294657,
+          "AGRICULTURAL_BURNING": 0.8952939651743796,
+          "WILDFIRE": 0.058620669866601624
         },
-        "prediction_margin": 0.8115,
-        "prediction_entropy": 0.3355,
-        "model_agreement": 0.8345
+        "prediction_margin": 0.8367,
+        "prediction_entropy": 0.3123,
+        "model_agreement": 0.8239
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -29482,7 +29482,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.888,
+        "final_confidence": 0.892,
         "cde_score": 0.11,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -29512,15 +29512,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.01219454849138856,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.03306880747663704,
-      "AGRICULTURAL_BURNING": 0.8831060562865165,
-      "WILDFIRE": 0.07163056772202253
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011371492515318096,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03471387279294657,
+      "AGRICULTURAL_BURNING": 0.8952939651743796,
+      "WILDFIRE": 0.058620669866601624
     },
-    "model_agreement": 0.8345,
-    "prediction_entropy": 0.3355,
-    "prediction_margin": 0.8115,
-    "agent_disagreement": 0.0146
+    "model_agreement": 0.8239,
+    "prediction_entropy": 0.3123,
+    "prediction_margin": 0.8367,
+    "agent_disagreement": 0.0152
   },
   {
     "id": "0f7705b59cfd2af3",
@@ -29648,7 +29648,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 319.084,
+    "distance_to_facility_km": 229.048,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -29657,7 +29657,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 319.084,
+        "distance_km": 229.048,
         "score": 0.95
       },
       "temporal": {
@@ -29862,7 +29862,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 379.235,
+    "distance_to_facility_km": 339.354,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -29871,7 +29871,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 379.235,
+        "distance_km": 339.354,
         "score": 0.95
       },
       "temporal": {
@@ -31704,7 +31704,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 324.576,
+    "distance_to_facility_km": 236.678,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -31713,7 +31713,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 324.576,
+        "distance_km": 236.678,
         "score": 0.95
       },
       "temporal": {
@@ -33509,13 +33509,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T07:48:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.886,
+    "confidence_score": 0.883,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 181.337,
+    "distance_to_facility_km": 15.56,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -33524,7 +33524,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 181.337,
+        "distance_km": 15.56,
         "score": 0.95
       },
       "temporal": {
@@ -33541,18 +33541,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 48.3,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.911,
-        "score": 0.911,
+        "vision_class_confidence": 0.901,
+        "score": 0.901,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T074800_N0500_R019_T44F3339_20260904T074800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.0074796792018848165,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.030890391504750727,
-          "AGRICULTURAL_BURNING": 0.9108563213739167,
-          "WILDFIRE": 0.05077362811750611
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.010859650084748864,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.04080533196747114,
+          "AGRICULTURAL_BURNING": 0.9012125511964162,
+          "WILDFIRE": 0.04712247641383549
         },
-        "prediction_margin": 0.8601,
-        "prediction_entropy": 0.2744,
-        "model_agreement": 0.8447
+        "prediction_margin": 0.8541,
+        "prediction_entropy": 0.3011,
+        "model_agreement": 0.8247
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -33563,7 +33563,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.886,
+        "final_confidence": 0.883,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -33593,15 +33593,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.0074796792018848165,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.030890391504750727,
-      "AGRICULTURAL_BURNING": 0.9108563213739167,
-      "WILDFIRE": 0.05077362811750611
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.010859650084748864,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.04080533196747114,
+      "AGRICULTURAL_BURNING": 0.9012125511964162,
+      "WILDFIRE": 0.04712247641383549
     },
-    "model_agreement": 0.8447,
-    "prediction_entropy": 0.2744,
-    "prediction_margin": 0.8601,
-    "agent_disagreement": 0.0179
+    "model_agreement": 0.8247,
+    "prediction_entropy": 0.3011,
+    "prediction_margin": 0.8541,
+    "agent_disagreement": 0.0162
   },
   {
     "id": "fd5ef13d7a5e8caa",
@@ -34478,7 +34478,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 381.782,
+    "distance_to_facility_km": 338.698,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -34487,7 +34487,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 381.782,
+        "distance_km": 338.698,
         "score": 0.95
       },
       "temporal": {
@@ -36534,7 +36534,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 191.922,
+    "distance_to_facility_km": 25.934,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -36543,7 +36543,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 191.922,
+        "distance_km": 25.934,
         "score": 0.95
       },
       "temporal": {
@@ -36564,14 +36564,14 @@
         "score": 0.85,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T064500_N0500_R019_T44F3350_20260904T064500",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.011633489620871842,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.03223749008725313,
-          "AGRICULTURAL_BURNING": 0.901557431850456,
-          "WILDFIRE": 0.05457162185261647
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011513450872153044,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0418438866431537,
+          "AGRICULTURAL_BURNING": 0.8975124532318342,
+          "WILDFIRE": 0.04913020669172208
         },
-        "prediction_margin": 0.847,
-        "prediction_entropy": 0.2991,
-        "model_agreement": 0.8509
+        "prediction_margin": 0.8484,
+        "prediction_entropy": 0.3097,
+        "model_agreement": 0.8328
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -36612,14 +36612,14 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.011633489620871842,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.03223749008725313,
-      "AGRICULTURAL_BURNING": 0.901557431850456,
-      "WILDFIRE": 0.05457162185261647
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011513450872153044,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0418438866431537,
+      "AGRICULTURAL_BURNING": 0.8975124532318342,
+      "WILDFIRE": 0.04913020669172208
     },
-    "model_agreement": 0.8509,
-    "prediction_entropy": 0.2991,
-    "prediction_margin": 0.847,
+    "model_agreement": 0.8328,
+    "prediction_entropy": 0.3097,
+    "prediction_margin": 0.8484,
     "agent_disagreement": 0.018
   },
   {
@@ -36641,7 +36641,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 386.293,
+    "distance_to_facility_km": 333.225,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -36650,7 +36650,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 386.293,
+        "distance_km": 333.225,
         "score": 0.95
       },
       "temporal": {
@@ -39333,13 +39333,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T05:29:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.897,
+    "confidence_score": 0.901,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 223.454,
+    "distance_to_facility_km": 79.133,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -39348,7 +39348,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 223.454,
+        "distance_km": 79.133,
         "score": 0.95
       },
       "temporal": {
@@ -39365,18 +39365,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 53.5,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.873,
-        "score": 0.873,
+        "vision_class_confidence": 0.895,
+        "score": 0.895,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T052900_N0500_R019_T44F8690_20260904T052900",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.012142147393897176,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.029815532555220507,
-          "AGRICULTURAL_BURNING": 0.8733561528914542,
-          "WILDFIRE": 0.08468618811418613
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011338081201538444,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03151891030623315,
+          "AGRICULTURAL_BURNING": 0.8953089214556784,
+          "WILDFIRE": 0.061834078188985585
         },
-        "prediction_margin": 0.7887,
-        "prediction_entropy": 0.3503,
-        "model_agreement": 0.8131
+        "prediction_margin": 0.8335,
+        "prediction_entropy": 0.3108,
+        "model_agreement": 0.8229
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -39387,7 +39387,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.897,
+        "final_confidence": 0.901,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -39417,15 +39417,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.012142147393897176,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.029815532555220507,
-      "AGRICULTURAL_BURNING": 0.8733561528914542,
-      "WILDFIRE": 0.08468618811418613
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011338081201538444,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03151891030623315,
+      "AGRICULTURAL_BURNING": 0.8953089214556784,
+      "WILDFIRE": 0.061834078188985585
     },
-    "model_agreement": 0.8131,
-    "prediction_entropy": 0.3503,
-    "prediction_margin": 0.7887,
-    "agent_disagreement": 0.0149
+    "model_agreement": 0.8229,
+    "prediction_entropy": 0.3108,
+    "prediction_margin": 0.8335,
+    "agent_disagreement": 0.0152
   },
   {
     "id": "7571cafaf2f8f3f0",
@@ -39446,7 +39446,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 339.329,
+    "distance_to_facility_km": 306.36,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -39455,7 +39455,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 339.329,
+        "distance_km": 306.36,
         "score": 0.95
       },
       "temporal": {
@@ -39654,13 +39654,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T05:21:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.875,
+    "confidence_score": 0.87,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 176.222,
+    "distance_to_facility_km": 14.149,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -39669,7 +39669,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 176.222,
+        "distance_km": 14.149,
         "score": 0.95
       },
       "temporal": {
@@ -39686,18 +39686,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 48.3,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.9,
-        "score": 0.9,
+        "vision_class_confidence": 0.887,
+        "score": 0.887,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T052100_N0500_R019_T44F3735_20260904T052100",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.008187687445121508,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.02855013267141936,
-          "AGRICULTURAL_BURNING": 0.8996180976622672,
-          "WILDFIRE": 0.06364407837948641
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011608625170774758,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.042170314770823315,
+          "AGRICULTURAL_BURNING": 0.8867467923959096,
+          "WILDFIRE": 0.05947426358795603
         },
-        "prediction_margin": 0.836,
-        "prediction_entropy": 0.2967,
-        "model_agreement": 0.8405
+        "prediction_margin": 0.8273,
+        "prediction_entropy": 0.3316,
+        "model_agreement": 0.8136
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -39708,7 +39708,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.875,
+        "final_confidence": 0.87,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -39738,15 +39738,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.008187687445121508,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.02855013267141936,
-      "AGRICULTURAL_BURNING": 0.8996180976622672,
-      "WILDFIRE": 0.06364407837948641
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011608625170774758,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.042170314770823315,
+      "AGRICULTURAL_BURNING": 0.8867467923959096,
+      "WILDFIRE": 0.05947426358795603
     },
-    "model_agreement": 0.8405,
-    "prediction_entropy": 0.2967,
-    "prediction_margin": 0.836,
-    "agent_disagreement": 0.0161
+    "model_agreement": 0.8136,
+    "prediction_entropy": 0.3316,
+    "prediction_margin": 0.8273,
+    "agent_disagreement": 0.0146
   },
   {
     "id": "8ccf5c18cf4fdf10",
@@ -40854,13 +40854,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T04:57:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.891,
+    "confidence_score": 0.895,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 221.267,
+    "distance_to_facility_km": 78.916,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -40869,7 +40869,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 221.267,
+        "distance_km": 78.916,
         "score": 0.95
       },
       "temporal": {
@@ -40886,18 +40886,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 39.0,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.893,
-        "score": 0.893,
+        "vision_class_confidence": 0.902,
+        "score": 0.902,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T045700_N0500_R019_T44F8488_20260904T045700",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.012271184930577874,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.026668550582640352,
-          "AGRICULTURAL_BURNING": 0.892904677509603,
-          "WILDFIRE": 0.0681556239972512
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011419265172444284,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03163615473798213,
+          "AGRICULTURAL_BURNING": 0.9017175894174347,
+          "WILDFIRE": 0.055226983570804196
         },
-        "prediction_margin": 0.8247,
-        "prediction_entropy": 0.3137,
-        "model_agreement": 0.854
+        "prediction_margin": 0.8465,
+        "prediction_entropy": 0.2983,
+        "model_agreement": 0.8368
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -40908,7 +40908,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.891,
+        "final_confidence": 0.895,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -40938,15 +40938,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.012271184930577874,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.026668550582640352,
-      "AGRICULTURAL_BURNING": 0.892904677509603,
-      "WILDFIRE": 0.0681556239972512
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011419265172444284,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03163615473798213,
+      "AGRICULTURAL_BURNING": 0.9017175894174347,
+      "WILDFIRE": 0.055226983570804196
     },
-    "model_agreement": 0.854,
-    "prediction_entropy": 0.3137,
-    "prediction_margin": 0.8247,
-    "agent_disagreement": 0.0149
+    "model_agreement": 0.8368,
+    "prediction_entropy": 0.2983,
+    "prediction_margin": 0.8465,
+    "agent_disagreement": 0.0164
   },
   {
     "id": "8b42ae439a89523e",
@@ -41395,7 +41395,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 332.378,
+    "distance_to_facility_km": 235.121,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -41404,7 +41404,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 332.378,
+        "distance_km": 235.121,
         "score": 0.95
       },
       "temporal": {
@@ -41603,13 +41603,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T04:27:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.883,
+    "confidence_score": 0.877,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 176.986,
+    "distance_to_facility_km": 20.278,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -41618,7 +41618,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 176.986,
+        "distance_km": 20.278,
         "score": 0.95
       },
       "temporal": {
@@ -41635,18 +41635,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 38.7,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.907,
-        "score": 0.907,
+        "vision_class_confidence": 0.891,
+        "score": 0.891,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T042700_N0500_R019_T44F4336_20260904T042700",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.008101640689807635,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.02842753034089861,
-          "AGRICULTURAL_BURNING": 0.9068689792546998,
-          "WILDFIRE": 0.056601864732170507
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.008184734454068046,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.041838208866005734,
+          "AGRICULTURAL_BURNING": 0.8908088819185893,
+          "WILDFIRE": 0.0591681681256636
         },
-        "prediction_margin": 0.8503,
-        "prediction_entropy": 0.2824,
-        "model_agreement": 0.8527
+        "prediction_margin": 0.8316,
+        "prediction_entropy": 0.3191,
+        "model_agreement": 0.8188
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -41657,7 +41657,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.883,
+        "final_confidence": 0.877,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -41687,15 +41687,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.008101640689807635,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.02842753034089861,
-      "AGRICULTURAL_BURNING": 0.9068689792546998,
-      "WILDFIRE": 0.056601864732170507
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.008184734454068046,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.041838208866005734,
+      "AGRICULTURAL_BURNING": 0.8908088819185893,
+      "WILDFIRE": 0.0591681681256636
     },
-    "model_agreement": 0.8527,
-    "prediction_entropy": 0.2824,
-    "prediction_margin": 0.8503,
-    "agent_disagreement": 0.0172
+    "model_agreement": 0.8188,
+    "prediction_entropy": 0.3191,
+    "prediction_margin": 0.8316,
+    "agent_disagreement": 0.0146
   },
   {
     "id": "515d95497a055bda",
@@ -41823,7 +41823,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 339.414,
+    "distance_to_facility_km": 305.817,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -41832,7 +41832,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 339.414,
+        "distance_km": 305.817,
         "score": 0.95
       },
       "temporal": {
@@ -42572,7 +42572,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 307.471,
+    "distance_to_facility_km": 226.032,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -42581,7 +42581,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 307.471,
+        "distance_km": 226.032,
         "score": 0.95
       },
       "temporal": {
@@ -43107,7 +43107,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 222.953,
+    "distance_to_facility_km": 75.219,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -43116,7 +43116,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 222.953,
+        "distance_km": 75.219,
         "score": 0.95
       },
       "temporal": {
@@ -43133,18 +43133,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 38.7,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.816,
-        "score": 0.816,
+        "vision_class_confidence": 0.835,
+        "score": 0.835,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T034100_N0500_R019_T44F9089_20260904T034100",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.012271184930577874,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.026613301963855824,
-          "AGRICULTURAL_BURNING": 0.8162932594617207,
-          "WILDFIRE": 0.14482229066391786
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011419265172444284,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0315809061191976,
+          "AGRICULTURAL_BURNING": 0.8351061713695527,
+          "WILDFIRE": 0.12189365023747087
         },
-        "prediction_margin": 0.6715,
-        "prediction_entropy": 0.4299,
-        "model_agreement": 0.7007
+        "prediction_margin": 0.7132,
+        "prediction_entropy": 0.4092,
+        "model_agreement": 0.7035
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -43185,15 +43185,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.012271184930577874,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.026613301963855824,
-      "AGRICULTURAL_BURNING": 0.8162932594617207,
-      "WILDFIRE": 0.14482229066391786
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011419265172444284,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0315809061191976,
+      "AGRICULTURAL_BURNING": 0.8351061713695527,
+      "WILDFIRE": 0.12189365023747087
     },
-    "model_agreement": 0.7007,
-    "prediction_entropy": 0.4299,
-    "prediction_margin": 0.6715,
-    "agent_disagreement": 0.0273
+    "model_agreement": 0.7035,
+    "prediction_entropy": 0.4092,
+    "prediction_margin": 0.7132,
+    "agent_disagreement": 0.0218
   },
   {
     "id": "48342b408845065a",
@@ -43428,7 +43428,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 336.646,
+    "distance_to_facility_km": 294.412,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -43437,7 +43437,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 336.646,
+        "distance_km": 294.412,
         "score": 0.95
       },
       "temporal": {
@@ -46042,13 +46042,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T02:46:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.895,
+    "confidence_score": 0.891,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 182.049,
+    "distance_to_facility_km": 15.559,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -46057,7 +46057,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 182.049,
+        "distance_km": 15.559,
         "score": 0.95
       },
       "temporal": {
@@ -46074,18 +46074,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 48.3,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.896,
-        "score": 0.896,
+        "vision_class_confidence": 0.887,
+        "score": 0.887,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T024600_N0500_R019_T44F3140_20260904T024600",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.008122909769105416,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.03181932186091799,
-          "AGRICULTURAL_BURNING": 0.896303003350235,
-          "WILDFIRE": 0.06375473393685063
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011496581826359034,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.04200048367555995,
+          "AGRICULTURAL_BURNING": 0.8870943172772725,
+          "WILDFIRE": 0.05940864166802605
         },
-        "prediction_margin": 0.8325,
-        "prediction_entropy": 0.3047,
-        "model_agreement": 0.8338
+        "prediction_margin": 0.8277,
+        "prediction_entropy": 0.3307,
+        "model_agreement": 0.8129
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -46096,7 +46096,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.895,
+        "final_confidence": 0.891,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -46126,15 +46126,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.008122909769105416,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.03181932186091799,
-      "AGRICULTURAL_BURNING": 0.896303003350235,
-      "WILDFIRE": 0.06375473393685063
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011496581826359034,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.04200048367555995,
+      "AGRICULTURAL_BURNING": 0.8870943172772725,
+      "WILDFIRE": 0.05940864166802605
     },
-    "model_agreement": 0.8338,
-    "prediction_entropy": 0.3047,
-    "prediction_margin": 0.8325,
-    "agent_disagreement": 0.0154
+    "model_agreement": 0.8129,
+    "prediction_entropy": 0.3307,
+    "prediction_margin": 0.8277,
+    "agent_disagreement": 0.0146
   },
   {
     "id": "712890e762f7b2e7",
@@ -46369,7 +46369,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 322.177,
+    "distance_to_facility_km": 231.521,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -46378,7 +46378,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 322.177,
+        "distance_km": 231.521,
         "score": 0.95
       },
       "temporal": {
@@ -46898,13 +46898,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T02:24:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.908,
+    "confidence_score": 0.905,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 189.339,
+    "distance_to_facility_km": 22.78,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -46913,7 +46913,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 189.339,
+        "distance_km": 22.78,
         "score": 0.95
       },
       "temporal": {
@@ -46930,18 +46930,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 38.7,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.905,
-        "score": 0.905,
+        "vision_class_confidence": 0.897,
+        "score": 0.897,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T022400_N0500_R019_T44F3247_20260904T022400",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.008261722816775244,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.03201979090774912,
-          "AGRICULTURAL_BURNING": 0.9053204207811127,
-          "WILDFIRE": 0.05439807527324995
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.008165202873448532,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.04171038600679298,
+          "AGRICULTURAL_BURNING": 0.8973753829797109,
+          "WILDFIRE": 0.05274898972299139
         },
-        "prediction_margin": 0.8509,
-        "prediction_entropy": 0.2873,
-        "model_agreement": 0.8558
+        "prediction_margin": 0.8446,
+        "prediction_entropy": 0.306,
+        "model_agreement": 0.8323
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -46952,7 +46952,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.908,
+        "final_confidence": 0.905,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -46982,15 +46982,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.008261722816775244,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.03201979090774912,
-      "AGRICULTURAL_BURNING": 0.9053204207811127,
-      "WILDFIRE": 0.05439807527324995
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.008165202873448532,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.04171038600679298,
+      "AGRICULTURAL_BURNING": 0.8973753829797109,
+      "WILDFIRE": 0.05274898972299139
     },
-    "model_agreement": 0.8558,
-    "prediction_entropy": 0.2873,
-    "prediction_margin": 0.8509,
-    "agent_disagreement": 0.0169
+    "model_agreement": 0.8323,
+    "prediction_entropy": 0.306,
+    "prediction_margin": 0.8446,
+    "agent_disagreement": 0.0156
   },
   {
     "id": "7e7da28f2762b94f",
@@ -47462,7 +47462,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 336.025,
+    "distance_to_facility_km": 303.921,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -47471,7 +47471,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 336.025,
+        "distance_km": 303.921,
         "score": 0.95
       },
       "temporal": {
@@ -47997,7 +47997,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 219.053,
+    "distance_to_facility_km": 76.787,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -48006,7 +48006,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 219.053,
+        "distance_km": 76.787,
         "score": 0.95
       },
       "temporal": {
@@ -48023,18 +48023,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 49.5,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.797,
-        "score": 0.797,
+        "vision_class_confidence": 0.822,
+        "score": 0.822,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T015700_N0500_R019_T44F8586_20260904T015700",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.012143240300938487,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.029761862062538665,
-          "AGRICULTURAL_BURNING": 0.7969913490613302,
-          "WILDFIRE": 0.1611035844311118
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011338369911536575,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03479741190404942,
+          "AGRICULTURAL_BURNING": 0.8221369628111521,
+          "WILDFIRE": 0.13172724198549987
         },
-        "prediction_margin": 0.6359,
-        "prediction_entropy": 0.4567,
-        "model_agreement": 0.6594
+        "prediction_margin": 0.6904,
+        "prediction_entropy": 0.4297,
+        "model_agreement": 0.6761
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -48075,15 +48075,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.012143240300938487,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.029761862062538665,
-      "AGRICULTURAL_BURNING": 0.7969913490613302,
-      "WILDFIRE": 0.1611035844311118
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011338369911536575,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03479741190404942,
+      "AGRICULTURAL_BURNING": 0.8221369628111521,
+      "WILDFIRE": 0.13172724198549987
     },
-    "model_agreement": 0.6594,
-    "prediction_entropy": 0.4567,
-    "prediction_margin": 0.6359,
-    "agent_disagreement": 0.0328
+    "model_agreement": 0.6761,
+    "prediction_entropy": 0.4297,
+    "prediction_margin": 0.6904,
+    "agent_disagreement": 0.0255
   },
   {
     "id": "25d136efd60ad222",
@@ -48104,7 +48104,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 343.898,
+    "distance_to_facility_km": 295.788,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -48113,7 +48113,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 343.898,
+        "distance_km": 295.788,
         "score": 0.95
       },
       "temporal": {
@@ -48769,7 +48769,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 386.664,
+    "distance_to_facility_km": 337.082,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -48778,7 +48778,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 386.664,
+        "distance_km": 337.082,
         "score": 0.95
       },
       "temporal": {
@@ -49084,13 +49084,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T01:46:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.872,
+    "confidence_score": 0.876,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 221.972,
+    "distance_to_facility_km": 82.374,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -49099,7 +49099,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 221.972,
+        "distance_km": 82.374,
         "score": 0.95
       },
       "temporal": {
@@ -49116,18 +49116,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 49.5,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.89,
-        "score": 0.89,
+        "vision_class_confidence": 0.902,
+        "score": 0.902,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T014600_N0500_R019_T44F8190_20260904T014600",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.012142147393897176,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.029815532555220507,
-          "AGRICULTURAL_BURNING": 0.8900228195581208,
-          "WILDFIRE": 0.06801952144751947
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011338081201538444,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03151891030623315,
+          "AGRICULTURAL_BURNING": 0.901975588122345,
+          "WILDFIRE": 0.05516741152231892
         },
-        "prediction_margin": 0.822,
-        "prediction_entropy": 0.3209,
-        "model_agreement": 0.8464
+        "prediction_margin": 0.8468,
+        "prediction_entropy": 0.2977,
+        "model_agreement": 0.8362
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -49138,7 +49138,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.872,
+        "final_confidence": 0.876,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -49168,15 +49168,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.012142147393897176,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.029815532555220507,
-      "AGRICULTURAL_BURNING": 0.8900228195581208,
-      "WILDFIRE": 0.06801952144751947
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011338081201538444,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03151891030623315,
+      "AGRICULTURAL_BURNING": 0.901975588122345,
+      "WILDFIRE": 0.05516741152231892
     },
-    "model_agreement": 0.8464,
-    "prediction_entropy": 0.3209,
-    "prediction_margin": 0.822,
-    "agent_disagreement": 0.0146
+    "model_agreement": 0.8362,
+    "prediction_entropy": 0.2977,
+    "prediction_margin": 0.8468,
+    "agent_disagreement": 0.0164
   },
   {
     "id": "12a644b0921a2bfa",
@@ -49518,7 +49518,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 342.597,
+    "distance_to_facility_km": 229.794,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -49527,7 +49527,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 342.597,
+        "distance_km": 229.794,
         "score": 0.95
       },
       "temporal": {
@@ -49619,13 +49619,13 @@
     "day_night": "N",
     "acq_datetime": "2026-09-04T01:41:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.905,
+    "confidence_score": 0.91,
     "cde_anomaly_score": 0.11,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 227.87,
+    "distance_to_facility_km": 87.75,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -49634,7 +49634,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 227.87,
+        "distance_km": 87.75,
         "score": 0.95
       },
       "temporal": {
@@ -49651,18 +49651,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 37.2,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.886,
-        "score": 0.886,
+        "vision_class_confidence": 0.899,
+        "score": 0.899,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T014100_N0500_R019_T44F8096_20260904T014100",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.01219454849138856,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.03306880747663704,
-          "AGRICULTURAL_BURNING": 0.8864393896198499,
-          "WILDFIRE": 0.0682972343886892
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011371492515318096,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03471387279294657,
+          "AGRICULTURAL_BURNING": 0.8986272985077131,
+          "WILDFIRE": 0.05528733653326829
         },
-        "prediction_margin": 0.8181,
-        "prediction_entropy": 0.3294,
-        "model_agreement": 0.8412
+        "prediction_margin": 0.8433,
+        "prediction_entropy": 0.3056,
+        "model_agreement": 0.8306
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -49673,7 +49673,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.905,
+        "final_confidence": 0.91,
         "cde_score": 0.11,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -49703,15 +49703,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.01219454849138856,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.03306880747663704,
-      "AGRICULTURAL_BURNING": 0.8864393896198499,
-      "WILDFIRE": 0.0682972343886892
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011371492515318096,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03471387279294657,
+      "AGRICULTURAL_BURNING": 0.8986272985077131,
+      "WILDFIRE": 0.05528733653326829
     },
-    "model_agreement": 0.8412,
-    "prediction_entropy": 0.3294,
-    "prediction_margin": 0.8181,
-    "agent_disagreement": 0.0146
+    "model_agreement": 0.8306,
+    "prediction_entropy": 0.3056,
+    "prediction_margin": 0.8433,
+    "agent_disagreement": 0.0159
   },
   {
     "id": "5ed2a08a4a554e56",
@@ -50099,7 +50099,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 315.379,
+    "distance_to_facility_km": 234.152,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -50108,7 +50108,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 315.379,
+        "distance_km": 234.152,
         "score": 0.95
       },
       "temporal": {
@@ -50741,7 +50741,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 325.625,
+    "distance_to_facility_km": 233.408,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -50750,7 +50750,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 325.625,
+        "distance_km": 233.408,
         "score": 0.95
       },
       "temporal": {
@@ -51062,7 +51062,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 317.176,
+    "distance_to_facility_km": 236.227,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -51071,7 +51071,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 317.176,
+        "distance_km": 236.227,
         "score": 0.95
       },
       "temporal": {
@@ -51811,7 +51811,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 306.263,
+    "distance_to_facility_km": 230.911,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -51820,7 +51820,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 306.263,
+        "distance_km": 230.911,
         "score": 0.95
       },
       "temporal": {
@@ -52019,13 +52019,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-04T00:56:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.902,
+    "confidence_score": 0.898,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 179.587,
+    "distance_to_facility_km": 12.82,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -52034,7 +52034,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 179.587,
+        "distance_km": 12.82,
         "score": 0.95
       },
       "temporal": {
@@ -52051,18 +52051,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 42.6,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.903,
-        "score": 0.903,
+        "vision_class_confidence": 0.892,
+        "score": 0.892,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T005600_N0500_R019_T44F3137_20260904T005600",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.008167386824886005,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.028550220914233305,
-          "AGRICULTURAL_BURNING": 0.9029713985516001,
-          "WILDFIRE": 0.06031101559536099
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011743046217598021,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03920340937314987,
+          "AGRICULTURAL_BURNING": 0.8923783051967621,
+          "WILDFIRE": 0.0566752337409699
         },
-        "prediction_margin": 0.8427,
-        "prediction_entropy": 0.2902,
-        "model_agreement": 0.8472
+        "prediction_margin": 0.8357,
+        "prediction_entropy": 0.3199,
+        "model_agreement": 0.829
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -52073,7 +52073,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.902,
+        "final_confidence": 0.898,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -52103,15 +52103,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.008167386824886005,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.028550220914233305,
-      "AGRICULTURAL_BURNING": 0.9029713985516001,
-      "WILDFIRE": 0.06031101559536099
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011743046217598021,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03920340937314987,
+      "AGRICULTURAL_BURNING": 0.8923783051967621,
+      "WILDFIRE": 0.0566752337409699
     },
-    "model_agreement": 0.8472,
-    "prediction_entropy": 0.2902,
-    "prediction_margin": 0.8427,
-    "agent_disagreement": 0.0166
+    "model_agreement": 0.829,
+    "prediction_entropy": 0.3199,
+    "prediction_margin": 0.8357,
+    "agent_disagreement": 0.0147
   },
   {
     "id": "17ad1697411b858c",
@@ -53332,7 +53332,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 341.079,
+    "distance_to_facility_km": 304.157,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -53341,7 +53341,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 341.079,
+        "distance_km": 304.157,
         "score": 0.95
       },
       "temporal": {
@@ -53760,7 +53760,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 223.588,
+    "distance_to_facility_km": 84.411,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -53769,7 +53769,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 223.588,
+        "distance_km": 84.411,
         "score": 0.95
       },
       "temporal": {
@@ -53786,18 +53786,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 48.3,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.827,
-        "score": 0.827,
+        "vision_class_confidence": 0.849,
+        "score": 0.849,
         "sentinel2_tile_id": "S2B_MSIL2A_20260904T000800_N0500_R019_T44F8091_20260904T000800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.012142147393897176,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.02976028393643598,
-          "AGRICULTURAL_BURNING": 0.8267447348435719,
-          "WILDFIRE": 0.1313528547808528
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011338081201538444,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.031463661687448616,
+          "AGRICULTURAL_BURNING": 0.8486975034077961,
+          "WILDFIRE": 0.10850074485565225
         },
-        "prediction_margin": 0.6954,
-        "prediction_entropy": 0.4199,
-        "model_agreement": 0.7198
+        "prediction_margin": 0.7402,
+        "prediction_entropy": 0.3894,
+        "model_agreement": 0.7297
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -53838,15 +53838,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.012142147393897176,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.02976028393643598,
-      "AGRICULTURAL_BURNING": 0.8267447348435719,
-      "WILDFIRE": 0.1313528547808528
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011338081201538444,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.031463661687448616,
+      "AGRICULTURAL_BURNING": 0.8486975034077961,
+      "WILDFIRE": 0.10850074485565225
     },
-    "model_agreement": 0.7198,
-    "prediction_entropy": 0.4199,
-    "prediction_margin": 0.6954,
-    "agent_disagreement": 0.0241
+    "model_agreement": 0.7297,
+    "prediction_entropy": 0.3894,
+    "prediction_margin": 0.7402,
+    "agent_disagreement": 0.0182
   },
   {
     "id": "c345c4a2673bab7c",
@@ -53974,7 +53974,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 379.153,
+    "distance_to_facility_km": 340.097,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -53983,7 +53983,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 379.153,
+        "distance_km": 340.097,
         "score": 0.95
       },
       "temporal": {
@@ -69139,63 +69139,63 @@
     "satellite_source": "VIIRS_SNPP_NRT",
     "day_night": "N",
     "acq_datetime": "2026-09-03T20:02:00+00:00",
-    "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.869,
-    "cde_anomaly_score": 0.11,
+    "classification": "PERSISTENT_INDUSTRIAL_FLARE",
+    "confidence_score": 0.833,
+    "cde_anomaly_score": 0.06,
     "cde_severity": "NORMAL",
-    "facility_id": null,
-    "facility_name": null,
-    "facility_type": null,
-    "distance_to_facility_km": 454.21,
+    "facility_id": "fac-051",
+    "facility_name": "GIDA Industrial Complex & Gallantt Ispat Gorakhpur",
+    "facility_type": "metal_works",
+    "distance_to_facility_km": 0.102,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
     "agent_reasoning": {
       "spatial": {
-        "facility": null,
-        "facility_type": null,
-        "land_cover": "Cropland",
-        "distance_km": 454.21,
-        "score": 0.95
+        "facility": "GIDA Industrial Complex & Gallantt Ispat Gorakhpur",
+        "facility_type": "metal_works",
+        "land_cover": "Urban/Built-up",
+        "distance_km": 0.102,
+        "score": 0.98
       },
       "temporal": {
-        "frp_zscore": -7.6,
-        "bt_zscore": -52.4,
-        "diurnal_anomaly": 0.15,
-        "tpi": 0.0115,
-        "baseline_frp_mean": 110.0,
-        "baseline_frp_std": 14.0,
-        "observation_count": 2,
-        "score": 0.92
+        "frp_zscore": -8.6,
+        "bt_zscore": -51.97,
+        "diurnal_anomaly": 0.08,
+        "tpi": 0.0125,
+        "baseline_frp_mean": 210.0,
+        "baseline_frp_std": 24.0,
+        "observation_count": 4,
+        "score": 0.88
       },
       "vision": {
         "cloud_free": true,
         "cloud_coverage_pct": 39.6,
-        "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.909,
-        "score": 0.909,
+        "predicted_class": "WILDFIRE",
+        "vision_class_confidence": 0.634,
+        "score": 0.634,
         "sentinel2_tile_id": "S2B_MSIL2A_20260903T200200_N0500_R019_T44F7619_20260903T200200",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.006958606840732197,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.024033321336581454,
-          "AGRICULTURAL_BURNING": 0.9090579663918816,
-          "WILDFIRE": 0.05995012443560605
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.046167554842929046,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.17556214272975923,
+          "AGRICULTURAL_BURNING": 0.14465644116202991,
+          "WILDFIRE": 0.6336138919989268
         },
-        "prediction_margin": 0.8491,
-        "prediction_entropy": 0.2738,
-        "model_agreement": 0.8242
+        "prediction_margin": 0.4581,
+        "prediction_entropy": 0.7331,
+        "model_agreement": 0.6394
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
         "wind_speed_ms": 4.5,
-        "hazard_5km_pop": 0,
-        "hazard_10km_pop": 0,
-        "recommended_action": "INFO: Agricultural stubble burning detected. Log only."
+        "hazard_5km_pop": 11750,
+        "hazard_10km_pop": 47000,
+        "recommended_action": "ROUTINE: Log and continue monitoring. Normal flaring operation."
       },
       "orchestrator": {
-        "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.869,
-        "cde_score": 0.11,
+        "final_classification": "PERSISTENT_INDUSTRIAL_FLARE",
+        "final_confidence": 0.833,
+        "cde_score": 0.06,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
         "is_critical": false,
@@ -69224,15 +69224,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.006958606840732197,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.024033321336581454,
-      "AGRICULTURAL_BURNING": 0.9090579663918816,
-      "WILDFIRE": 0.05995012443560605
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.046167554842929046,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.17556214272975923,
+      "AGRICULTURAL_BURNING": 0.14465644116202991,
+      "WILDFIRE": 0.6336138919989268
     },
-    "model_agreement": 0.8242,
-    "prediction_entropy": 0.2738,
-    "prediction_margin": 0.8491,
-    "agent_disagreement": 0.0176
+    "model_agreement": 0.6394,
+    "prediction_entropy": 0.7331,
+    "prediction_margin": 0.4581,
+    "agent_disagreement": 0.5498
   },
   {
     "id": "f5ef0ac11624f9ec",
@@ -76124,7 +76124,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 42.643,
+    "distance_to_facility_km": 4.713,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -76133,7 +76133,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 42.643,
+        "distance_km": 4.713,
         "score": 0.95
       },
       "temporal": {
@@ -76150,18 +76150,18 @@
         "cloud_free": false,
         "cloud_coverage_pct": 61.7,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.852,
-        "score": 0.852,
+        "vision_class_confidence": 0.85,
+        "score": 0.85,
         "sentinel2_tile_id": "S2B_MSIL2A_20260903T085600_N0500_R019_T42F4104_20260903T085600",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.00014226630446501076,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.01978098790529853,
-          "AGRICULTURAL_BURNING": 0.9261583110882213,
-          "WILDFIRE": 0.05391844982145509
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.010212065511732362,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03659468552020068,
+          "AGRICULTURAL_BURNING": 0.9024999487400055,
+          "WILDFIRE": 0.050693315405709045
         },
-        "prediction_margin": 0.8722,
-        "prediction_entropy": 0.2217,
-        "model_agreement": 0.8543
+        "prediction_margin": 0.8518,
+        "prediction_entropy": 0.2969,
+        "model_agreement": 0.8088
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -76202,15 +76202,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.00014226630446501076,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.01978098790529853,
-      "AGRICULTURAL_BURNING": 0.9261583110882213,
-      "WILDFIRE": 0.05391844982145509
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.010212065511732362,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03659468552020068,
+      "AGRICULTURAL_BURNING": 0.9024999487400055,
+      "WILDFIRE": 0.050693315405709045
     },
-    "model_agreement": 0.8543,
-    "prediction_entropy": 0.2217,
-    "prediction_margin": 0.8722,
-    "agent_disagreement": 0.0176
+    "model_agreement": 0.8088,
+    "prediction_entropy": 0.2969,
+    "prediction_margin": 0.8518,
+    "agent_disagreement": 0.018
   },
   {
     "id": "c2a79304065c3fec",
@@ -76545,63 +76545,63 @@
     "satellite_source": "VIIRS_SNPP_NRT",
     "day_night": "N",
     "acq_datetime": "2026-09-03T19:42:00+00:00",
-    "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.86,
-    "cde_anomaly_score": 0.11,
+    "classification": "PERSISTENT_INDUSTRIAL_FLARE",
+    "confidence_score": 0.833,
+    "cde_anomaly_score": 0.06,
     "cde_severity": "NORMAL",
-    "facility_id": null,
-    "facility_name": null,
-    "facility_type": null,
-    "distance_to_facility_km": 454.112,
+    "facility_id": "fac-051",
+    "facility_name": "GIDA Industrial Complex & Gallantt Ispat Gorakhpur",
+    "facility_type": "metal_works",
+    "distance_to_facility_km": 0.128,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
     "agent_reasoning": {
       "spatial": {
-        "facility": null,
-        "facility_type": null,
-        "land_cover": "Cropland",
-        "distance_km": 454.112,
-        "score": 0.95
+        "facility": "GIDA Industrial Complex & Gallantt Ispat Gorakhpur",
+        "facility_type": "metal_works",
+        "land_cover": "Urban/Built-up",
+        "distance_km": 0.128,
+        "score": 0.98
       },
       "temporal": {
-        "frp_zscore": -7.77,
-        "bt_zscore": -52.57,
-        "diurnal_anomaly": 0.15,
-        "tpi": 0.0115,
-        "baseline_frp_mean": 110.0,
-        "baseline_frp_std": 14.0,
-        "observation_count": 2,
-        "score": 0.92
+        "frp_zscore": -8.7,
+        "bt_zscore": -52.1,
+        "diurnal_anomaly": 0.08,
+        "tpi": 0.0125,
+        "baseline_frp_mean": 210.0,
+        "baseline_frp_std": 24.0,
+        "observation_count": 4,
+        "score": 0.88
       },
       "vision": {
         "cloud_free": true,
         "cloud_coverage_pct": 54.9,
-        "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.879,
-        "score": 0.879,
+        "predicted_class": "WILDFIRE",
+        "vision_class_confidence": 0.716,
+        "score": 0.716,
         "sentinel2_tile_id": "S2B_MSIL2A_20260903T194200_N0500_R019_T44F7519_20260903T194200",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.0070804675183414175,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.019847701552723137,
-          "AGRICULTURAL_BURNING": 0.8792413738184206,
-          "WILDFIRE": 0.09383042454332854
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.04043411026812262,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.1463862593472004,
+          "AGRICULTURAL_BURNING": 0.09695415048963493,
+          "WILDFIRE": 0.7162254677878486
         },
-        "prediction_margin": 0.7854,
-        "prediction_entropy": 0.3232,
-        "model_agreement": 0.7761
+        "prediction_margin": 0.5698,
+        "prediction_entropy": 0.6321,
+        "model_agreement": 0.5787
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
         "wind_speed_ms": 4.5,
-        "hazard_5km_pop": 0,
-        "hazard_10km_pop": 0,
-        "recommended_action": "INFO: Agricultural stubble burning detected. Log only."
+        "hazard_5km_pop": 11750,
+        "hazard_10km_pop": 47000,
+        "recommended_action": "ROUTINE: Log and continue monitoring. Normal flaring operation."
       },
       "orchestrator": {
-        "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.86,
-        "cde_score": 0.11,
+        "final_classification": "PERSISTENT_INDUSTRIAL_FLARE",
+        "final_confidence": 0.833,
+        "cde_score": 0.06,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
         "is_critical": false,
@@ -76630,15 +76630,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.0070804675183414175,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.019847701552723137,
-      "AGRICULTURAL_BURNING": 0.8792413738184206,
-      "WILDFIRE": 0.09383042454332854
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.04043411026812262,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.1463862593472004,
+      "AGRICULTURAL_BURNING": 0.09695415048963493,
+      "WILDFIRE": 0.7162254677878486
     },
-    "model_agreement": 0.7761,
-    "prediction_entropy": 0.3232,
-    "prediction_margin": 0.7854,
-    "agent_disagreement": 0.0147
+    "model_agreement": 0.5787,
+    "prediction_entropy": 0.6321,
+    "prediction_margin": 0.5698,
+    "agent_disagreement": 0.5601
   },
   {
     "id": "4dd7231b3ef51a18",
@@ -84004,7 +84004,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 136.441,
+    "distance_to_facility_km": 127.424,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -84013,7 +84013,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 136.441,
+        "distance_km": 127.424,
         "score": 0.95
       },
       "temporal": {
@@ -84380,7 +84380,7 @@
         "predicted_class": "WILDFIRE",
         "vision_class_confidence": 0.697,
         "score": 0.697,
-        "sentinel2_tile_id": "S2A_MSIL2A_20260906T153725_N0500_R019_T42F3683_20260906T153725",
+        "sentinel2_tile_id": "S2A_MSIL2A_20260906T154834_N0500_R019_T42F3683_20260906T154834",
         "class_probabilities": {
           "INDUSTRIAL_FIRE_EMERGENCY": 0.008223172662158808,
           "PERSISTENT_INDUSTRIAL_FLARE": 0.0713193160081,
@@ -93071,13 +93071,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-05T08:16:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.88,
+    "confidence_score": 0.881,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 220.907,
+    "distance_to_facility_km": 208.683,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -93086,7 +93086,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 220.907,
+        "distance_km": 208.683,
         "score": 0.95
       },
       "temporal": {
@@ -93103,18 +93103,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 45.0,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.937,
-        "score": 0.937,
+        "vision_class_confidence": 0.94,
+        "score": 0.94,
         "sentinel2_tile_id": "S2B_MSIL2A_20260905T081600_N0500_R019_T44F0759_20260905T081600",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.001902278865260693,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.01757078794966858,
-          "AGRICULTURAL_BURNING": 0.9365763005500711,
-          "WILDFIRE": 0.04395064670670157
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.0018603836248318355,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.017511033070920373,
+          "AGRICULTURAL_BURNING": 0.9401210217561005,
+          "WILDFIRE": 0.04050754623953253
         },
-        "prediction_margin": 0.8926,
-        "prediction_entropy": 0.2032,
-        "model_agreement": 0.8779
+        "prediction_margin": 0.8996,
+        "prediction_entropy": 0.1951,
+        "model_agreement": 0.8842
       },
       "dispersion": {
         "wind_direction_deg": 230.0,
@@ -93125,7 +93125,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.88,
+        "final_confidence": 0.881,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -93155,15 +93155,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.001902278865260693,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.01757078794966858,
-      "AGRICULTURAL_BURNING": 0.9365763005500711,
-      "WILDFIRE": 0.04395064670670157
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.0018603836248318355,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.017511033070920373,
+      "AGRICULTURAL_BURNING": 0.9401210217561005,
+      "WILDFIRE": 0.04050754623953253
     },
-    "model_agreement": 0.8779,
-    "prediction_entropy": 0.2032,
-    "prediction_margin": 0.8926,
-    "agent_disagreement": 0.0249
+    "model_agreement": 0.8842,
+    "prediction_entropy": 0.1951,
+    "prediction_margin": 0.8996,
+    "agent_disagreement": 0.0259
   },
   {
     "id": "51fe74d4b3150c99",
@@ -94531,13 +94531,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-05T08:18:00+00:00",
     "classification": "WILDFIRE",
-    "confidence_score": 0.87,
+    "confidence_score": 0.873,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 76.062,
+    "distance_to_facility_km": 21.659,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -94546,7 +94546,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 76.062,
+        "distance_km": 21.659,
         "score": 0.94
       },
       "temporal": {
@@ -94563,18 +94563,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 41.3,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.927,
-        "score": 0.927,
+        "vision_class_confidence": 0.935,
+        "score": 0.935,
         "sentinel2_tile_id": "S2B_MSIL2A_20260905T081800_N0500_R019_T44F7484_20260905T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.00046865621698088944,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005049831233918667,
-          "AGRICULTURAL_BURNING": 0.07161608921984831,
-          "WILDFIRE": 0.9274102707703908
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.0038032544027858726,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005891680484637618,
+          "AGRICULTURAL_BURNING": 0.06019717061581711,
+          "WILDFIRE": 0.9354104125499725
         },
-        "prediction_margin": 0.8558,
-        "prediction_entropy": 0.192,
-        "model_agreement": 0.8766
+        "prediction_margin": 0.8752,
+        "prediction_entropy": 0.1855,
+        "model_agreement": 0.888
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -94585,7 +94585,7 @@
       },
       "orchestrator": {
         "final_classification": "WILDFIRE",
-        "final_confidence": 0.87,
+        "final_confidence": 0.873,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "WARNING",
@@ -94615,15 +94615,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.00046865621698088944,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005049831233918667,
-      "AGRICULTURAL_BURNING": 0.07161608921984831,
-      "WILDFIRE": 0.9274102707703908
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.0038032544027858726,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005891680484637618,
+      "AGRICULTURAL_BURNING": 0.06019717061581711,
+      "WILDFIRE": 0.9354104125499725
     },
-    "model_agreement": 0.8766,
-    "prediction_entropy": 0.192,
-    "prediction_margin": 0.8558,
-    "agent_disagreement": 0.0285
+    "model_agreement": 0.888,
+    "prediction_entropy": 0.1855,
+    "prediction_margin": 0.8752,
+    "agent_disagreement": 0.0311
   },
   {
     "id": "9ad05223b7445712",
@@ -94644,7 +94644,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 76.361,
+    "distance_to_facility_km": 20.958,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -94653,7 +94653,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 76.361,
+        "distance_km": 20.958,
         "score": 0.94
       },
       "temporal": {
@@ -94670,18 +94670,18 @@
         "cloud_free": false,
         "cloud_coverage_pct": 62.5,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.894,
-        "score": 0.894,
+        "vision_class_confidence": 0.904,
+        "score": 0.904,
         "sentinel2_tile_id": "S2B_MSIL2A_20260905T081800_N0500_R019_T44F7484_20260905T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.00013663663412444293,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0001429111580364406,
-          "AGRICULTURAL_BURNING": 0.027963110750748057,
-          "WILDFIRE": 0.971757346259223
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.0034700320895838864,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0001688365009613335,
+          "AGRICULTURAL_BURNING": 0.013821382014624154,
+          "WILDFIRE": 0.9825397570927938
         },
-        "prediction_margin": 0.9438,
-        "prediction_entropy": 0.094,
-        "model_agreement": 0.947
+        "prediction_margin": 0.9687,
+        "prediction_entropy": 0.0704,
+        "model_agreement": 0.9679
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -94722,15 +94722,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.00013663663412444293,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0001429111580364406,
-      "AGRICULTURAL_BURNING": 0.027963110750748057,
-      "WILDFIRE": 0.971757346259223
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.0034700320895838864,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0001688365009613335,
+      "AGRICULTURAL_BURNING": 0.013821382014624154,
+      "WILDFIRE": 0.9825397570927938
     },
-    "model_agreement": 0.947,
-    "prediction_entropy": 0.094,
-    "prediction_margin": 0.9438,
-    "agent_disagreement": 0.0219
+    "model_agreement": 0.9679,
+    "prediction_entropy": 0.0704,
+    "prediction_margin": 0.9687,
+    "agent_disagreement": 0.0236
   },
   {
     "id": "1934a4d404a0dfe9",
@@ -94745,13 +94745,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-05T08:18:00+00:00",
     "classification": "WILDFIRE",
-    "confidence_score": 0.87,
+    "confidence_score": 0.873,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 75.847,
+    "distance_to_facility_km": 21.5,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -94760,7 +94760,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 75.847,
+        "distance_km": 21.5,
         "score": 0.94
       },
       "temporal": {
@@ -94777,18 +94777,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 41.3,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.927,
-        "score": 0.927,
+        "vision_class_confidence": 0.935,
+        "score": 0.935,
         "sentinel2_tile_id": "S2B_MSIL2A_20260905T081800_N0500_R019_T44F7483_20260905T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.00046865621698088944,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005049831233918667,
-          "AGRICULTURAL_BURNING": 0.07161608921984831,
-          "WILDFIRE": 0.9274102707703908
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.0038032544027858726,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005891680484637618,
+          "AGRICULTURAL_BURNING": 0.06019717061581711,
+          "WILDFIRE": 0.9354104125499725
         },
-        "prediction_margin": 0.8558,
-        "prediction_entropy": 0.192,
-        "model_agreement": 0.8766
+        "prediction_margin": 0.8752,
+        "prediction_entropy": 0.1855,
+        "model_agreement": 0.888
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -94799,7 +94799,7 @@
       },
       "orchestrator": {
         "final_classification": "WILDFIRE",
-        "final_confidence": 0.87,
+        "final_confidence": 0.873,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "WARNING",
@@ -94829,15 +94829,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.00046865621698088944,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005049831233918667,
-      "AGRICULTURAL_BURNING": 0.07161608921984831,
-      "WILDFIRE": 0.9274102707703908
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.0038032544027858726,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005891680484637618,
+      "AGRICULTURAL_BURNING": 0.06019717061581711,
+      "WILDFIRE": 0.9354104125499725
     },
-    "model_agreement": 0.8766,
-    "prediction_entropy": 0.192,
-    "prediction_margin": 0.8558,
-    "agent_disagreement": 0.0285
+    "model_agreement": 0.888,
+    "prediction_entropy": 0.1855,
+    "prediction_margin": 0.8752,
+    "agent_disagreement": 0.0311
   },
   {
     "id": "4569eb0bb9c2dd0c",
@@ -94852,13 +94852,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-05T08:18:00+00:00",
     "classification": "WILDFIRE",
-    "confidence_score": 0.886,
+    "confidence_score": 0.889,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 75.942,
+    "distance_to_facility_km": 20.671,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -94867,7 +94867,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 75.942,
+        "distance_km": 20.671,
         "score": 0.94
       },
       "temporal": {
@@ -94884,18 +94884,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 57.3,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.971,
-        "score": 0.971,
+        "vision_class_confidence": 0.979,
+        "score": 0.979,
         "sentinel2_tile_id": "S2B_MSIL2A_20260905T081800_N0500_R019_T44F7584_20260905T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.00016148037684615701,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0001688957418082282,
-          "AGRICULTURAL_BURNING": 0.02832920655349477,
-          "WILDFIRE": 0.9713404415713416
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.003494926021861223,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.00019958305347245187,
+          "AGRICULTURAL_BURNING": 0.01739605109129722,
+          "WILDFIRE": 0.9789094138145447
         },
-        "prediction_margin": 0.943,
-        "prediction_entropy": 0.0953,
-        "model_agreement": 0.9478
+        "prediction_margin": 0.9615,
+        "prediction_entropy": 0.0814,
+        "model_agreement": 0.9618
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -94906,7 +94906,7 @@
       },
       "orchestrator": {
         "final_classification": "WILDFIRE",
-        "final_confidence": 0.886,
+        "final_confidence": 0.889,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "WARNING",
@@ -94936,15 +94936,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.00016148037684615701,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0001688957418082282,
-      "AGRICULTURAL_BURNING": 0.02832920655349477,
-      "WILDFIRE": 0.9713404415713416
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.003494926021861223,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.00019958305347245187,
+      "AGRICULTURAL_BURNING": 0.01739605109129722,
+      "WILDFIRE": 0.9789094138145447
     },
-    "model_agreement": 0.9478,
-    "prediction_entropy": 0.0953,
-    "prediction_margin": 0.943,
-    "agent_disagreement": 0.0431
+    "model_agreement": 0.9618,
+    "prediction_entropy": 0.0814,
+    "prediction_margin": 0.9615,
+    "agent_disagreement": 0.0458
   },
   {
     "id": "3fd0db5db5f7209f",
@@ -94965,7 +94965,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 22.164,
+    "distance_to_facility_km": 5.069,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -94974,7 +94974,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 22.164,
+        "distance_km": 5.069,
         "score": 0.94
       },
       "temporal": {
@@ -94995,14 +94995,14 @@
         "score": 0.95,
         "sentinel2_tile_id": "S2B_MSIL2A_20260905T081800_N0500_R019_T44F9235_20260905T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.003686229646749174,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0004424471117090434,
-          "AGRICULTURAL_BURNING": 0.045744288827603063,
-          "WILDFIRE": 0.9501270206769308
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.003686444520329436,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005525178858079016,
+          "AGRICULTURAL_BURNING": 0.04533147753526767,
+          "WILDFIRE": 0.9504295440514883
         },
-        "prediction_margin": 0.9044,
-        "prediction_entropy": 0.1542,
-        "model_agreement": 0.9122
+        "prediction_margin": 0.9051,
+        "prediction_entropy": 0.1539,
+        "model_agreement": 0.9114
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -95043,14 +95043,14 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.003686229646749174,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0004424471117090434,
-      "AGRICULTURAL_BURNING": 0.045744288827603063,
-      "WILDFIRE": 0.9501270206769308
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.003686444520329436,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005525178858079016,
+      "AGRICULTURAL_BURNING": 0.04533147753526767,
+      "WILDFIRE": 0.9504295440514883
     },
-    "model_agreement": 0.9122,
-    "prediction_entropy": 0.1542,
-    "prediction_margin": 0.9044,
+    "model_agreement": 0.9114,
+    "prediction_entropy": 0.1539,
+    "prediction_margin": 0.9051,
     "agent_disagreement": 0.0361
   },
   {
@@ -101574,13 +101574,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-05T08:37:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.875,
+    "confidence_score": 0.866,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 42.661,
+    "distance_to_facility_km": 4.696,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -101589,7 +101589,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 42.661,
+        "distance_km": 4.696,
         "score": 0.95
       },
       "temporal": {
@@ -101606,18 +101606,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 59.5,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.924,
-        "score": 0.924,
+        "vision_class_confidence": 0.9,
+        "score": 0.9,
         "sentinel2_tile_id": "S2B_MSIL2A_20260905T083700_N0500_R019_T42F4104_20260905T083700",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.001808934077077235,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.016960476598184893,
-          "AGRICULTURAL_BURNING": 0.9239826982106445,
-          "WILDFIRE": 0.057247926024137995
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.008545401260683623,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.03710751057321874,
+          "AGRICULTURAL_BURNING": 0.9003261538040943,
+          "WILDFIRE": 0.05402090041238504
         },
-        "prediction_margin": 0.8667,
-        "prediction_entropy": 0.2289,
-        "model_agreement": 0.8502
+        "prediction_margin": 0.8463,
+        "prediction_entropy": 0.2994,
+        "model_agreement": 0.8044
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -101628,7 +101628,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.875,
+        "final_confidence": 0.866,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -101658,15 +101658,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.001808934077077235,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.016960476598184893,
-      "AGRICULTURAL_BURNING": 0.9239826982106445,
-      "WILDFIRE": 0.057247926024137995
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.008545401260683623,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.03710751057321874,
+      "AGRICULTURAL_BURNING": 0.9003261538040943,
+      "WILDFIRE": 0.05402090041238504
     },
-    "model_agreement": 0.8502,
-    "prediction_entropy": 0.2289,
-    "prediction_margin": 0.8667,
-    "agent_disagreement": 0.0205
+    "model_agreement": 0.8044,
+    "prediction_entropy": 0.2994,
+    "prediction_margin": 0.8463,
+    "agent_disagreement": 0.0161
   },
   {
     "id": "3f5777d43938ece6",
@@ -106941,7 +106941,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 320.434,
+    "distance_to_facility_km": 240.462,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -106950,7 +106950,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 320.434,
+        "distance_km": 240.462,
         "score": 0.95
       },
       "temporal": {
@@ -107756,7 +107756,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 231.77,
+    "distance_to_facility_km": 81.009,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -107765,7 +107765,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 231.77,
+        "distance_km": 81.009,
         "score": 0.95
       },
       "temporal": {
@@ -107786,14 +107786,14 @@
         "score": 0.85,
         "sentinel2_tile_id": "S2B_MSIL2A_20260906T214500_N0500_R019_T44F9397_20260906T214500",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.012144363010302186,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.029763483727971714,
-          "AGRICULTURAL_BURNING": 0.8005780617396037,
-          "WILDFIRE": 0.1575140833730499
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.011338666304945946,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0347978400796031,
+          "AGRICULTURAL_BURNING": 0.8189126165707906,
+          "WILDFIRE": 0.13495084922139844
         },
-        "prediction_margin": 0.6431,
-        "prediction_entropy": 0.4525,
-        "model_agreement": 0.6655
+        "prediction_margin": 0.684,
+        "prediction_entropy": 0.4339,
+        "model_agreement": 0.6693
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -107836,14 +107836,14 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.012144363010302186,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.029763483727971714,
-      "AGRICULTURAL_BURNING": 0.8005780617396037,
-      "WILDFIRE": 0.1575140833730499
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.011338666304945946,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0347978400796031,
+      "AGRICULTURAL_BURNING": 0.8189126165707906,
+      "WILDFIRE": 0.13495084922139844
     },
-    "model_agreement": 0.6655,
-    "prediction_entropy": 0.4525,
-    "prediction_margin": 0.6431,
+    "model_agreement": 0.6693,
+    "prediction_entropy": 0.4339,
+    "prediction_margin": 0.684,
     "agent_disagreement": 0.018,
     "analyst_confirmed": false,
     "review_decision": null,
@@ -109475,7 +109475,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 332.974,
+    "distance_to_facility_km": 233.671,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -109484,7 +109484,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 332.974,
+        "distance_km": 233.671,
         "score": 0.95
       },
       "temporal": {
@@ -109927,7 +109927,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 308.91,
+    "distance_to_facility_km": 232.177,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -109936,7 +109936,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 308.91,
+        "distance_km": 232.177,
         "score": 0.95
       },
       "temporal": {
@@ -111872,7 +111872,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 388.217,
+    "distance_to_facility_km": 331.82,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -111881,7 +111881,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 388.217,
+        "distance_km": 331.82,
         "score": 0.95
       },
       "temporal": {
@@ -112324,7 +112324,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 384.96,
+    "distance_to_facility_km": 337.524,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -112333,7 +112333,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 384.96,
+        "distance_km": 337.524,
         "score": 0.95
       },
       "temporal": {
@@ -114156,7 +114156,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 312.501,
+    "distance_to_facility_km": 235.795,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -114165,7 +114165,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 312.501,
+        "distance_km": 235.795,
         "score": 0.95
       },
       "temporal": {
@@ -114608,7 +114608,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 382.554,
+    "distance_to_facility_km": 339.828,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -114617,7 +114617,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 382.554,
+        "distance_km": 339.828,
         "score": 0.95
       },
       "temporal": {
@@ -114721,7 +114721,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 335.212,
+    "distance_to_facility_km": 234.418,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -114730,7 +114730,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 335.212,
+        "distance_km": 234.418,
         "score": 0.95
       },
       "temporal": {
@@ -116666,7 +116666,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 308.83,
+    "distance_to_facility_km": 222.737,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -116675,7 +116675,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 308.83,
+        "distance_km": 222.737,
         "score": 0.95
       },
       "temporal": {
@@ -116886,13 +116886,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-06T12:18:00+00:00",
     "classification": "AGRICULTURAL_BURNING",
-    "confidence_score": 0.898,
+    "confidence_score": 0.895,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 178.074,
+    "distance_to_facility_km": 17.897,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -116901,7 +116901,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 178.074,
+        "distance_km": 17.897,
         "score": 0.95
       },
       "temporal": {
@@ -116918,18 +116918,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 38.7,
         "predicted_class": "AGRICULTURAL_BURNING",
-        "vision_class_confidence": 0.893,
-        "score": 0.893,
+        "vision_class_confidence": 0.88,
+        "score": 0.88,
         "sentinel2_tile_id": "S2B_MSIL2A_20260906T121800_N0500_R019_T44F3937_20260906T121800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.008100784105869632,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.031759643175997915,
-          "AGRICULTURAL_BURNING": 0.8932429871155193,
-          "WILDFIRE": 0.0668965477676336
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.008183691722030442,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.04193534394789298,
+          "AGRICULTURAL_BURNING": 0.8804718474547069,
+          "WILDFIRE": 0.06940912549010356
         },
-        "prediction_margin": 0.8263,
-        "prediction_entropy": 0.3104,
-        "model_agreement": 0.8266
+        "prediction_margin": 0.8111,
+        "prediction_entropy": 0.3387,
+        "model_agreement": 0.7995
       },
       "dispersion": {
         "wind_direction_deg": 270.0,
@@ -116940,7 +116940,7 @@
       },
       "orchestrator": {
         "final_classification": "AGRICULTURAL_BURNING",
-        "final_confidence": 0.898,
+        "final_confidence": 0.895,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "INFO",
@@ -116972,15 +116972,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.008100784105869632,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.031759643175997915,
-      "AGRICULTURAL_BURNING": 0.8932429871155193,
-      "WILDFIRE": 0.0668965477676336
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.008183691722030442,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.04193534394789298,
+      "AGRICULTURAL_BURNING": 0.8804718474547069,
+      "WILDFIRE": 0.06940912549010356
     },
-    "model_agreement": 0.8266,
-    "prediction_entropy": 0.3104,
-    "prediction_margin": 0.8263,
-    "agent_disagreement": 0.0149,
+    "model_agreement": 0.7995,
+    "prediction_entropy": 0.3387,
+    "prediction_margin": 0.8111,
+    "agent_disagreement": 0.0146,
     "analyst_confirmed": false,
     "review_decision": null,
     "reviewed_at": null,
@@ -117142,7 +117142,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 333.678,
+    "distance_to_facility_km": 220.766,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -117151,7 +117151,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 333.678,
+        "distance_km": 220.766,
         "score": 0.95
       },
       "temporal": {
@@ -117255,7 +117255,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 334.573,
+    "distance_to_facility_km": 294.267,
     "alert_severity": "INFO",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -117264,7 +117264,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Cropland",
-        "distance_km": 334.573,
+        "distance_km": 294.267,
         "score": 0.95
       },
       "temporal": {
@@ -118034,13 +118034,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-06T08:18:00+00:00",
     "classification": "WILDFIRE",
-    "confidence_score": 0.872,
+    "confidence_score": 0.874,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 75.956,
+    "distance_to_facility_km": 20.74,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -118049,7 +118049,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 75.956,
+        "distance_km": 20.74,
         "score": 0.94
       },
       "temporal": {
@@ -118066,18 +118066,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 57.3,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.931,
-        "score": 0.931,
+        "vision_class_confidence": 0.939,
+        "score": 0.939,
         "sentinel2_tile_id": "S2B_MSIL2A_20260906T081800_N0500_R019_T44F7584_20260906T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.00046865621698088944,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005049831233918667,
-          "AGRICULTURAL_BURNING": 0.06828275588651499,
-          "WILDFIRE": 0.9307436041037241
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.003803292266869297,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005979783018119633,
+          "AGRICULTURAL_BURNING": 0.05681509674837192,
+          "WILDFIRE": 0.938783651192983
         },
-        "prediction_margin": 0.8625,
-        "prediction_entropy": 0.1858,
-        "model_agreement": 0.8832
+        "prediction_margin": 0.882,
+        "prediction_entropy": 0.1788,
+        "model_agreement": 0.8946
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -118088,7 +118088,7 @@
       },
       "orchestrator": {
         "final_classification": "WILDFIRE",
-        "final_confidence": 0.872,
+        "final_confidence": 0.874,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "WARNING",
@@ -118118,15 +118118,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.00046865621698088944,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005049831233918667,
-      "AGRICULTURAL_BURNING": 0.06828275588651499,
-      "WILDFIRE": 0.9307436041037241
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.003803292266869297,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005979783018119633,
+      "AGRICULTURAL_BURNING": 0.05681509674837192,
+      "WILDFIRE": 0.938783651192983
     },
-    "model_agreement": 0.8832,
-    "prediction_entropy": 0.1858,
-    "prediction_margin": 0.8625,
-    "agent_disagreement": 0.0298
+    "model_agreement": 0.8946,
+    "prediction_entropy": 0.1788,
+    "prediction_margin": 0.882,
+    "agent_disagreement": 0.0325
   },
   {
     "id": "9ad54bf11223c975",
@@ -118147,7 +118147,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 76.219,
+    "distance_to_facility_km": 21.273,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -118156,7 +118156,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 76.219,
+        "distance_km": 21.273,
         "score": 0.94
       },
       "temporal": {
@@ -118173,18 +118173,18 @@
         "cloud_free": false,
         "cloud_coverage_pct": 62.5,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.862,
-        "score": 0.862,
+        "vision_class_confidence": 0.867,
+        "score": 0.867,
         "sentinel2_tile_id": "S2B_MSIL2A_20260906T081800_N0500_R019_T44F7484_20260906T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.00047705654287710786,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005140345310792327,
-          "AGRICULTURAL_BURNING": 0.06154305397222439,
-          "WILDFIRE": 0.9374658521016439
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.003811655747316157,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005997009575366974,
+          "AGRICULTURAL_BURNING": 0.053478246973827484,
+          "WILDFIRE": 0.9421103684107462
         },
-        "prediction_margin": 0.8759,
-        "prediction_entropy": 0.1729,
-        "model_agreement": 0.8964
+        "prediction_margin": 0.8886,
+        "prediction_entropy": 0.172,
+        "model_agreement": 0.9012
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -118225,15 +118225,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.00047705654287710786,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005140345310792327,
-      "AGRICULTURAL_BURNING": 0.06154305397222439,
-      "WILDFIRE": 0.9374658521016439
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.003811655747316157,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005997009575366974,
+      "AGRICULTURAL_BURNING": 0.053478246973827484,
+      "WILDFIRE": 0.9421103684107462
     },
-    "model_agreement": 0.8964,
-    "prediction_entropy": 0.1729,
-    "prediction_margin": 0.8759,
-    "agent_disagreement": 0.0223
+    "model_agreement": 0.9012,
+    "prediction_entropy": 0.172,
+    "prediction_margin": 0.8886,
+    "agent_disagreement": 0.022
   },
   {
     "id": "fa4e61ffd21f8c3c",
@@ -118248,13 +118248,13 @@
     "day_night": "D",
     "acq_datetime": "2026-09-06T08:18:00+00:00",
     "classification": "WILDFIRE",
-    "confidence_score": 0.875,
+    "confidence_score": 0.877,
     "cde_anomaly_score": 0.0,
     "cde_severity": "NORMAL",
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 75.991,
+    "distance_to_facility_km": 21.094,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -118263,7 +118263,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 75.991,
+        "distance_km": 21.094,
         "score": 0.94
       },
       "temporal": {
@@ -118280,18 +118280,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 57.3,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.941,
-        "score": 0.941,
+        "vision_class_confidence": 0.945,
+        "score": 0.945,
         "sentinel2_tile_id": "S2B_MSIL2A_20260906T081800_N0500_R019_T44F7484_20260906T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.00047705654287710786,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005140345310792327,
-          "AGRICULTURAL_BURNING": 0.058209720638891065,
-          "WILDFIRE": 0.9407991854349772
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.0038116934367765985,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.000608667905908078,
+          "AGRICULTURAL_BURNING": 0.05009689045759539,
+          "WILDFIRE": 0.9454827427864074
         },
-        "prediction_margin": 0.8826,
-        "prediction_entropy": 0.1663,
-        "model_agreement": 0.9031
+        "prediction_margin": 0.8954,
+        "prediction_entropy": 0.165,
+        "model_agreement": 0.9078
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -118302,7 +118302,7 @@
       },
       "orchestrator": {
         "final_classification": "WILDFIRE",
-        "final_confidence": 0.875,
+        "final_confidence": 0.877,
         "cde_score": 0.0,
         "cde_severity": "NORMAL",
         "alert_severity": "WARNING",
@@ -118332,15 +118332,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.00047705654287710786,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005140345310792327,
-      "AGRICULTURAL_BURNING": 0.058209720638891065,
-      "WILDFIRE": 0.9407991854349772
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.0038116934367765985,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.000608667905908078,
+      "AGRICULTURAL_BURNING": 0.05009689045759539,
+      "WILDFIRE": 0.9454827427864074
     },
-    "model_agreement": 0.9031,
-    "prediction_entropy": 0.1663,
-    "prediction_margin": 0.8826,
-    "agent_disagreement": 0.0331
+    "model_agreement": 0.9078,
+    "prediction_entropy": 0.165,
+    "prediction_margin": 0.8954,
+    "agent_disagreement": 0.0345
   },
   {
     "id": "a2627ef2f317b785",
@@ -118361,7 +118361,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 76.099,
+    "distance_to_facility_km": 20.581,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -118370,7 +118370,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 76.099,
+        "distance_km": 20.581,
         "score": 0.94
       },
       "temporal": {
@@ -118387,18 +118387,18 @@
         "cloud_free": false,
         "cloud_coverage_pct": 64.5,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.856,
-        "score": 0.856,
+        "vision_class_confidence": 0.864,
+        "score": 0.864,
         "sentinel2_tile_id": "S2B_MSIL2A_20260906T081800_N0500_R019_T44F7584_20260906T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.0004769022634718567,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005138682899996638,
-          "AGRICULTURAL_BURNING": 0.06836984153216084,
-          "WILDFIRE": 0.9306393853823344
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.0038115846175545208,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0006085294880904257,
+          "AGRICULTURAL_BURNING": 0.056876531674837076,
+          "WILDFIRE": 0.9387033637364706
         },
-        "prediction_margin": 0.8623,
-        "prediction_entropy": 0.186,
-        "model_agreement": 0.8834
+        "prediction_margin": 0.8818,
+        "prediction_entropy": 0.179,
+        "model_agreement": 0.8947
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -118439,15 +118439,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.0004769022634718567,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005138682899996638,
-      "AGRICULTURAL_BURNING": 0.06836984153216084,
-      "WILDFIRE": 0.9306393853823344
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.0038115846175545208,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0006085294880904257,
+      "AGRICULTURAL_BURNING": 0.056876531674837076,
+      "WILDFIRE": 0.9387033637364706
     },
-    "model_agreement": 0.8834,
-    "prediction_entropy": 0.186,
-    "prediction_margin": 0.8623,
-    "agent_disagreement": 0.0225
+    "model_agreement": 0.8947,
+    "prediction_entropy": 0.179,
+    "prediction_margin": 0.8818,
+    "agent_disagreement": 0.0222
   },
   {
     "id": "f9b55c29afe6c87c",
@@ -118468,7 +118468,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 79.502,
+    "distance_to_facility_km": 14.5,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -118477,7 +118477,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 79.502,
+        "distance_km": 14.5,
         "score": 0.94
       },
       "temporal": {
@@ -118494,18 +118494,18 @@
         "cloud_free": false,
         "cloud_coverage_pct": 60.6,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.862,
-        "score": 0.862,
+        "vision_class_confidence": 0.87,
+        "score": 0.87,
         "sentinel2_tile_id": "S2B_MSIL2A_20260906T081800_N0500_R019_T44F8089_20260906T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.00047705654287710786,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005140345310792327,
-          "AGRICULTURAL_BURNING": 0.06154305397222439,
-          "WILDFIRE": 0.9374658521016439
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.0038116350544927023,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0006696337950415909,
+          "AGRICULTURAL_BURNING": 0.0500964718280981,
+          "WILDFIRE": 0.9454222738742828
         },
-        "prediction_margin": 0.8759,
-        "prediction_entropy": 0.1729,
-        "model_agreement": 0.8964
+        "prediction_margin": 0.8953,
+        "prediction_entropy": 0.1653,
+        "model_agreement": 0.9078
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -118546,15 +118546,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.00047705654287710786,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005140345310792327,
-      "AGRICULTURAL_BURNING": 0.06154305397222439,
-      "WILDFIRE": 0.9374658521016439
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.0038116350544927023,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0006696337950415909,
+      "AGRICULTURAL_BURNING": 0.0500964718280981,
+      "WILDFIRE": 0.9454222738742828
     },
-    "model_agreement": 0.8964,
-    "prediction_entropy": 0.1729,
-    "prediction_margin": 0.8759,
-    "agent_disagreement": 0.0223
+    "model_agreement": 0.9078,
+    "prediction_entropy": 0.1653,
+    "prediction_margin": 0.8953,
+    "agent_disagreement": 0.0219
   },
   {
     "id": "7c7605af355dfbb6",
@@ -118575,7 +118575,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 22.059,
+    "distance_to_facility_km": 5.208,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -118584,7 +118584,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 22.059,
+        "distance_km": 5.208,
         "score": 0.94
       },
       "temporal": {
@@ -118601,18 +118601,18 @@
         "cloud_free": true,
         "cloud_coverage_pct": 55.7,
         "predicted_class": "WILDFIRE",
-        "vision_class_confidence": 0.935,
-        "score": 0.935,
+        "vision_class_confidence": 0.936,
+        "score": 0.936,
         "sentinel2_tile_id": "S2B_MSIL2A_20260906T081800_N0500_R019_T44F9235_20260906T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.0038032544027858726,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.0005891680484637618,
-          "AGRICULTURAL_BURNING": 0.06019717061581711,
-          "WILDFIRE": 0.9354104125499725
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.003803687293160086,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0007359696901403368,
+          "AGRICULTURAL_BURNING": 0.05959357952388624,
+          "WILDFIRE": 0.9358667755126953
         },
-        "prediction_margin": 0.8752,
-        "prediction_entropy": 0.1855,
-        "model_agreement": 0.888
+        "prediction_margin": 0.8763,
+        "prediction_entropy": 0.1851,
+        "model_agreement": 0.8868
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -118653,15 +118653,15 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.0038032544027858726,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.0005891680484637618,
-      "AGRICULTURAL_BURNING": 0.06019717061581711,
-      "WILDFIRE": 0.9354104125499725
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.003803687293160086,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0007359696901403368,
+      "AGRICULTURAL_BURNING": 0.05959357952388624,
+      "WILDFIRE": 0.9358667755126953
     },
-    "model_agreement": 0.888,
-    "prediction_entropy": 0.1855,
-    "prediction_margin": 0.8752,
-    "agent_disagreement": 0.0311
+    "model_agreement": 0.8868,
+    "prediction_entropy": 0.1851,
+    "prediction_margin": 0.8763,
+    "agent_disagreement": 0.0315
   },
   {
     "id": "64f204ff0e7faef8",
@@ -118682,7 +118682,7 @@
     "facility_id": null,
     "facility_name": null,
     "facility_type": null,
-    "distance_to_facility_km": 22.037,
+    "distance_to_facility_km": 5.188,
     "alert_severity": "WARNING",
     "is_critical_alert": false,
     "human_review_required": false,
@@ -118691,7 +118691,7 @@
         "facility": null,
         "facility_type": null,
         "land_cover": "Tree cover",
-        "distance_km": 22.037,
+        "distance_km": 5.188,
         "score": 0.94
       },
       "temporal": {
@@ -118712,14 +118712,14 @@
         "score": 0.942,
         "sentinel2_tile_id": "S2B_MSIL2A_20260906T081800_N0500_R019_T44F9235_20260906T081800",
         "class_probabilities": {
-          "INDUSTRIAL_FIRE_EMERGENCY": 0.0038115454146948956,
-          "PERSISTENT_INDUSTRIAL_FLARE": 0.000599562656134367,
-          "AGRICULTURAL_BURNING": 0.0535927938297391,
-          "WILDFIRE": 0.9419961063067118
+          "INDUSTRIAL_FIRE_EMERGENCY": 0.0038119937009954206,
+          "PERSISTENT_INDUSTRIAL_FLARE": 0.0007489664130844176,
+          "AGRICULTURAL_BURNING": 0.052978601725772026,
+          "WILDFIRE": 0.9424603966871897
         },
-        "prediction_margin": 0.8884,
-        "prediction_entropy": 0.1723,
-        "model_agreement": 0.9015
+        "prediction_margin": 0.8895,
+        "prediction_entropy": 0.1718,
+        "model_agreement": 0.9002
       },
       "dispersion": {
         "wind_direction_deg": 250.0,
@@ -118760,14 +118760,14 @@
     },
     "uncertainty_reasons": [],
     "model_probabilities": {
-      "INDUSTRIAL_FIRE_EMERGENCY": 0.0038115454146948956,
-      "PERSISTENT_INDUSTRIAL_FLARE": 0.000599562656134367,
-      "AGRICULTURAL_BURNING": 0.0535927938297391,
-      "WILDFIRE": 0.9419961063067118
+      "INDUSTRIAL_FIRE_EMERGENCY": 0.0038119937009954206,
+      "PERSISTENT_INDUSTRIAL_FLARE": 0.0007489664130844176,
+      "AGRICULTURAL_BURNING": 0.052978601725772026,
+      "WILDFIRE": 0.9424603966871897
     },
-    "model_agreement": 0.9015,
-    "prediction_entropy": 0.1723,
-    "prediction_margin": 0.8884,
+    "model_agreement": 0.9002,
+    "prediction_entropy": 0.1718,
+    "prediction_margin": 0.8895,
     "agent_disagreement": 0.0335
   },
   {
