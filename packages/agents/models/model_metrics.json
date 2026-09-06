@@ -1,6 +1,6 @@
 {
   "model_name": "Calibrated XGBoost + Random Forest Multi-Modal Ensemble",
-  "trained_at": "2026-09-06T09:38:32.896892+00:00",
+  "trained_at": "2026-09-06T09:45:27.529714+00:00",
   "evaluation_method": "5-Fold Stratified Cross-Validation (every sample tested once)",
   "total_samples": 1080,
   "test_samples": 1080,
@@ -164,5 +164,5 @@
     }
   ],
   "shap_chart_url": "/ml/shap_feature_importance.png",
-  "dataset_provenance": "333 Real NASA FIRMS VIIRS Detections (North India BBox) + Google Earth Optical Ground Truth + OpenStreetMap Geodesic Infrastructure Network"
+  "dataset_provenance": "Merged ground truth: 221 hand-verified (Google Earth optical) + 112 physical boundary anchors + 746 NASA LANCE VIIRS C2 archive samples (India, rule-labeled via 50-facility OSM registry containment + geographic fire-regime zones; persistence_count_30d derived from real per-location archive detection counts). Labels: 0=Industrial Fire Emergency, 1=Persistent Industrial Flare, 2=Agricultural Burning, 3=Wildfire."
 }
