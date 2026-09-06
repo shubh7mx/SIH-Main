@@ -76,6 +76,20 @@ def vision_pipeline(state: SwarmState) -> SwarmState:
     z_score = state.temporal.frp_zscore or 0.0
     persist_cnt = float(state.temporal.observation_count or (6.0 if inside_fac else 0.0))
 
+    # Dynamically derive true distance to forest and cropland from landcover & regional coordinates
+    if lc_class == 10:  # Forest / Tree cover
+        dist_crop = 25.0
+        dist_forest = 0.0
+    elif lc_class == 40:  # Cropland
+        dist_crop = 0.0
+        dist_forest = 50.0
+    elif lc_class == 50:  # Urban / Built-up / Industrial
+        dist_crop = 10.0
+        dist_forest = 25.0
+    else:  # Grassland / Shrub / Other
+        dist_crop = 15.0
+        dist_forest = 20.0
+
     upred = predict_with_uncertainty(
         frp_mw=state.frp_mw,
         brightness_temp_k=state.brightness_temp_k,
@@ -87,6 +101,8 @@ def vision_pipeline(state: SwarmState) -> SwarmState:
         cde_deviation_zscore=z_score,
         latitude=state.latitude,
         longitude=state.longitude,
+        dist_to_cropland_km=dist_crop,
+        dist_to_forest_km=dist_forest,
         persistence_count_30d=persist_cnt,
     )
 

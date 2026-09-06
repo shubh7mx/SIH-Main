@@ -132,8 +132,7 @@ def _temporal_class_posterior(state: SwarmState) -> dict[str, float]:
     dist_km = state.spatial.nearest_facility_km if state.spatial.nearest_facility_km is not None else 999.0
     is_industrial = (
         state.spatial.facility_id is not None
-        or dist_km <= 5.0
-        or (state.spatial.land_cover_class == 50 and dist_km <= 10.0)
+        or dist_km <= 2.5
     )
     z_frp = state.temporal.frp_zscore or 0.0
     z_bt = state.temporal.bt_zscore or 0.0
@@ -259,7 +258,7 @@ def orchestrator_node(state: SwarmState) -> SwarmState:
     # ── CDE severity override for industrial containment ───────────
     spatial_facility = state.spatial.facility_id is not None or state.spatial.facility_name is not None
     nearest_km = state.spatial.nearest_facility_km if state.spatial.nearest_facility_km is not None else 999.0
-    is_near_facility = (spatial_facility or state.spatial.facility_type is not None or state.spatial.land_cover_class == 50) and nearest_km <= 8.0
+    is_near_facility = spatial_facility and nearest_km <= 2.5
 
     severity: AlertSeverity = "INFO"
     is_critical = False

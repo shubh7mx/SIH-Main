@@ -143,32 +143,32 @@ def spatial_pipeline(state: SwarmState) -> SwarmState:
     land_cover_class, land_cover_name = _simulate_worldcover(lat, lon)
 
     # ── High-confidence spatial scoring ──────────────────────────────────────
-    # A hotspot is considered facility-associated if within 12.0 km of a major industrial asset
-    # or if within 25.0 km for mega-complexes (Jamnagar, Hazira, Jamshedpur, Paradip, Manali, Angul, Bokaro)
-    is_mega_complex = nearest and any(k in nearest["name"].lower() for k in ["jamnagar", "hazira", "jamshedpur", "paradip", "bokaro", "angul", "haldia", "koyali", "mundra", "vizag", "vijayanagar"])
-    max_threshold_km = 25.0 if is_mega_complex else 12.0
-    is_near_facility = nearest is not None and min_dist_km <= max_threshold_km
+    # A hotspot is contained within an industrial facility ONLY if it is inside its true perimeter
+    # (<= 2.5 km for mega refineries/smelters, <= 1.5 km for cement/chemical plants).
+    # Hotspots 5-25 km away in rural Punjab, Jharkhand forests, or Assam tea gardens
+    # are NEVER industrial flares — they are real agricultural burning or forest fires.
+    is_mega_complex = nearest and any(k in nearest["name"].lower() for k in ["jamnagar", "hazira", "jamshedpur", "paradip", "haldia", "koyali", "mundra", "vizag", "vijayanagar"])
+    facility_radius_km = 2.5 if is_mega_complex else 1.5
+    is_near_facility = nearest is not None and min_dist_km <= facility_radius_km
 
     if is_near_facility:
         # Hotspot contained within industrial perimeter or flare buffer
-        if min_dist_km <= 2.0:
-            spatial_score = 0.98  # Direct facility footprint
-        elif min_dist_km <= 6.0:
-            spatial_score = 0.95  # Industrial fence line / flare zone
-        elif min_dist_km <= 12.0:
-            spatial_score = 0.91  # Industrial corridor / peripheral buffer
+        if min_dist_km <= 0.8:
+            spatial_score = 0.98  # Direct plant / flare stack footprint
+        elif min_dist_km <= 1.5:
+            spatial_score = 0.95  # Industrial facility boundary
         else:
-            spatial_score = 0.86  # Regional industrial cluster zone
+            spatial_score = 0.90  # Refinery outer perimeter
         cluster_size = 4 if nearest["type"] in ("refinery", "metal_works", "chemical", "gas_processing") else 2
-        land_cover_class = 50  # Override land-cover to Urban/Industrial
+        land_cover_class = 50  # Urban/Industrial land cover
         land_cover_name = "Urban/Built-up"
     else:
-        # Non-industrial hotspot: high spatial confidence for agrarian or forest context
+        # Non-industrial hotspot: authentic land cover classification (Cropland, Forest, Grassland)
         if land_cover_class == 40:  # Cropland
-            spatial_score = 0.94
+            spatial_score = 0.95
             cluster_size = 2
         elif land_cover_class == 10:  # Forest/Tree cover
-            spatial_score = 0.93
+            spatial_score = 0.94
             cluster_size = 1
         elif land_cover_class in (20, 30):  # Shrub/Grassland
             spatial_score = 0.90
