@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+import { API_BASE } from "@/lib/api";
 
 interface EscalateButtonProps {
   eventId: string;
@@ -67,7 +66,7 @@ export function EscalateButton({
     }, 550);
 
     try {
-      const res = await fetch(`${API_BASE}/api/v1/events/${eventId}/escalate`, {
+      const res = await fetch(`${API_BASE}/events/${eventId}/escalate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ note: `Manual escalation of ${facilityName || "event"}` }),
