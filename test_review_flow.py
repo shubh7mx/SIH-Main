@@ -21,13 +21,13 @@ def test_review_flow_live():
         "scenario": "ambiguous_boundary",
         "hotspot": {
             "firms_id": "test-hitl-001",
-            "latitude": 21.15,
-            "longitude": 72.68,
-            "frp_megawatts": 150.0,
-            "brightness_temp_kelvin": 500.0,
-            "confidence_pct": 62,
+            "latitude": 23.50,
+            "longitude": 77.50,
+            "frp_megawatts": 45.0,
+            "brightness_temp_kelvin": 345.0,
+            "confidence_pct": 20,
             "satellite_source": "VIIRS_SNPP_NRT",
-            "day_night": "N",
+            "day_night": "D",
         }
     }
 

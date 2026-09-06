@@ -73,8 +73,8 @@ class CoDisambiguationEngine:
 
     # Severity thresholds on raw CDE score (sum of |Z| weighted)
     THRESHOLD_CRITICAL = 4.0
-    THRESHOLD_WARNING = 2.0
-    THRESHOLD_WATCH = 1.0  # Raised from 0.3 to require more confidence before watching
+    THRESHOLD_WARNING = 2.5
+    THRESHOLD_WATCH = 1.0
 
     def __init__(self, baseline: FacilityBaseline):
         self.baseline = baseline
