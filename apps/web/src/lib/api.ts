@@ -119,6 +119,34 @@ export async function getEvent(
   return request<HotspotEvent>(`/events/${encodeURIComponent(id)}`, {}, signal);
 }
 
+export async function getReviewQueue(
+  limit: number = 50,
+  signal?: AbortSignal
+): Promise<{ count: number; events: HotspotEvent[] }> {
+  return request<{ count: number; events: HotspotEvent[] }>(
+    `/events/review-queue?limit=${limit}`,
+    {},
+    signal
+  );
+}
+
+export async function submitReview(
+  eventId: string,
+  decision: "CONFIRM_EMERGENCY" | "CONFIRM_FLARE" | "CONFIRM_AGRICULTURAL" | "CONFIRM_WILDFIRE" | "DISMISS",
+  note: string = "",
+  signal?: AbortSignal
+): Promise<{ status: string; event: HotspotEvent }> {
+  return request<{ status: string; event: HotspotEvent }>(
+    `/events/${encodeURIComponent(eventId)}/review`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ decision, note }),
+    },
+    signal
+  );
+}
+
 export async function listFacilities(
   signal?: AbortSignal
 ): Promise<Facility[]> {
@@ -227,6 +255,16 @@ export interface DetailedAnalytics {
   facilities_ranking: FacilityRisk[];
   state_breakdown: Record<string, number>;
   monitored_facilities: number;
+  review_queue?: {
+    pending: number;
+    confirmed_emergency: number;
+    confirmed_flare: number;
+    confirmed_agricultural: number;
+    confirmed_wildfire: number;
+    dismissed: number;
+    total_deferred: number;
+    deferral_rate_pct: number;
+  };
 }
 
 // Backend sends raw fields (critical_alerts / max_frp / mean_frp) and may omit

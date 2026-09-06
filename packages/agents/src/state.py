@@ -56,6 +56,12 @@ class VisionScores(BaseModel):
     predicted_class: ThermalClass = "UNKNOWN"
     vision_class_confidence: float = 0.0
     score: float = 0.0
+    # ── Tier A: ML uncertainty decomposition ────────────────────────
+    class_probabilities: dict[str, float] = Field(default_factory=dict)
+    prediction_margin: float = 1.0
+    prediction_entropy: float = 0.0
+    model_agreement: float = 1.0
+    submodel_classes: list[str] = Field(default_factory=list)
 
 
 class DispersionResult(BaseModel):
@@ -96,6 +102,18 @@ class SwarmState(BaseModel):
     is_critical: bool = False
     human_review_required: bool = False
 
+    # ── Tier A: Uncertainty & Human-in-the-Loop Review ────────────────
+    agent_disagreement: float = 0.0            # posterior spread across agents [0,1]
+    uncertainty_reasons: list[str] = Field(default_factory=list)
+    model_probabilities: dict[str, float] = Field(default_factory=dict)
+    model_agreement: float = 1.0               # XGB-vs-RF posterior agreement [0,1]
+    prediction_entropy: float = 0.0            # normalized predictive entropy [0,1]
+    prediction_margin: float = 1.0             # top1 - top2 probability
+    analyst_confirmed: bool = False
+    review_decision: Optional[str] = None       # CONFIRM_* | DISMISS
+    reviewed_at: Optional[datetime] = None
+    review_note: Optional[str] = None
+
     # ── Meta ───────────────────────────────────────────────────────────
     errors: list[str] = Field(default_factory=list)
     agents_completed: list[str] = Field(default_factory=list)
@@ -128,6 +146,17 @@ class SwarmState(BaseModel):
             "alert_severity": self.alert_severity,
             "is_critical_alert": self.is_critical,
             "human_review_required": self.human_review_required,
+            # ── Tier A: uncertainty + HITL review state ──────────────
+            "model_probabilities": self.model_probabilities,
+            "model_agreement": round(self.model_agreement, 4),
+            "prediction_entropy": round(self.prediction_entropy, 4),
+            "prediction_margin": round(self.prediction_margin, 4),
+            "agent_disagreement": round(self.agent_disagreement, 4),
+            "uncertainty_reasons": self.uncertainty_reasons,
+            "analyst_confirmed": self.analyst_confirmed,
+            "review_decision": self.review_decision,
+            "reviewed_at": self.reviewed_at.isoformat() if self.reviewed_at else None,
+            "review_note": self.review_note,
             "agent_reasoning": {
                 "spatial": {
                     "facility": self.spatial.facility_name,
@@ -153,6 +182,10 @@ class SwarmState(BaseModel):
                     "vision_class_confidence": round(self.vision.vision_class_confidence, 3),
                     "score": round(self.vision.score, 3),
                     "sentinel2_tile_id": self.vision.sentinel2_tile_id,
+                    "class_probabilities": self.vision.class_probabilities,
+                    "prediction_margin": round(self.vision.prediction_margin, 4),
+                    "prediction_entropy": round(self.vision.prediction_entropy, 4),
+                    "model_agreement": round(self.vision.model_agreement, 4),
                 },
                 "dispersion": {
                     "wind_direction_deg": self.dispersion.wind_direction_deg,

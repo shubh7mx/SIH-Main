@@ -124,6 +124,8 @@ class AlertDispatcher:
             "severity": severity,
             "channels_requested": channels,
             "channels_dispatched": [d["channel"] for d in dispatched if d["status"] == "sent"],
+            "analyst_queue": state.human_review_required,
+            "uncertainty_reasons": state.uncertainty_reasons,
             "results": dispatched,
         }
 
@@ -268,11 +270,14 @@ class AlertDispatcher:
         location = f"{state.latitude:.4f}N, {state.longitude:.4f}E"
         frp = state.frp_mw
         cde = state.cde_score
+        reasons_line = ""
+        if state.uncertainty_reasons:
+            reasons_line = f"\nUncertainty: {'; '.join(state.uncertainty_reasons[:2])}"
         return (
             f"[SIH26162] {severity} ALERT\n"
             f"Facility: {facility}\n"
             f"Location: {location}\n"
             f"FRP: {frp:.0f} MW | BT: {state.brightness_temp_k:.0f} K\n"
-            f"CDE Score: +{cde:.1f}σ deviation\n"
+            f"CDE Score: +{cde:.1f}σ deviation{reasons_line}\n"
             f"Action: {state.dispersion.recommended_action[:80]}"
         )

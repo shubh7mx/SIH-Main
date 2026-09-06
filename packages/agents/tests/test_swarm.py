@@ -150,8 +150,31 @@ def test_cde_threshold_boundary():
     }
     result2 = run_swarm(hotspot_normal)
     assert result2["is_critical_alert"] is False, "2σ must NOT be critical"
-    assert result2["classification"] in ("PERSISTENT_INDUSTRIAL_FLARE", "INDUSTRIAL_FIRE_EMERGENCY")
+    assert result2["classification"] in ("PERSISTENT_INDUSTRIAL_FLARE", "INDUSTRIAL_FIRE_EMERGENCY", "DEFERRED_FOR_ANALYST")
     print(f"  ✅ CDE normal: {result2['cde_anomaly_score']}σ → {result2['classification']}")
+
+
+def test_ambiguous_boundary_defers():
+    """Crafted ambiguous input: mid-confidence + mid-FRP near facility → DEFERRED_FOR_ANALYST."""
+    hotspot_ambiguous = {
+        "firms_id": "evt-amb-001",
+        "latitude": 21.15,
+        "longitude": 72.68,
+        "frp_megawatts": 150.0,
+        "brightness_temp_kelvin": 500.0,
+        "confidence_pct": 62,
+        "satellite_source": "VIIRS_SNPP_NRT",
+        "day_night": "N",
+        "acq_datetime": "2026-01-15T14:32:00+00:00",
+    }
+    result = run_swarm(hotspot_ambiguous)
+    assert result["classification"] == "DEFERRED_FOR_ANALYST", (
+        f"Expected DEFERRED_FOR_ANALYST, got {result['classification']}"
+    )
+    assert result["human_review_required"] is True, "Ambiguous case must require review"
+    assert len(result["uncertainty_reasons"]) > 0, "Must give at least one uncertainty reason"
+    assert result["is_critical_alert"] is False, "Deferred case must not be critical"
+    print(f"  ✅ Ambiguous boundary deferral verified: {result['uncertainty_reasons']}")
 
 
 if __name__ == "__main__":
@@ -176,6 +199,9 @@ if __name__ == "__main__":
 
     print("\n[6] CDE Threshold Boundaries")
     test_cde_threshold_boundary()
+
+    print("\n[7] Ambiguous Boundary Defers to Analyst")
+    test_ambiguous_boundary_defers()
 
     print("\n" + "=" * 51)
     print("🎯 All Phase 2 swarm tests passed.")

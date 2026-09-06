@@ -162,6 +162,31 @@ def load_dataset() -> tuple[np.ndarray, np.ndarray]:
     return np.array(X_list, dtype=np.float32), np.array(y_list, dtype=np.int64)
 
 
+def build_ensemble():
+    """Builds a fresh soft-voting (XGBoost + Random Forest) ensemble."""
+    xgb = XGBClassifier(
+        n_estimators=200,
+        max_depth=5,
+        learning_rate=0.08,
+        subsample=0.85,
+        colsample_bytree=0.85,
+        random_state=42,
+        eval_metric="mlogloss",
+    )
+    rf = RandomForestClassifier(
+        n_estimators=150,
+        max_depth=8,
+        class_weight="balanced",
+        random_state=42,
+        n_jobs=1,
+    )
+    return VotingClassifier(
+        estimators=[("xgb", xgb), ("rf", rf)],
+        voting="soft",
+        n_jobs=1,
+    )
+
+
 def train_honest_evaluation():
     X, y = load_dataset()
     print(f"Loaded {len(X)} real hand-verified FIRMS observations.")
@@ -171,29 +196,6 @@ def train_honest_evaluation():
     # across folds. This eliminates the "lucky split" critique and is the
     # number we publish on the Model Validation dashboard.
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-
-    def build_ensemble():
-        xgb = XGBClassifier(
-            n_estimators=200,
-            max_depth=5,
-            learning_rate=0.08,
-            subsample=0.85,
-            colsample_bytree=0.85,
-            random_state=42,
-            eval_metric="mlogloss",
-        )
-        rf = RandomForestClassifier(
-            n_estimators=150,
-            max_depth=8,
-            class_weight="balanced",
-            random_state=42,
-            n_jobs=1,
-        )
-        return VotingClassifier(
-            estimators=[("xgb", xgb), ("rf", rf)],
-            voting="soft",
-            n_jobs=1,
-        )
 
     cm_total = None
     y_true_all, y_pred_all = [], []

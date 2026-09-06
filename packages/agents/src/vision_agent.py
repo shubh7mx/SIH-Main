@@ -67,15 +67,15 @@ def vision_pipeline(state: SwarmState) -> SwarmState:
     tile_id = _generate_sentinel2_tile_id(state.latitude, state.longitude, dt)
     patch_url = f"/satellite/patches/{state.hotspot_id}-swir-256.png"
 
-    # Predict class using the trained Multi-Modal Geospatial ML Engine
-    from packages.agents.src.ml_engine import predict_thermal_anomaly
+    # Predict class + uncertainty using the trained Multi-Modal Geospatial ML Engine
+    from packages.agents.src.ml_engine import predict_with_uncertainty
 
     inside_fac = state.spatial.facility_id is not None or (state.spatial.nearest_facility_km is not None and state.spatial.nearest_facility_km <= 2.5)
     lc_class = state.spatial.land_cover_class or 40
     dist_km = state.spatial.nearest_facility_km or 999.0
     z_score = state.temporal.frp_zscore or 0.0
 
-    ml_class, ml_conf, _ = predict_thermal_anomaly(
+    upred = predict_with_uncertainty(
         frp_mw=state.frp_mw,
         brightness_temp_k=state.brightness_temp_k,
         day_night=state.day_night,
@@ -88,8 +88,9 @@ def vision_pipeline(state: SwarmState) -> SwarmState:
         longitude=state.longitude,
     )
 
+    ml_class = upred.winning_class
     predicted_class = ml_class
-    vision_conf = ml_conf if cloud_free else max(0.85, ml_conf * 0.92)
+    vision_conf = upred.confidence if cloud_free else max(0.85, upred.confidence * 0.92)
 
     state.vision = VisionScores(
         cloud_free=cloud_free,
@@ -99,6 +100,11 @@ def vision_pipeline(state: SwarmState) -> SwarmState:
         predicted_class=predicted_class,
         vision_class_confidence=round(vision_conf, 3),
         score=round(vision_conf, 3),
+        class_probabilities=upred.probabilities,
+        prediction_margin=upred.margin,
+        prediction_entropy=upred.entropy,
+        model_agreement=upred.submodel_agreement,
+        submodel_classes=list(upred.submodel_classes),
     )
 
     return state

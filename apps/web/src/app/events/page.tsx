@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { ConsoleShell } from "@/components/ConsoleShell";
 import { EventDrawer } from "@/components/EventDrawer";
+import { ReviewQueuePanel } from "@/components/ReviewQueuePanel";
 import { SeverityBadge } from "@/components/ui/SeverityBadge";
 import { TableSkeleton } from "@/components/ui/LoadingSkeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { useEvents, useAlertStream } from "@/lib/hooks";
+import { useEvents, useAlertStream, useReviewQueue } from "@/lib/hooks";
 import type { HotspotEvent, ThermalClassification } from "@/lib/types";
 import { getClassificationSeverity } from "@/lib/design-tokens";
 import { getEventLocation } from "@/lib/location-resolver";
@@ -17,6 +18,7 @@ type FilterCat = "ALL" | "CRITICAL" | "PERSISTENT" | "AGRICULTURAL" | "WILDFIRE"
 export default function EventsPage() {
   const eventsQuery = useEvents({ limit: 200 }, 30_000);
   const alertStream = useAlertStream({ enabled: true });
+  const reviewQueue = useReviewQueue(15_000);
   const [liveEvents, setLiveEvents] = useState<HotspotEvent[]>([]);
   const [selected, setSelected] = useState<HotspotEvent | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>("acq_datetime");
@@ -133,6 +135,15 @@ export default function EventsPage() {
             </select>
           </div>
         </div>
+
+        {/* Tier A: Analyst Review Queue */}
+        <ReviewQueuePanel
+          events={reviewQueue.data?.events ?? []}
+          onResolved={() => {
+            reviewQueue.refresh();
+            eventsQuery.refresh();
+          }}
+        />
 
         {/* Table */}
         {eventsQuery.loading && allEvents.length === 0 ? (

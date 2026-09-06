@@ -12,6 +12,8 @@ import {
   getAnalytics,
   getDetailedAnalytics,
   getModelValidation,
+  getReviewQueue,
+  submitReview,
   getHealth,
   getTimeline,
   listEvents,
@@ -362,6 +364,23 @@ export function useModelValidation(): AsyncState<any> {
     (signal) => getModelValidation(signal),
     []
   );
+  return { data, error, loading, refresh };
+}
+
+// ── Tier A: Human-in-the-loop Analyst Review Queue hook ──────────────────────
+
+export function useReviewQueue(refreshMs = 15_000): AsyncState<{ count: number; events: HotspotEvent[] }> {
+  const { data, error, loading, refresh } = useAsync<{ count: number; events: HotspotEvent[] }>(
+    (signal) => getReviewQueue(50, signal),
+    []
+  );
+  const refreshRef = useRef(refresh);
+  refreshRef.current = refresh;
+  useEffect(() => {
+    if (refreshMs <= 0) return;
+    const id = setInterval(() => refreshRef.current(), refreshMs);
+    return () => clearInterval(id);
+  }, [refreshMs]);
   return { data, error, loading, refresh };
 }
 

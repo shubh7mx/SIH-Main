@@ -182,8 +182,20 @@ export interface HotspotEvent {
   facility_type: string | null;
   distance_to_facility_km: number | null;
   is_critical_alert: boolean;
-  agent_reasoning: Record<string, string>;
+  agent_reasoning: Record<string, any>;
   created_at: string;
+  // ── Tier A: Uncertainty + Human-in-the-Loop ──────────────
+  model_probabilities?: Record<string, number>;
+  model_agreement?: number;
+  prediction_entropy?: number;
+  prediction_margin?: number;
+  agent_disagreement?: number;
+  uncertainty_reasons?: string[];
+  human_review_required?: boolean;
+  analyst_confirmed?: boolean;
+  review_decision?: string | null;
+  reviewed_at?: string | null;
+  review_note?: string | null;
 }
 
 export interface Facility {

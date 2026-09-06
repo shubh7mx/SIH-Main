@@ -164,5 +164,15 @@
     }
   ],
   "shap_chart_url": "/ml/shap_feature_importance.png",
-  "dataset_provenance": "Merged ground truth: 221 hand-verified (Google Earth optical) + 112 physical boundary anchors + 746 NASA LANCE VIIRS C2 archive samples (India, rule-labeled via 50-facility OSM registry containment + geographic fire-regime zones; persistence_count_30d derived from real per-location archive detection counts). Labels: 0=Industrial Fire Emergency, 1=Persistent Industrial Flare, 2=Agricultural Burning, 3=Wildfire."
+  "dataset_provenance": "Merged ground truth: 221 hand-verified (Google Earth optical) + 112 physical boundary anchors + 746 NASA LANCE VIIRS C2 archive samples (India, rule-labeled via 50-facility OSM registry containment + geographic fire-regime zones; persistence_count_30d derived from real per-location archive detection counts). Labels: 0=Industrial Fire Emergency, 1=Persistent Industrial Flare, 2=Agricultural Burning, 3=Wildfire.",
+  "deferral_calibration": {
+    "margin_tau": 0.15,
+    "use_submodel_conflict": false,
+    "coverage_pct": 99.72,
+    "auto_decided_accuracy_pct": 99.81,
+    "deferred_subset_accuracy_pct": 0.0,
+    "error_capture_pct": 60.0,
+    "deferred_samples_count": 3,
+    "auto_decided_samples_count": 1077
+  }
 }

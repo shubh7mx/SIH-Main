@@ -114,6 +114,26 @@ export default function AnalyticsPage() {
           />
         </div>
 
+        {/* Tier A: Human-in-the-Loop Deferral Funnel */}
+        {stats?.review_queue && (
+          <div className="surface-card rounded-xl border border-amber-500/20 p-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="eyebrow">🕵️ Human-in-the-Loop Deferral Funnel</div>
+              <span className="font-mono text-[10px] text-amber-300/80 px-2 py-0.5 rounded-full border border-amber-400/30 bg-amber-500/10">
+                {stats.review_queue.deferral_rate_pct.toFixed(1)}% deferral rate
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              <FunnelItem label="Pending Review" value={stats.review_queue.pending} color="#f59e0b" />
+              <FunnelItem label="Confirmed Emergency" value={stats.review_queue.confirmed_emergency} color="#ef4444" />
+              <FunnelItem label="Confirmed Flare" value={stats.review_queue.confirmed_flare} color="#f97316" />
+              <FunnelItem label="Confirmed Agri" value={stats.review_queue.confirmed_agricultural} color="#22d3ee" />
+              <FunnelItem label="Confirmed Wildfire" value={stats.review_queue.confirmed_wildfire} color="#a78bfa" />
+              <FunnelItem label="Dismissed" value={stats.review_queue.dismissed} color="#64748b" />
+            </div>
+          </div>
+        )}
+
         {/* Charts Row 1: Category Pie + State Bar */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Category distribution */}
@@ -272,5 +292,27 @@ export default function AnalyticsPage() {
         </div>
       </div>
     </ConsoleShell>
+  );
+}
+
+function FunnelItem({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: number;
+  color: string;
+}) {
+  return (
+    <div className="p-3 rounded-lg bg-white/[0.03] border border-white/5 flex flex-col justify-between">
+      <span className="font-mono text-[10px] text-mute">{label}</span>
+      <span
+        className="font-mono text-xl font-bold mt-1 tabular-nums"
+        style={{ color }}
+      >
+        {value}
+      </span>
+    </div>
   );
 }

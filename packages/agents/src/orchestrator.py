@@ -45,6 +45,40 @@ _BASELINE_TABLE = {
 _CLASSES = ["INDUSTRIAL_FIRE_EMERGENCY", "PERSISTENT_INDUSTRIAL_FLARE",
             "AGRICULTURAL_BURNING", "WILDFIRE", "DEFERRED_FOR_ANALYST"]
 
+# ── Tier A: Human-review deferral thresholds ──────────────────────────────
+# Calibrated by scripts/evaluate_deferral.py (5-fold CV sweep over the
+# 1,080-sample merged ground truth; chosen to maximize auto-decided accuracy
+# subject to coverage >= 85%).
+MARGIN_TAU = 0.25        # top1 - top2 probability below this = ambiguous
+AGREE_TAU = 0.70          # XGB-vs-RF posterior agreement below this = models split
+ENTROPY_TAU = 0.55        # normalized predictive entropy above this = uncertain
+CONF_TAU = 0.80           # fused confidence below this = weak evidence
+
+
+def _agent_disagreement(posters: list[dict[str, float]]) -> float:
+    """
+    Disagreement across agent posteriors in [0, 1].
+    Half credit for distinct top-class count, half for mean pairwise
+    L1 distance (normalized). 0 = all agents same shape, 1 = total conflict.
+    """
+    n = len(posters)
+    if n < 2:
+        return 0.0
+    tops = [max(p, key=p.get) for p in posters]
+    distinct = len(set(tops))
+    top_component = (distinct - 1) / (n - 1) if n > 1 else 0.0
+
+    l1_sum, pairs = 0.0, 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            keys = set(posters[i]) | set(posters[j])
+            l1 = sum(abs(posters[i].get(k, 0.0) - posters[j].get(k, 0.0)) for k in keys)
+            l1_sum += l1 / 2.0  # L1 in [0,2] → normalize
+            pairs += 1
+    l1_component = l1_sum / pairs if pairs else 0.0
+
+    return round(0.5 * top_component + 0.5 * l1_component, 4)
+
 
 def _spatial_class_posterior(state: SwarmState) -> dict[str, float]:
     """Spatial agent's class-conditional likelihood distribution."""
@@ -186,6 +220,15 @@ def orchestrator_node(state: SwarmState) -> SwarmState:
     classification: ThermalClass = max(fused, key=fused.get)  # type: ignore[assignment]
     fused_score = fused[classification]
 
+    # ── Tier A: Uncertainty inputs (defer decision applied at end) ──
+    # Deferral rules run on the FINAL fused score (after CDE override,
+    # consensus bonus and FIRMS floor) so strong-evidence events are
+    # never deferred by an early weak score.
+    agent_disagree = _agent_disagreement([p_spatial, p_temporal, p_vision])
+    ml_margin = state.vision.prediction_margin
+    ml_entropy = state.vision.prediction_entropy
+    ml_agreement = state.vision.model_agreement
+
     # ── CDE severity override for industrial containment ───────────
     spatial_facility = state.spatial.facility_id is not None
     nearest_km = state.spatial.nearest_facility_km if state.spatial.nearest_facility_km is not None else 999.0
@@ -244,9 +287,53 @@ def orchestrator_node(state: SwarmState) -> SwarmState:
     # Confidence is never lower than the weakest evidence, never above 0.99
     fused_score = max(0.70, min(0.99, round(fused_score, 3)))
 
+    # ── Tier A: Deferral rules (on final evidence) ─────────────────
+    uncertainty_reasons: list[str] = []
+
+    if fused_score < CONF_TAU:
+        uncertainty_reasons.append(
+            f"Low fused confidence ({fused_score:.2f} < {CONF_TAU})"
+        )
+    if ml_margin < MARGIN_TAU and (state.spatial.nearest_facility_km or 999.0) <= 10.0:
+        uncertainty_reasons.append(
+            f"Narrow margin between top classes (Δ={ml_margin:.2f} < {MARGIN_TAU})"
+        )
+    # Sub-model classification conflict: XGB and RF pick different winners.
+    # (Posterior distance alone is not a conflict signal — a diffuse RF
+    # that still agrees on argmax is calibration spread, not disagreement.)
+    sub_classes = state.vision.submodel_classes
+    submodels_conflict = (
+        len(sub_classes) == 2 and sub_classes[0] != sub_classes[1]
+    )
+    if submodels_conflict and fused_score < 0.90:
+        uncertainty_reasons.append(
+            f"XGBoost and Random Forest disagree on class (XGB→{sub_classes[0]}, RF→{sub_classes[1]})"
+        )
+    if agent_disagree >= 0.60 and ml_entropy > ENTROPY_TAU:
+        uncertainty_reasons.append(
+            f"Spatial/Temporal/Vision agents conflict (disagreement {agent_disagree:.2f})"
+        )
+
+    defer_for_review = len(uncertainty_reasons) > 0
+
+    # Never defer when CDE says CRITICAL and all agents independently
+    # converge on the same class (strong-evidence override).
+    agents_unanimous = (
+        top_spatial == top_temporal == top_vision
+        and top_spatial == classification
+    )
+    cde_critical_confident = cde_output.severity == "CRITICAL" and agents_unanimous
+
+    if defer_for_review and not cde_critical_confident:
+        classification = "DEFERRED_FOR_ANALYST"
+        if severity not in ("WARNING", "CRITICAL"):
+            severity = "WATCH"
+        is_critical = False
+
     # ── Human review gating ───────────────────────────────────────
     human_review = (
         classification == "DEFERRED_FOR_ANALYST"
+        or defer_for_review
         or fused_score < 0.80
         or cde_output.severity == "WARNING"
     )
@@ -259,6 +346,12 @@ def orchestrator_node(state: SwarmState) -> SwarmState:
     state.alert_severity = severity
     state.is_critical = is_critical
     state.human_review_required = human_review
+    state.agent_disagreement = agent_disagree
+    state.uncertainty_reasons = uncertainty_reasons
+    state.model_probabilities = state.vision.class_probabilities
+    state.model_agreement = ml_agreement
+    state.prediction_entropy = ml_entropy
+    state.prediction_margin = ml_margin
     state.agents_completed = list(set(state.agents_completed + ["orchestrator"]))
 
     state.pipeline_completed_at = datetime.now(timezone.utc)

@@ -306,6 +306,112 @@ async def escalate_event(event_id: str, payload: Optional[dict] = None):
     }
 
 
+# ── Tier A: Human-in-the-Loop Analyst Review Queue ────────────────────────
+
+DECISION_MAP = {
+    "CONFIRM_EMERGENCY": ("INDUSTRIAL_FIRE_EMERGENCY", "CRITICAL", True),
+    "CONFIRM_FLARE": ("PERSISTENT_INDUSTRIAL_FLARE", "INFO", False),
+    "CONFIRM_AGRICULTURAL": ("AGRICULTURAL_BURNING", "INFO", False),
+    "CONFIRM_WILDFIRE": ("WILDFIRE", "WARNING", False),
+    "DISMISS": ("DEFERRED_FOR_ANALYST", "INFO", False),
+}
+
+
+@router.get("/review-queue")
+async def get_review_queue(limit: int = 100):
+    """
+    Returns pending thermal events flagged for human analyst review
+    due to model sub-model disagreement, narrow margin, high entropy,
+    or multi-agent conflict.
+    """
+    pending = await event_store.list_review_queue(limit=limit)
+    return {
+        "count": len(pending),
+        "events": pending,
+    }
+
+
+@router.post("/{event_id}/review")
+async def submit_analyst_review(event_id: str, payload: dict):
+    """
+    Records an analyst's authoritative review decision for a deferred event.
+
+    Decision must be one of:
+      - CONFIRM_EMERGENCY     → upgrades to INDUSTRIAL_FIRE_EMERGENCY + CRITICAL
+      - CONFIRM_FLARE         → resolves to PERSISTENT_INDUSTRIAL_FLARE
+      - CONFIRM_AGRICULTURAL  → resolves to AGRICULTURAL_BURNING
+      - CONFIRM_WILDFIRE      → resolves to WILDFIRE + WARNING
+      - DISMISS               → keeps DEFERRED status, marks resolved
+    """
+    from datetime import datetime, timezone
+    from apps.api.core.log_store import log_store
+    from apps.api.core.ws_manager import ws_manager
+
+    event = await event_store.get(event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail=f"Event {event_id} not found")
+
+    decision = str(payload.get("decision", "")).strip().upper()
+    if decision not in DECISION_MAP:
+        valid = list(DECISION_MAP.keys())
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid decision '{decision}'. Must be one of: {valid}",
+        )
+
+    note = str(payload.get("note", "")).strip() or "Analyst authoritative determination"
+    target_class, severity, is_crit = DECISION_MAP[decision]
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    patch = {
+        "classification": target_class,
+        "alert_severity": severity,
+        "is_critical_alert": is_crit,
+        "human_review_required": False,
+        "analyst_confirmed": True,
+        "review_decision": decision,
+        "reviewed_at": now_iso,
+        "review_note": note,
+    }
+
+    updated = await event_store.update(event_id, patch)
+
+    # Log to immutable audit store
+    log_store.add_entry(
+        event_id=event_id,
+        level="CRITICAL" if is_crit else "INFO",
+        agent_name="AnalystDesk",
+        action=f"HITL_REVIEW_{decision}",
+        reasoning=f"Analyst resolution: {target_class} ({note})",
+        confidence=float(event.get("confidence_score") or 0.95),
+        cde_score=float(event.get("cde_anomaly_score") or 0.0),
+    )
+
+    # Broadcast on analyst channel + general events channel
+    try:
+        await ws_manager.broadcast_json({
+            "type": "ANALYST_REVIEW_COMPLETED",
+            "event_id": event_id,
+            "decision": decision,
+            "classification": target_class,
+            "reviewed_at": now_iso,
+            "note": note,
+        })
+    except Exception:
+        pass
+
+    return {
+        "status": "success",
+        "event_id": event_id,
+        "decision": decision,
+        "classification": target_class,
+        "alert_severity": severity,
+        "is_critical_alert": is_crit,
+        "reviewed_at": now_iso,
+        "event": updated,
+    }
+
+
 @router.get("/{event_id}")
 async def get_event(event_id: str):
     """Returns a single classified event by ID."""

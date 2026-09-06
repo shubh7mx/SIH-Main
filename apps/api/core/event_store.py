@@ -168,6 +168,32 @@ class EventStore:
     async def get(self, event_id: str) -> Optional[dict]:
         return self._events.get(event_id)
 
+    async def update(self, event_id: str, patch: dict) -> Optional[dict]:
+        """Merges patch into an existing stored event, marks dirty and persists."""
+        async with self._lock:
+            ev = self._events.get(event_id)
+            if not ev:
+                return None
+            ev.update(patch)
+            self._dirty = True
+            self._save_to_disk()
+            return dict(ev)
+
+    async def list_review_queue(self, limit: int = 100) -> list[dict]:
+        """Returns events pending human analyst review (newest first)."""
+        async with self._lock:
+            pending: list[dict] = []
+            for eid in reversed(self._order):
+                ev = self._events.get(eid)
+                if not ev:
+                    continue
+                # Pending if review is required and no decision has been taken yet
+                if ev.get("human_review_required") and not ev.get("review_decision"):
+                    pending.append(dict(ev))
+                    if len(pending) >= limit:
+                        break
+            return pending
+
     async def list(
         self,
         classification: Optional[str] = None,
@@ -560,6 +586,36 @@ class EventStore:
                 idx = int(len(frp_values) * pct)
                 return round(frp_values[min(idx, len(frp_values) - 1)], 1)
 
+            # ── Tier A: Review queue funnel stats ─────────────────────────
+            review_pending = sum(
+                1 for e in self._events.values()
+                if e.get("human_review_required") and not e.get("review_decision")
+            )
+            review_confirmed_emerg = sum(
+                1 for e in self._events.values()
+                if e.get("review_decision") == "CONFIRM_EMERGENCY"
+            )
+            review_confirmed_flare = sum(
+                1 for e in self._events.values()
+                if e.get("review_decision") == "CONFIRM_FLARE"
+            )
+            review_confirmed_agri = sum(
+                1 for e in self._events.values()
+                if e.get("review_decision") == "CONFIRM_AGRICULTURAL"
+            )
+            review_confirmed_wild = sum(
+                1 for e in self._events.values()
+                if e.get("review_decision") == "CONFIRM_WILDFIRE"
+            )
+            review_dismissed = sum(
+                1 for e in self._events.values()
+                if e.get("review_decision") == "DISMISS"
+            )
+            total_deferred = sum(
+                1 for e in self._events.values()
+                if e.get("human_review_required") or e.get("review_decision")
+            )
+
             return {
                 "total_events_processed": total,
                 "critical_alerts_count": critical_count,
@@ -576,6 +632,16 @@ class EventStore:
                 "facilities_ranking": rankings,
                 "state_breakdown": state_breakdown,
                 "monitored_facilities": len(rankings),
+                "review_queue": {
+                    "pending": review_pending,
+                    "confirmed_emergency": review_confirmed_emerg,
+                    "confirmed_flare": review_confirmed_flare,
+                    "confirmed_agricultural": review_confirmed_agri,
+                    "confirmed_wildfire": review_confirmed_wild,
+                    "dismissed": review_dismissed,
+                    "total_deferred": total_deferred,
+                    "deferral_rate_pct": round(total_deferred / max(1, total) * 100, 2),
+                },
             }
 
     # ── Analytics Aggregations ────────────────────────────────────────────
