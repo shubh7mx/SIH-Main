@@ -6,6 +6,7 @@ import { CLASSIFICATION_META } from "@/lib/types";
 import { useIncidentBrief } from "@/lib/hooks";
 import { SwarmEvidenceGrid } from "@/components/SwarmEvidenceGrid";
 import { IncidentAssessmentCard } from "@/components/IncidentAssessmentCard";
+import { EscalateModal } from "@/components/EscalateModal";
 import { inferAnomalyReason } from "@/lib/anomaly-inference";
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 
 export function EventDetailPanel({ event }: Props) {
   const [escalated, setEscalated] = useState(false);
+  const [isEscalateModalOpen, setIsEscalateModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"BRIEF" | "EVIDENCE" | "FUSION" | "PLUME">("BRIEF");
   const { brief, loading: briefLoading, error: briefError } = useIncidentBrief(event?.id ?? null);
 
@@ -245,8 +247,7 @@ export function EventDetailPanel({ event }: Props) {
       {/* ── Actions / Escalation ────────────────────────────────────────── */}
       <div className="p-4 bg-[var(--bg-surface-elevated)] flex-shrink-0 flex items-center gap-2">
         <button
-          onClick={() => setEscalated(true)}
-          disabled={escalated}
+          onClick={() => setIsEscalateModalOpen(true)}
           className={`flex-1 py-2 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-medium transition-all ${
             escalated
               ? "bg-[rgba(34,197,94,0.15)] text-[#22c55e] border border-[rgba(34,197,94,0.3)]"
@@ -256,12 +257,22 @@ export function EventDetailPanel({ event }: Props) {
           }`}
         >
           {escalated
-            ? "✓ Escalated to Duty Officer"
+            ? "✓ Multi-Agency Dispatched"
             : event.is_critical_alert
             ? "🚨 Escalate to NTRO Duty Officer"
             : "Forward Incident Report"}
         </button>
       </div>
+
+      {/* Multi-Agency Incident Escalation HUD */}
+      {event && (
+        <EscalateModal
+          event={event}
+          isOpen={isEscalateModalOpen}
+          onClose={() => setIsEscalateModalOpen(false)}
+          onEscalated={() => setEscalated(true)}
+        />
+      )}
     </div>
   );
 }

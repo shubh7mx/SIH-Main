@@ -7,6 +7,7 @@ import { ConsoleShell } from "@/components/ConsoleShell";
 import { TacticalMap } from "@/components/TacticalMap";
 import { ExportBriefModal } from "@/components/ExportBriefModal";
 import { FacilityBaselineChart } from "@/components/FacilityBaselineChart";
+import { EscalateModal } from "@/components/EscalateModal";
 import { IncidentAssessmentCard } from "@/components/IncidentAssessmentCard";
 import { SeverityBadge } from "@/components/ui/SeverityBadge";
 import { ConfidenceMeter } from "@/components/ui/ConfidenceMeter";
@@ -41,6 +42,7 @@ function EventDetailInner() {
   const { brief, loading: briefLoading } = useIncidentBrief(id);
   const [escalated, setEscalated] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [isEscalateModalOpen, setIsEscalateModalOpen] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -162,8 +164,7 @@ function EventDetailInner() {
             <span>📄</span> Export Brief
           </button>
           <button
-            onClick={() => setEscalated(true)}
-            disabled={escalated}
+            onClick={() => setIsEscalateModalOpen(true)}
             className={`py-2 px-4 rounded-lg font-mono text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
               escalated
                 ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
@@ -173,7 +174,7 @@ function EventDetailInner() {
             }`}
           >
             {escalated
-              ? "✓ Escalated to Duty Officer"
+              ? "✓ Multi-Agency Dispatched"
               : event.is_critical_alert
               ? "🚨 Escalate to NTRO"
               : "Forward to Incident Report"}
@@ -260,6 +261,14 @@ function EventDetailInner() {
         briefText={brief?.brief ?? null}
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
+      />
+
+      {/* Multi-Agency Incident Escalation HUD Modal */}
+      <EscalateModal
+        event={event}
+        isOpen={isEscalateModalOpen}
+        onClose={() => setIsEscalateModalOpen(false)}
+        onEscalated={() => setEscalated(true)}
       />
     </div>
   );

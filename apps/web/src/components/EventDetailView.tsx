@@ -9,6 +9,7 @@ import { IncidentAssessmentCard } from "@/components/IncidentAssessmentCard";
 import { SeverityBadge } from "@/components/ui/SeverityBadge";
 import { ConfidenceMeter } from "@/components/ui/ConfidenceMeter";
 import { SwarmEvidenceGrid } from "@/components/SwarmEvidenceGrid";
+import { EscalateModal } from "@/components/EscalateModal";
 import { getClassificationSeverity } from "@/lib/design-tokens";
 import { useEvents, useIncidentBrief } from "@/lib/hooks";
 import type { HotspotEvent } from "@/lib/types";
@@ -22,6 +23,7 @@ export function EventDetailView() {
   const [event, setEvent] = useState<HotspotEvent | null>(null);
   const { brief, loading: briefLoading } = useIncidentBrief(event?.id ?? null);
   const [escalated, setEscalated] = useState(false);
+  const [isEscalateModalOpen, setIsEscalateModalOpen] = useState(false);
 
   useEffect(() => {
     if (eventsQuery.data && id) {
@@ -114,8 +116,7 @@ export function EventDetailView() {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setEscalated(true)}
-              disabled={escalated}
+              onClick={() => setIsEscalateModalOpen(true)}
               className={`py-2 px-4 rounded-lg font-mono text-xs font-semibold uppercase tracking-wider transition-all ${
                 escalated
                   ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
@@ -125,13 +126,23 @@ export function EventDetailView() {
               }`}
             >
               {escalated
-                ? "✓ Escalated to Duty Officer"
+                ? "✓ Multi-Agency Dispatched"
                 : event.is_critical_alert
                 ? "🚨 Escalate to NTRO"
                 : "Forward to Incident Report"}
             </button>
           </div>
         </div>
+
+        {/* Multi-Agency Incident Escalation HUD */}
+        {event && (
+          <EscalateModal
+            event={event}
+            isOpen={isEscalateModalOpen}
+            onClose={() => setIsEscalateModalOpen(false)}
+            onEscalated={() => setEscalated(true)}
+          />
+        )}
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 font-mono">

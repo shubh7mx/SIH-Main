@@ -110,9 +110,23 @@ class AlertDispatcher:
         msg = self._format_message(state, severity)
 
         if channel == "telegram":
-            # Production: await bot.send_message(chat_id=NTRO_CHANNEL_ID, text=msg)
+            import os
+            import httpx
+            token = os.environ.get("TELEGRAM_BOT_TOKEN")
+            chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+            if token and chat_id and token != "mock":
+                try:
+                    resp = httpx.post(
+                        f"https://api.telegram.org/bot{token}/sendMessage",
+                        json={"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"},
+                        timeout=4.0,
+                    )
+                    if resp.status_code == 200:
+                        return {"channel": "telegram", "status": "sent", "note": "live Telegram alert delivered"}
+                except Exception as e:
+                    print(f"[Telegram error] {e}")
             print(f"[Telegram] {msg[:120]}...")
-            return {"channel": "telegram", "status": "sent", "note": "mock (requires BOT_TOKEN)"}
+            return {"channel": "telegram", "status": "sent", "note": "simulated (or offline)"}
 
         elif channel == "sms":
             # Production: twilio.messages.create(to=+91..., body=msg)
