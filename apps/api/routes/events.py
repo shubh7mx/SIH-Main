@@ -196,14 +196,37 @@ async def escalate_event(event_id: str, payload: Optional[dict] = None):
 
     if tg_token and tg_chat and tg_token != "mock":
         try:
-            tg_text = (
-                f"🚨 *[SIH26162 CRITICAL ALERT]*\n"
-                f"• *Facility:* {event.get('facility_name', 'Unmapped')}\n"
-                f"• *FRP:* {event.get('frp_megawatts', 0)} MW | *BT:* {event.get('brightness_temp_kelvin', 0)} K\n"
-                f"• *CDE Deviation:* +{event.get('cde_anomaly_score', 0)}σ\n"
-                f"• *Location:* {event.get('latitude', 0):.4f}N, {event.get('longitude', 0):.4f}E\n"
-                f"• *Directive:* Level-1 Incident Escalated to Duty Desk."
+            # Build the rich responder card (same format as auto-dispatch alerts)
+            from packages.agents.src.dispatcher import AlertDispatcher
+            from packages.agents.src.state import SwarmState
+            from datetime import datetime
+
+            dispatcher = AlertDispatcher()
+            state = SwarmState(
+                hotspot_id=event.get("id", event_id),
+                firms_id=event.get("firms_id", ""),
+                latitude=float(event.get("latitude", 0)),
+                longitude=float(event.get("longitude", 0)),
+                frp_mw=float(event.get("frp_megawatts", 0)),
+                brightness_temp_k=float(event.get("brightness_temp_kelvin", 0)),
+                confidence_pct=int(event.get("confidence_pct", 90)),
+                satellite_source=event.get("satellite_source", "VIIRS_SNPP_NRT"),
+                day_night=event.get("day_night", "N"),
+                acq_datetime=datetime.now(),
             )
+            # Attach classification & spatial metadata
+            state.final_classification = event.get("classification", "INDUSTRIAL_FIRE_EMERGENCY")
+            state.final_confidence = float(event.get("confidence_score", 0.9))
+            state.cde_score = float(event.get("cde_anomaly_score", 0.0))
+            state.spatial.facility_name = event.get("facility_name")
+            state.spatial.facility_type = event.get("facility_type")
+            state.dispersion.hazard_5km_pop = int(event.get("hazard_5km_pop", 4200))
+            state.dispersion.hazard_10km_pop = int(event.get("hazard_10km_pop", 12000))
+            state.dispersion.recommended_action = (
+                f"Level-1 Emergency Escalation Directive: {note}"
+            )
+
+            tg_text = dispatcher._build_rich_card(state, "CRITICAL")
             async with httpx.AsyncClient(timeout=5.0) as client:
                 res = await client.post(
                     f"https://api.telegram.org/bot{tg_token}/sendMessage",
@@ -211,7 +234,10 @@ async def escalate_event(event_id: str, payload: Optional[dict] = None):
                 )
                 if res.status_code == 200:
                     tg_status = "live_delivered"
-        except Exception:
+                else:
+                    print(f"[Telegram] send failed: {res.status_code} {res.text[:200]}")
+        except Exception as e:
+            print(f"[Telegram] escalation error: {e}")
             tg_status = "simulated_success"
 
     # 2. Write official escalation entry to the audit log store
