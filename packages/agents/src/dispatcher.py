@@ -221,10 +221,17 @@ class AlertDispatcher:
         pass_time = "Night" if (state.day_night or "D") == "N" else "Day"
         action = (state.dispersion.recommended_action or "").strip() or "Initiate immediate site assessment and Level-1 industrial-fire SOP; coordinate with district authorities."
 
+        # Confidence: prefer fused model confidence; fall back to FIRMS detection
+        # confidence so the card never ships a misleading 0%.
+        conf_pct = state.final_confidence * 100
+        if conf_pct <= 0 and state.confidence_pct > 0:
+            conf_pct = float(state.confidence_pct)
+        cde_disp = f"+{state.cde_score:.1f}σ" if state.cde_score else "N/A (normal ops)"
+
         lines = [
             f"{icon} *{severity.upper()} · SIH26162 THERMAL INTELLIGENCE ALERT*",
             f"*Classification:* {str(state.final_classification).replace('_', ' ').title()}",
-            f"*Confidence:* {state.final_confidence*100:.0f}%  ·  *CDE Deviation:* {state.cde_score:+.1f}σ",
+            f"*Confidence:* {conf_pct:.0f}%  ·  *CDE Deviation:* {cde_disp}",
             "",
             f"🏭 *Facility:* {self._esc_md(state.spatial.facility_name or 'Unknown Facility')}",
             f"   ├─ *Type:* {self._esc_md(state.spatial.facility_type or 'Industrial')}",

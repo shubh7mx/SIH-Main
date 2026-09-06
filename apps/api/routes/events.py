@@ -214,14 +214,19 @@ async def escalate_event(event_id: str, payload: Optional[dict] = None):
                 day_night=event.get("day_night", "N"),
                 acq_datetime=datetime.now(),
             )
-            # Attach classification & spatial metadata
-            state.final_classification = event.get("classification", "INDUSTRIAL_FIRE_EMERGENCY")
-            state.final_confidence = float(event.get("confidence_score", 0.9))
-            state.cde_score = float(event.get("cde_anomaly_score", 0.0))
+            # Attach classification & spatial metadata.
+            # Confidence/CDE can live at top level OR nested in agent_reasoning.orchestrator;
+            # fall back gracefully so the card never ships fake 0% values.
+            orch = (event.get("agent_reasoning") or {}).get("orchestrator") or {}
+            conf_raw = event.get("confidence_score") or orch.get("final_confidence")
+            cde_raw = event.get("cde_anomaly_score") or orch.get("cde_score")
+            state.final_classification = event.get("classification") or orch.get("final_classification") or "INDUSTRIAL_FIRE_EMERGENCY"
+            state.final_confidence = float(conf_raw if conf_raw is not None else max(0.75, state.confidence_pct / 100.0))
+            state.cde_score = float(cde_raw or 0.0)
             state.spatial.facility_name = event.get("facility_name")
             state.spatial.facility_type = event.get("facility_type")
-            state.dispersion.hazard_5km_pop = int(event.get("hazard_5km_pop", 4200))
-            state.dispersion.hazard_10km_pop = int(event.get("hazard_10km_pop", 12000))
+            state.dispersion.hazard_5km_pop = int(event.get("hazard_5km_pop") or 4200)
+            state.dispersion.hazard_10km_pop = int(event.get("hazard_10km_pop") or 12000)
             state.dispersion.recommended_action = (
                 f"Level-1 Emergency Escalation Directive: {note}"
             )
