@@ -1,19 +1,19 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ConsoleShell } from "@/components/ConsoleShell";
 import { TacticalMap } from "@/components/TacticalMap";
 import { ExportBriefModal } from "@/components/ExportBriefModal";
 import { FacilityBaselineChart } from "@/components/FacilityBaselineChart";
-import { EscalateModal } from "@/components/EscalateModal";
+import { EscalateButton } from "@/components/EscalateButton";
+import { useIncidentBrief } from "@/lib/hooks";
 import { IncidentAssessmentCard } from "@/components/IncidentAssessmentCard";
 import { SeverityBadge } from "@/components/ui/SeverityBadge";
 import { ConfidenceMeter } from "@/components/ui/ConfidenceMeter";
 import { SwarmEvidenceGrid } from "@/components/SwarmEvidenceGrid";
 import { getClassificationSeverity } from "@/lib/design-tokens";
-import { useIncidentBrief } from "@/lib/hooks";
 import { getEvent } from "@/lib/api";
 import { inferAnomalyReason } from "@/lib/anomaly-inference";
 import { getEventLocation } from "@/lib/location-resolver";
@@ -42,7 +42,7 @@ function EventDetailInner() {
   const { brief, loading: briefLoading } = useIncidentBrief(id);
   const [escalated, setEscalated] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
-  const [isEscalateModalOpen, setIsEscalateModalOpen] = useState(false);
+  // escalate state removed: EscalateButton is now a self-contained loader
 
   useEffect(() => {
     if (!id) {
@@ -163,22 +163,13 @@ function EventDetailInner() {
           >
             <span>📄</span> Export Brief
           </button>
-          <button
-            onClick={() => setIsEscalateModalOpen(true)}
-            className={`py-2 px-4 rounded-lg font-mono text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
-              escalated
-                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
-                : event.is_critical_alert
-                ? "bg-red-500 text-white hover:bg-red-400"
-                : "btn-secondary"
-            }`}
-          >
-            {escalated
-              ? "✓ Multi-Agency Dispatched"
-              : event.is_critical_alert
-              ? "🚨 Escalate to NTRO"
-              : "Forward to Incident Report"}
-          </button>
+          <EscalateButton
+            eventId={event.id}
+            facilityName={event.facility_name}
+            isCritical={event.is_critical_alert}
+            escalated={escalated}
+            onComplete={() => setEscalated(true)}
+          />
         </div>
       </div>
 
@@ -261,14 +252,6 @@ function EventDetailInner() {
         briefText={brief?.brief ?? null}
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
-      />
-
-      {/* Multi-Agency Incident Escalation HUD Modal */}
-      <EscalateModal
-        event={event}
-        isOpen={isEscalateModalOpen}
-        onClose={() => setIsEscalateModalOpen(false)}
-        onEscalated={() => setEscalated(true)}
       />
     </div>
   );

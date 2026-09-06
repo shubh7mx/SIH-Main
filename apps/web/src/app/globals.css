@@ -433,6 +433,12 @@ html, body {
   animation: scan-sweep 2.8s cubic-bezier(0.45, 0, 0.55, 1) forwards;
 }
 
+/* Horizontal light sweep inside the Escalate loader button */
+@keyframes escalate-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
 /* Custom Tactical Hotspot Marker with Reticle */
 .hotspot-marker {
   position: relative;
