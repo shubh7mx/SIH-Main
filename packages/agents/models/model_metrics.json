@@ -1,34 +1,37 @@
 {
-  "model_name": "Calibrated XGBoost (300 Trees) + Random Forest Multi-Modal Ensemble",
-  "trained_at": "2026-09-06T06:37:07.281178+00:00",
-  "total_samples": 1311,
-  "test_samples": 263,
-  "accuracy_pct": 100.0,
-  "weighted_f1_pct": 100.0,
+  "model_name": "Calibrated XGBoost + Random Forest Multi-Modal Ensemble",
+  "trained_at": "2026-09-06T08:53:03.710274+00:00",
+  "evaluation_method": "5-Fold Stratified Cross-Validation (every sample tested once)",
+  "total_samples": 333,
+  "test_samples": 333,
+  "accuracy_pct": 98.81,
+  "weighted_f1_pct": 98.8,
+  "accuracy_std_pct": 1.12,
+  "weighted_f1_std_pct": 1.12,
   "confusion_matrix": [
     [
-      12,
+      60,
       0,
       0,
       0
     ],
     [
       0,
-      27,
-      0,
+      71,
+      1,
       0
     ],
     [
       0,
       0,
-      169,
-      0
+      140,
+      1
     ],
     [
       0,
       0,
-      0,
-      55
+      2,
+      58
     ]
   ],
   "target_classes": [
@@ -42,38 +45,38 @@
       "precision": 1.0,
       "recall": 1.0,
       "f1-score": 1.0,
-      "support": 12.0
+      "support": 60.0
     },
     "PERSISTENT_INDUSTRIAL_FLARE": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 27.0
+      "recall": 0.9861111111111112,
+      "f1-score": 0.993006993006993,
+      "support": 72.0
     },
     "AGRICULTURAL_BURNING": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 169.0
+      "precision": 0.9790209790209791,
+      "recall": 0.9929078014184397,
+      "f1-score": 0.9859154929577465,
+      "support": 141.0
     },
     "WILDFIRE": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 55.0
+      "precision": 0.9830508474576272,
+      "recall": 0.9666666666666667,
+      "f1-score": 0.9747899159663865,
+      "support": 60.0
     },
-    "accuracy": 1.0,
+    "accuracy": 0.987987987987988,
     "macro avg": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 263.0
+      "precision": 0.9905179566196516,
+      "recall": 0.9864213947990544,
+      "f1-score": 0.9884281004827815,
+      "support": 333.0
     },
     "weighted avg": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 263.0
+      "precision": 0.9880630897580053,
+      "recall": 0.987987987987988,
+      "f1-score": 0.9879819308154023,
+      "support": 333.0
     }
   },
   "features": [
@@ -97,69 +100,69 @@
   "feature_importance_shap": [
     {
       "feature": "cde_deviation_zscore",
-      "mean_shap": 0.9804903268814087
-    },
-    {
-      "feature": "dist_to_cropland_km",
-      "mean_shap": 0.8837745189666748
+      "mean_shap": 1.641371488571167
     },
     {
       "feature": "dist_to_forest_km",
-      "mean_shap": 0.7067347764968872
-    },
-    {
-      "feature": "persistence_count_30d",
-      "mean_shap": 0.6320773959159851
+      "mean_shap": 0.403799831867218
     },
     {
       "feature": "dist_to_mining_km",
-      "mean_shap": 0.1964712291955948
+      "mean_shap": 0.3743867874145508
     },
     {
-      "feature": "dist_to_industrial_km",
-      "mean_shap": 0.13778288662433624
+      "feature": "persistence_count_30d",
+      "mean_shap": 0.2814967930316925
     },
     {
-      "feature": "landcover_class",
-      "mean_shap": 0.10991769284009933
-    },
-    {
-      "feature": "frp_to_bt_ratio",
-      "mean_shap": 0.08402004092931747
-    },
-    {
-      "feature": "frp_megawatts",
-      "mean_shap": 0.08042334765195847
-    },
-    {
-      "feature": "latitude",
-      "mean_shap": 0.07278167456388474
-    },
-    {
-      "feature": "brightness_temp_kelvin",
-      "mean_shap": 0.06515692919492722
-    },
-    {
-      "feature": "longitude",
-      "mean_shap": 0.06265735626220703
+      "feature": "dist_to_cropland_km",
+      "mean_shap": 0.23064881563186646
     },
     {
       "feature": "dist_to_power_km",
-      "mean_shap": 0.049860235303640366
+      "mean_shap": 0.1457967609167099
     },
     {
-      "feature": "confidence_pct",
-      "mean_shap": 0.019306469708681107
+      "feature": "brightness_temp_kelvin",
+      "mean_shap": 0.13179482519626617
+    },
+    {
+      "feature": "frp_megawatts",
+      "mean_shap": 0.11554230004549026
+    },
+    {
+      "feature": "latitude",
+      "mean_shap": 0.10685476660728455
+    },
+    {
+      "feature": "dist_to_industrial_km",
+      "mean_shap": 0.09637603163719177
+    },
+    {
+      "feature": "landcover_class",
+      "mean_shap": 0.06838977336883545
     },
     {
       "feature": "day_night_flag",
-      "mean_shap": 0.006969020701944828
+      "mean_shap": 0.05052558332681656
+    },
+    {
+      "feature": "longitude",
+      "mean_shap": 0.04383047670125961
+    },
+    {
+      "feature": "frp_to_bt_ratio",
+      "mean_shap": 0.021815652027726173
+    },
+    {
+      "feature": "confidence_pct",
+      "mean_shap": 0.0024071873631328344
     },
     {
       "feature": "inside_osm_facility",
-      "mean_shap": 0.00010829126404132694
+      "mean_shap": 0.0
     }
   ],
   "shap_chart_url": "/ml/shap_feature_importance.png",
-  "dataset_provenance": "NASA FIRMS VIIRS (S-NPP & NOAA-20 375m NRT) + Google Earth Verified Ground Truth + OpenStreetMap Geodesic Infrastructure Proximity"
+  "dataset_provenance": "333 Real NASA FIRMS VIIRS Detections (North India BBox) + Google Earth Optical Ground Truth + OpenStreetMap Geodesic Infrastructure Network"
 }

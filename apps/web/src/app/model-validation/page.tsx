@@ -56,6 +56,7 @@ export default function ModelValidationPage() {
           </p>
           <div className="mt-2 text-[11px] font-mono text-slate-500">
             Provenance: {data?.dataset_provenance ?? "NASA FIRMS + OSM + Google Earth Verified"}
+            {data?.evaluation_method ? ` · ${data.evaluation_method}` : ""}
           </div>
         </header>
 
@@ -77,7 +78,7 @@ export default function ModelValidationPage() {
                   {overall?.accuracy?.toFixed(1) ?? "—"}%
                 </p>
                 <p className="text-[10px] text-slate-500 mt-1 font-mono">
-                  Held-out test set ({overall?.testSamples ?? 0} samples)
+                  5-fold stratified CV · {data?.accuracy_std_pct != null ? `± ${data.accuracy_std_pct.toFixed(1)}` : "every sample tested once"}
                 </p>
               </div>
               <div className="rounded-xl bg-slate-950/80 border border-emerald-500/30 p-5 shadow-lg shadow-emerald-950/20">
@@ -88,7 +89,7 @@ export default function ModelValidationPage() {
                   {overall?.f1?.toFixed(1) ?? "—"}%
                 </p>
                 <p className="text-[10px] text-slate-500 mt-1 font-mono">
-                  Multi-class harmonic mean
+                  {data?.weighted_f1_std_pct != null ? `± ${data.weighted_f1_std_pct.toFixed(1)} · multi-class harmonic mean` : "Multi-class harmonic mean"}
                 </p>
               </div>
               <div className="rounded-xl bg-slate-950/80 border border-amber-500/30 p-5 shadow-lg shadow-amber-950/20">

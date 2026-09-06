@@ -24,7 +24,7 @@ import shap
 
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from xgboost import XGBClassifier
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -163,58 +163,79 @@ def train_honest_evaluation():
     X, y = load_dataset()
     print(f"Loaded {len(X)} real hand-verified FIRMS observations.")
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.20, random_state=42, stratify=y
+    # ── Honest 5-Fold Stratified Cross-Validation ─────────────────────
+    # Every sample serves as test exactly once; scores are the mean ± std
+    # across folds. This eliminates the "lucky split" critique and is the
+    # number we publish on the Model Validation dashboard.
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+    def build_ensemble():
+        xgb = XGBClassifier(
+            n_estimators=200,
+            max_depth=5,
+            learning_rate=0.08,
+            subsample=0.85,
+            colsample_bytree=0.85,
+            random_state=42,
+            eval_metric="mlogloss",
+        )
+        rf = RandomForestClassifier(
+            n_estimators=150,
+            max_depth=8,
+            class_weight="balanced",
+            random_state=42,
+            n_jobs=1,
+        )
+        return VotingClassifier(
+            estimators=[("xgb", xgb), ("rf", rf)],
+            voting="soft",
+            n_jobs=1,
+        )
+
+    cm_total = None
+    y_true_all, y_pred_all = [], []
+    accs, f1s = [], []
+    fold = 0
+    for train_idx, test_idx in skf.split(X, y):
+        fold += 1
+        model = build_ensemble()
+        model.fit(X[train_idx], y[train_idx])
+        y_pred = model.predict(X[test_idx])
+        accs.append(accuracy_score(y[test_idx], y_pred))
+        f1s.append(f1_score(y[test_idx], y_pred, average="weighted"))
+        cm_fold = confusion_matrix(y[test_idx], y_pred, labels=list(range(len(TARGET_CLASSES))))
+        cm_total = cm_fold if cm_total is None else cm_total + cm_fold
+        y_true_all.extend(y[test_idx].tolist())
+        y_pred_all.extend(y_pred.tolist())
+        print(f"  Fold {fold}/5  acc={accs[-1]*100:.2f}%  f1={f1s[-1]*100:.2f}%")
+
+    acc_mean, acc_std = float(np.mean(accs)), float(np.std(accs))
+    f1_mean, f1_std = float(np.mean(f1s)), float(np.std(f1s))
+    report = classification_report(
+        np.array(y_true_all), np.array(y_pred_all),
+        target_names=TARGET_CLASSES, output_dict=True, labels=list(range(len(TARGET_CLASSES))),
     )
-
-    xgb = XGBClassifier(
-        n_estimators=200,
-        max_depth=5,
-        learning_rate=0.08,
-        subsample=0.85,
-        colsample_bytree=0.85,
-        random_state=42,
-        eval_metric="mlogloss",
-    )
-
-    rf = RandomForestClassifier(
-        n_estimators=150,
-        max_depth=8,
-        class_weight="balanced",
-        random_state=42,
-        n_jobs=1,
-    )
-
-    ensemble = VotingClassifier(
-        estimators=[("xgb", xgb), ("rf", rf)],
-        voting="soft",
-        n_jobs=1,
-    )
-
-    ensemble.fit(X_train, y_train)
-    xgb.fit(X_train, y_train)
-
-    y_pred = ensemble.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred, average="weighted")
-    cm = confusion_matrix(y_test, y_pred)
-    report = classification_report(y_test, y_pred, target_names=TARGET_CLASSES, output_dict=True)
 
     print("\n" + "=" * 60)
-    print(f"HONEST REAL DATA TEST RESULTS:")
-    print(f"  Accuracy:  {acc * 100:.2f}%")
-    print(f"  F1 (wtd):  {f1 * 100:.2f}%")
+    print(f"HONEST 5-FOLD STRATIFIED CV RESULTS (all {len(X)} samples):")
+    print(f"  Accuracy:  {acc_mean * 100:.2f}% ± {acc_std * 100:.2f}")
+    print(f"  F1 (wtd):  {f1_mean * 100:.2f}% ± {f1_std * 100:.2f}")
     print("=" * 60)
     for c in TARGET_CLASSES:
         m = report[c]
         print(f"  {c:30s} Precision: {m['precision']*100:.1f}% | Recall: {m['recall']*100:.1f}% | F1: {m['f1-score']*100:.1f}% (N={m['support']})")
+
+    # Retrain a final production model on ALL data for SHAP + inference
+    final_ensemble = build_ensemble()
+    final_ensemble.fit(X, y)
+    xgb = final_ensemble.named_estimators_["xgb"]
 
     # Generate SHAP chart
     public_img_dir = ROOT / "apps" / "web" / "public" / "ml"
     public_img_dir.mkdir(parents=True, exist_ok=True)
 
     explainer = shap.TreeExplainer(xgb)
-    shap_values = explainer.shap_values(X_test)
+    shap_values = explainer.shap_values(X)
 
     if isinstance(shap_values, list):
         mean_shap = np.mean([np.abs(sv).mean(axis=0) for sv in shap_values], axis=0)
@@ -235,7 +256,7 @@ def train_honest_evaluation():
     plt.yticks(range(len(top_features)), top_features, color="#e2e8f0", fontsize=9, fontfamily="sans-serif")
     plt.xticks(color="#94a3b8", fontsize=8)
     plt.xlabel("Mean |SHAP Value| (Real Feature Impact)", color="#94a3b8", fontsize=9, labelpad=8)
-    plt.title("Real Satellite Feature Attribution via SHAP (Held-Out Test Set)", color="#f8fafc", fontsize=11, weight="bold", pad=12)
+    plt.title("Real Satellite Feature Attribution via SHAP (All Samples)", color="#f8fafc", fontsize=11, weight="bold", pad=12)
     plt.grid(axis="x", color="#1e293b", linestyle="--", alpha=0.7)
     plt.tight_layout()
 
@@ -246,7 +267,7 @@ def train_honest_evaluation():
     model_dir = ROOT / "packages" / "agents" / "models"
     model_dir.mkdir(parents=True, exist_ok=True)
     with open(model_dir / "thermal_classifier_ensemble.pkl", "wb") as f:
-        pickle.dump(ensemble, f)
+        pickle.dump(final_ensemble, f)
 
     feature_ranking = [
         {"feature": FEATURE_NAMES[i], "mean_shap": float(mean_shap[i])}
@@ -256,11 +277,14 @@ def train_honest_evaluation():
     metrics_data = {
         "model_name": "Calibrated XGBoost + Random Forest Multi-Modal Ensemble",
         "trained_at": datetime.now(timezone.utc).isoformat(),
+        "evaluation_method": "5-Fold Stratified Cross-Validation (every sample tested once)",
         "total_samples": len(X),
-        "test_samples": len(X_test),
-        "accuracy_pct": round(acc * 100, 2),
-        "weighted_f1_pct": round(f1 * 100, 2),
-        "confusion_matrix": cm.tolist(),
+        "test_samples": len(X),
+        "accuracy_pct": round(acc_mean * 100, 2),
+        "weighted_f1_pct": round(f1_mean * 100, 2),
+        "accuracy_std_pct": round(acc_std * 100, 2),
+        "weighted_f1_std_pct": round(f1_std * 100, 2),
+        "confusion_matrix": cm_total.tolist(),
         "target_classes": TARGET_CLASSES,
         "classification_report": report,
         "features": FEATURE_NAMES,
@@ -272,7 +296,7 @@ def train_honest_evaluation():
     with open(model_dir / "model_metrics.json", "w", encoding="utf-8") as f:
         json.dump(metrics_data, f, indent=2)
 
-    print(f"\n✅ Model & Honest Metrics saved: {acc*100:.1f}% Accuracy, {f1*100:.1f}% F1")
+    print(f"\n✅ Model & Honest 5-Fold CV Metrics saved: {acc_mean*100:.2f}% ± {acc_std*100:.2f} Accuracy, {f1_mean*100:.2f}% ± {f1_std*100:.2f} F1")
 
 
 if __name__ == "__main__":
