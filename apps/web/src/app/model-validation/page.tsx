@@ -166,12 +166,15 @@ export default function ModelValidationPage() {
                         Top SHAP Attribution Scores:
                       </p>
                       <div className="space-y-1">
-                        {shapRanking.slice(0, 4).map((item: any, idx: number) => (
-                          <div key={item.feature} className="flex justify-between items-center text-[10px] font-mono bg-slate-900/60 px-2 py-1 rounded">
-                            <span className="text-slate-300 truncate">{idx + 1}. {item.feature}</span>
-                            <span className="text-cyan-400 font-bold">+{item.mean_shap.toFixed(3)}</span>
-                          </div>
-                        ))}
+                        {shapRanking.slice(0, 4).map((item: any, idx: number) => {
+                          const val = item.importance ?? item.mean_shap ?? 0;
+                          return (
+                            <div key={item.feature ?? idx} className="flex justify-between items-center text-[10px] font-mono bg-slate-900/60 px-2 py-1 rounded">
+                              <span className="text-slate-300 truncate">{idx + 1}. {item.feature}</span>
+                              <span className="text-cyan-400 font-bold">+{typeof val === "number" ? val.toFixed(3) : Number(val || 0).toFixed(3)}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
