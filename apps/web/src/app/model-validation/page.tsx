@@ -204,6 +204,7 @@ export default function ModelValidationPage() {
                   <tbody>
                     {cm.map((row: number[], i: number) => {
                       const rowMax = Math.max(...row, 1);
+                      const totalInRow = row.reduce((a, b) => a + b, 0);
                       return (
                         <tr key={classes[i]} className="border-b border-slate-900/60 hover:bg-white/[0.02] transition-colors">
                           <td className="p-3 text-slate-300 text-[11px] text-left font-medium whitespace-nowrap">
@@ -211,20 +212,32 @@ export default function ModelValidationPage() {
                           </td>
                           {row.map((v: number, j: number) => {
                             const isDiag = i === j;
+                            const isZero = v === 0;
                             const intensity = v / rowMax;
+                            const errPct = totalInRow > 0 ? v / totalInRow : 0;
+                            // Proportionate shading: tiny errors get very faint tint, accurate diagonal stays bright
+                            const redOpacity = isZero ? 0 : Math.min(0.28, 0.03 + errPct * 1.2);
                             return (
                               <td
                                 key={j}
-                                className="p-3 font-semibold text-sm transition-all"
+                                className="p-3 text-sm transition-all"
                                 style={{
                                   background: isDiag
-                                    ? `rgba(16, 185, 129, ${0.15 + intensity * 0.5})`
-                                    : v > 0
-                                    ? `rgba(239, 68, 68, ${0.15 + intensity * 0.5})`
+                                    ? `rgba(16, 185, 129, ${0.12 + intensity * 0.45})`
+                                    : !isZero
+                                    ? `rgba(239, 68, 68, ${redOpacity})`
                                     : "transparent",
                                 }}
                               >
-                                <span className={isDiag ? "text-emerald-300 font-bold drop-shadow" : v > 0 ? "text-red-300" : "text-slate-600"}>
+                                <span
+                                  className={
+                                    isDiag
+                                      ? "text-emerald-300 font-bold drop-shadow"
+                                      : !isZero
+                                      ? "text-red-300/80 font-medium"
+                                      : "text-slate-600"
+                                  }
+                                >
                                   {v}
                                 </span>
                               </td>
