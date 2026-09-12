@@ -156,7 +156,7 @@ export function TimelineScrubber({
       </div>
 
       {/* Scrubber track with continuous histogram bars */}
-      <div className="relative w-full h-12 bg-black/40 rounded border border-hairline flex items-end p-1 gap-[2px] overflow-x-auto overflow-y-hidden">
+      <div className="relative w-full h-14 bg-black/40 rounded border border-hairline flex items-end p-1 gap-[2px] overflow-visible">
         {buckets.length === 0 ? (
           <div className="w-full h-full flex items-center justify-center text-[10px] text-mute font-mono">
             {loading ? "Loading temporal histogram…" : `No thermal events recorded in past ${timeRange}`}
@@ -209,8 +209,8 @@ export function TimelineScrubber({
                       })
                 } IST: ${b.total_events} events (${b.critical_count} critical), Max FRP ${b.max_frp_mw.toFixed(1)} MW`}
               >
-                {/* Hover indicator tooltip on individual bucket */}
-                <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:flex flex-col items-center bg-[#070b14] border border-cyan-500/40 px-2 py-1 rounded text-[9px] font-mono text-white shadow-xl z-30 whitespace-nowrap">
+                {/* Hover indicator tooltip on individual bucket - elevated z-index & backdrop */}
+                <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center bg-[#070b14]/95 backdrop-blur-md border border-cyan-500/50 px-2.5 py-1.5 rounded-md text-[10px] font-mono text-white shadow-[0_10px_25px_rgba(0,0,0,0.8)] z-50 whitespace-nowrap">
                   <span className="font-semibold text-cyan-300">
                     {timeRange === "24H"
                       ? new Date(b.epoch).toLocaleTimeString("en-IN", {
@@ -232,9 +232,11 @@ export function TimelineScrubber({
                       🚨 {b.critical_count} critical
                     </span>
                   )}
-                  <span className="text-slate-400">
-                    Max: {b.max_frp_mw.toFixed(1)} MW
+                  <span className="text-slate-400 text-[9px]">
+                    Max FRP: {b.max_frp_mw.toFixed(1)} MW
                   </span>
+                  {/* Tooltip caret */}
+                  <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-4 border-transparent border-t-cyan-500/50" />
                 </span>
               </button>
             );
