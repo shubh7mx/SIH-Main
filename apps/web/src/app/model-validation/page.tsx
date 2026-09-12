@@ -188,15 +188,15 @@ export default function ModelValidationPage() {
                 Confusion Matrix (Held-Out Test Set)
               </h2>
               <div className="overflow-x-auto rounded-xl bg-slate-950/70 border border-slate-800 p-4">
-                <table className="min-w-[520px] w-full text-center font-mono text-xs">
+                <table className="w-full text-center font-mono text-xs border-collapse">
                   <thead>
                     <tr>
-                      <th className="p-2 text-slate-500 text-[10px] uppercase">
+                      <th className="p-3 text-slate-500 text-[11px] uppercase text-left border-b border-slate-800 font-medium">
                         Ground Truth \ Predicted
                       </th>
                       {classes.map((c: string) => (
-                        <th key={c} className="p-2 text-slate-400 text-[10px]">
-                          {CLASS_LABELS[c]?.split(" ")[0] ?? c}
+                        <th key={c} className="p-3 text-slate-200 text-[11px] font-semibold border-b border-slate-800 whitespace-nowrap">
+                          {CLASS_LABELS[c] ?? c}
                         </th>
                       ))}
                     </tr>
@@ -205,8 +205,8 @@ export default function ModelValidationPage() {
                     {cm.map((row: number[], i: number) => {
                       const rowMax = Math.max(...row, 1);
                       return (
-                        <tr key={classes[i]}>
-                          <td className="p-2 text-slate-400 text-[10px] text-left whitespace-nowrap">
+                        <tr key={classes[i]} className="border-b border-slate-900/60 hover:bg-white/[0.02] transition-colors">
+                          <td className="p-3 text-slate-300 text-[11px] text-left font-medium whitespace-nowrap">
                             {CLASS_LABELS[classes[i]] ?? classes[i]}
                           </td>
                           {row.map((v: number, j: number) => {
@@ -215,7 +215,7 @@ export default function ModelValidationPage() {
                             return (
                               <td
                                 key={j}
-                                className="p-2"
+                                className="p-3 font-semibold text-sm transition-all"
                                 style={{
                                   background: isDiag
                                     ? `rgba(16, 185, 129, ${0.15 + intensity * 0.5})`
@@ -224,7 +224,7 @@ export default function ModelValidationPage() {
                                     : "transparent",
                                 }}
                               >
-                                <span className={isDiag ? "text-emerald-300 font-bold" : v > 0 ? "text-red-300" : "text-slate-600"}>
+                                <span className={isDiag ? "text-emerald-300 font-bold drop-shadow" : v > 0 ? "text-red-300" : "text-slate-600"}>
                                   {v}
                                 </span>
                               </td>
@@ -235,9 +235,10 @@ export default function ModelValidationPage() {
                     })}
                   </tbody>
                 </table>
-                <p className="text-[10px] text-slate-500 mt-3 font-mono">
-                  Diagonal (green) = correct classifications · Off-diagonal (red) = misclassifications
-                </p>
+                <div className="flex items-center justify-between text-[11px] text-slate-500 mt-3 font-mono">
+                  <span>Diagonal (green) = correct classifications · Off-diagonal (red) = misclassifications</span>
+                  <span className="text-slate-400">Total Evaluated: <strong className="text-white">{data?.test_samples ?? 2400}</strong> test samples</span>
+                </div>
               </div>
             </section>
 
