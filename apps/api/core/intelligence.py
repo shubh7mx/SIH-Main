@@ -516,6 +516,26 @@ def _build_standardized_brief(event: Dict[str, Any]) -> str:
             target_summary = f"Open-Air Biomass & Surface Disposal Anomaly"
             containment_desc = f"Unclassified surface radiance in {region}."
 
+    # Urban / built-up refinement for deferred anomalies inside municipal limits
+    if not fac_name and cls not in ("AGRICULTURAL_BURNING", "WILDFIRE", "PERSISTENT_INDUSTRIAL_FLARE", "INDUSTRIAL_FIRE_EMERGENCY"):
+        urban_belts = [
+            (28.40, 28.90, 76.85, 77.45),  # Delhi NCR
+            (18.85, 19.35, 72.75, 73.15),  # Mumbai MMR
+            (30.82, 30.98, 75.75, 75.95),  # Ludhiana
+            (22.90, 23.15, 72.45, 72.75),  # Ahmedabad
+            (21.10, 21.30, 72.75, 72.95),  # Surat
+            (22.45, 22.70, 88.25, 88.48),  # Kolkata
+            (17.30, 17.55, 78.30, 78.60),  # Hyderabad
+            (12.85, 13.10, 77.45, 77.75),  # Bengaluru
+            (12.95, 13.20, 80.15, 80.32),  # Chennai
+            (18.45, 18.65, 73.75, 74.00),  # Pune
+            (26.40, 26.55, 80.25, 80.45),  # Kanpur
+            (26.75, 26.95, 80.85, 81.05),  # Lucknow
+        ]
+        if any(min_lat <= lat <= max_lat and min_lon <= lon <= max_lon for min_lat, max_lat, min_lon, max_lon in urban_belts):
+            target_summary = f"Municipal / Built-Up Thermal Anomaly"
+            containment_desc = f"Urban fabric thermal radiance in {region} — unregistered industrial process or waste incineration."
+
     # Baseline Anomaly
     if cde is not None:
         cde_desc = f"{cde:+.1f}σ deviation relative to 30-day facility historical baseline ({'breaches 3σ alarm threshold' if abs(cde) >= 3 else 'within expected variance'})."

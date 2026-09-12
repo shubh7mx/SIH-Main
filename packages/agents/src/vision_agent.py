@@ -77,18 +77,20 @@ def vision_pipeline(state: SwarmState) -> SwarmState:
     persist_cnt = float(state.temporal.observation_count or (6.0 if inside_fac else 0.0))
 
     # Dynamically derive true distance to forest and cropland from landcover & regional coordinates
+    # For non-forested zones (Cropland, Urban/Built-up, Industrial), dist_to_forest is high (>= 50km)
+    # ensuring the classifier does not mistake urban/industrial or agrarian thermal points for forest wildfires.
     if lc_class == 10:  # Forest / Tree cover
         dist_crop = 25.0
         dist_forest = 0.0
+    elif lc_class == 50:  # Urban / Built-up / Industrial
+        dist_crop = 0.0
+        dist_forest = 50.0
     elif lc_class == 40:  # Cropland
         dist_crop = 0.0
         dist_forest = 50.0
-    elif lc_class == 50:  # Urban / Built-up / Industrial
-        dist_crop = 10.0
-        dist_forest = 25.0
     else:  # Grassland / Shrub / Other
         dist_crop = 15.0
-        dist_forest = 20.0
+        dist_forest = 30.0
 
     upred = predict_with_uncertainty(
         frp_mw=state.frp_mw,

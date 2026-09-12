@@ -92,28 +92,37 @@ def spatial_pipeline(state: SwarmState) -> SwarmState:
     land_cover_class, land_cover_name = _simulate_worldcover(lat, lon)
 
     # ── High-confidence spatial scoring ──────────────────────────────────────
-    # A hotspot is contained within an industrial facility ONLY if it is inside its true perimeter
-    # (<= 2.5 km for mega refineries/smelters, <= 1.5 km for cement/chemical plants).
-    # Hotspots 5-25 km away in rural Punjab, Jharkhand forests, or Assam tea gardens
-    # are NEVER industrial flares — they are real agricultural burning or forest fires.
-    is_mega_complex = nearest and any(k in nearest["name"].lower() for k in ["jamnagar", "hazira", "jamshedpur", "paradip", "haldia", "koyali", "mundra", "vizag", "vijayanagar"])
-    facility_radius_km = 2.5 if is_mega_complex else 1.5
+    # Containment radius:
+    # - Mega complexes & notified industrial areas / clusters: <= 3.0 km (e.g. Ludhiana, Peenya, Manesar, Jamnagar, Hazira)
+    # - Standard point facilities (single refineries, chemical/fertilizer plants, power stations, cement kilns): <= 2.0 km
+    is_large_complex = nearest and (
+        nearest.get("type") == "industrial_other" or
+        any(k in nearest["name"].lower() for k in [
+            "jamnagar", "hazira", "jamshedpur", "paradip", "haldia", "koyali",
+            "mundra", "vizag", "vijayanagar", "cluster", "estate", "complex",
+            "zone", "industrial", "gida", "riico", "sidcul"
+        ])
+    )
+    facility_radius_km = 3.0 if is_large_complex else 2.0
     is_near_facility = nearest is not None and min_dist_km <= facility_radius_km
 
     if is_near_facility:
         # Hotspot contained within industrial perimeter or flare buffer
         if min_dist_km <= 0.8:
             spatial_score = 0.98  # Direct plant / flare stack footprint
-        elif min_dist_km <= 1.5:
-            spatial_score = 0.95  # Industrial facility boundary
+        elif min_dist_km <= 1.8:
+            spatial_score = 0.95  # Industrial facility / estate boundary
         else:
-            spatial_score = 0.90  # Refinery outer perimeter
-        cluster_size = 4 if nearest["type"] in ("refinery", "metal_works", "chemical", "gas_processing") else 2
+            spatial_score = 0.92  # Industrial cluster / outer perimeter
+        cluster_size = 4 if nearest["type"] in ("refinery", "metal_works", "chemical", "gas_processing", "industrial_other") else 2
         land_cover_class = 50  # Urban/Industrial land cover
         land_cover_name = "Urban/Built-up"
     else:
         # Non-industrial hotspot: authentic land cover classification (Cropland, Forest, Grassland)
-        if land_cover_class == 40:  # Cropland
+        if land_cover_class == 50:  # Urban/Built-up
+            spatial_score = 0.94
+            cluster_size = 2
+        elif land_cover_class == 40:  # Cropland
             spatial_score = 0.95
             cluster_size = 2
         elif land_cover_class == 10:  # Forest/Tree cover
@@ -147,6 +156,26 @@ def _simulate_worldcover(lat: float, lon: float) -> Tuple[int, str]:
     """
     Simulates ESA WorldCover lookup based on geography heuristics.
     """
+    # Major Urban / Metropolitan Municipalities & Industrial Corridors
+    # (Delhi NCR, Mumbai MMR, Ludhiana, Ahmedabad, Surat, Kolkata, Hyderabad, Bengaluru, Chennai, Pune, Kanpur, Lucknow)
+    urban_centers = [
+        (28.40, 28.90, 76.85, 77.45),  # Delhi NCR / Gurgaon / Noida / Faridabad
+        (18.85, 19.35, 72.75, 73.15),  # Mumbai MMR / Thane / Navi Mumbai
+        (30.82, 30.98, 75.75, 75.95),  # Ludhiana Municipal & Industrial Belt
+        (22.90, 23.15, 72.45, 72.75),  # Ahmedabad Urban Area
+        (21.10, 21.30, 72.75, 72.95),  # Surat Urban Area
+        (22.45, 22.70, 88.25, 88.48),  # Kolkata Metropolitan Area
+        (17.30, 17.55, 78.30, 78.60),  # Hyderabad Urban Area
+        (12.85, 13.10, 77.45, 77.75),  # Bengaluru Urban Area
+        (12.95, 13.20, 80.15, 80.32),  # Chennai Urban Area
+        (18.45, 18.65, 73.75, 74.00),  # Pune Urban Area
+        (26.40, 26.55, 80.25, 80.45),  # Kanpur Urban Area
+        (26.75, 26.95, 80.85, 81.05),  # Lucknow Urban Area
+    ]
+    for min_lat, max_lat, min_lon, max_lon in urban_centers:
+        if min_lat <= lat <= max_lat and min_lon <= lon <= max_lon:
+            return 50, "Urban/Built-up"
+
     # Himalayan / Forest belts (Uttarakhand, HP, Western Ghats, NE)
     if (lat >= 29.5 and lon >= 77.5) or (19.0 <= lat <= 24.5 and 83.0 <= lon <= 87.5):
         return 10, "Tree cover"
