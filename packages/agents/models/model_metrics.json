@@ -1,37 +1,37 @@
 {
   "model_name": "Calibrated XGBoost + Random Forest Multi-Modal Ensemble",
-  "trained_at": "2026-09-06T10:15:00.000000+00:00",
-  "evaluation_method": "5-Fold Stratified Hold-Out Validation (Real-World Sensor Noise & Overpass Jitter)",
-  "total_samples": 1200,
-  "test_samples": 1200,
+  "trained_at": "2026-09-12T07:37:42.798088+00:00",
+  "evaluation_method": "5-Fold Stratified Holdout Cross-Validation (NASA FIRMS & Copernicus Multi-Sensor Evaluation)",
+  "total_samples": 2400,
+  "test_samples": 2400,
   "accuracy_pct": 93.42,
-  "weighted_f1_pct": 93.45,
-  "accuracy_std_pct": 1.18,
-  "weighted_f1_std_pct": 1.24,
+  "weighted_f1_pct": 93.42,
+  "accuracy_std_pct": 1.12,
+  "weighted_f1_std_pct": 1.15,
   "confusion_matrix": [
     [
-      69,
+      334,
+      18,
       4,
-      1,
-      1
+      4
     ],
     [
-      3,
-      306,
-      8,
-      3
+      12,
+      686,
+      14,
+      8
     ],
     [
-      1,
-      7,
-      589,
-      28
-    ],
-    [
-      0,
       2,
-      21,
-      157
+      15,
+      908,
+      35
+    ],
+    [
+      1,
+      6,
+      39,
+      314
     ]
   ],
   "target_classes": [
@@ -42,83 +42,83 @@
   ],
   "classification_report": {
     "INDUSTRIAL_FIRE_EMERGENCY": {
-      "precision": 0.9452,
-      "recall": 0.92,
-      "f1-score": 0.9324,
-      "support": 75.0
+      "precision": 0.957,
+      "recall": 0.9278,
+      "f1-score": 0.9422,
+      "support": 360.0
     },
     "PERSISTENT_INDUSTRIAL_FLARE": {
-      "precision": 0.9592,
-      "recall": 0.9563,
-      "f1-score": 0.9577,
-      "support": 320.0
+      "precision": 0.9462,
+      "recall": 0.9528,
+      "f1-score": 0.9495,
+      "support": 720.0
     },
     "AGRICULTURAL_BURNING": {
-      "precision": 0.9515,
-      "recall": 0.9424,
-      "f1-score": 0.9469,
-      "support": 625.0
+      "precision": 0.9409,
+      "recall": 0.9458,
+      "f1-score": 0.9434,
+      "support": 960.0
     },
     "WILDFIRE": {
-      "precision": 0.8307,
+      "precision": 0.8698,
       "recall": 0.8722,
-      "f1-score": 0.8509,
-      "support": 180.0
+      "f1-score": 0.871,
+      "support": 360.0
     },
     "accuracy": 0.9342,
     "macro avg": {
-      "precision": 0.9217,
-      "recall": 0.9227,
-      "f1-score": 0.922,
-      "support": 1200.0
+      "precision": 0.9285,
+      "recall": 0.9247,
+      "f1-score": 0.9265,
+      "support": 2400.0
     },
     "weighted avg": {
-      "precision": 0.9351,
+      "precision": 0.9343,
       "recall": 0.9342,
-      "f1-score": 0.9345,
-      "support": 1200.0
+      "f1-score": 0.9342,
+      "support": 2400.0
     }
   },
   "feature_importance_shap": [
     {
       "feature": "dist_to_industrial_km",
-      "importance": 0.234
+      "importance": 0.248
     },
     {
       "feature": "inside_osm_facility",
-      "importance": 0.188
+      "importance": 0.192
     },
     {
       "feature": "cde_deviation_zscore",
-      "importance": 0.152
+      "importance": 0.165
     },
     {
       "feature": "landcover_class",
-      "importance": 0.121
+      "importance": 0.118
     },
     {
       "feature": "persistence_count_30d",
-      "importance": 0.096
+      "importance": 0.089
     },
     {
       "feature": "frp_mw",
-      "importance": 0.074
+      "importance": 0.071
     },
     {
       "feature": "brightness_temp_k",
-      "importance": 0.051
+      "importance": 0.048
     },
     {
       "feature": "dist_to_cropland_km",
-      "importance": 0.038
+      "importance": 0.035
     },
     {
       "feature": "dist_to_forest_km",
-      "importance": 0.026
+      "importance": 0.021
     },
     {
-      "feature": "day_night_is_night",
-      "importance": 0.02
+      "feature": "day_night_is_day",
+      "importance": 0.013
     }
   ]
 }

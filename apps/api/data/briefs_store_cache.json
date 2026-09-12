@@ -250,5 +250,17 @@
     "mode": "DOCTRINE",
     "generated_at": "2026-09-06T15:30:13.199428+00:00",
     "latency_ms": 9125.0
+  },
+  "c3c3b1cb100dd1da": {
+    "text": "[TAXONOMY & THREAT SEVERITY]\n\u2022 Classification: Deferred For Analyst | Severity: DEFERRED (ANALYST REVIEW)\n\u2022 Assessment: Unclassified anomalous thermal radiance\n\u2022 Multi-Agent Consensus: 81% confidence\n\n[RADIOMETRIC & THERMAL TELEMETRY]\n\u2022 Radiative Power (FRP): 57.1 MW\n\u2022 Brightness Temperature: 352.5 K (79.3\u00b0C calibrated)\n\u2022 Sensor & Orbit: VIIRS_NOAA20_NRT \u00b7 Day Pass (13:30 IST Window)\n\n[SPATIAL & FACILITY CONTEXT]\n\u2022 Target Site: Open-Air Biomass & Surface Disposal Anomaly\n\u2022 Coordinates: 30.8879\u00b0N, 75.8639\u00b0E\n\u2022 Agro-Climatic Belt: Indo-Gangetic Plain (Punjab/Haryana/West UP Belt)\n\u2022 Containment: Unclassified surface radiance in Indo-Gangetic Plain (Punjab/Haryana/West UP Belt).\n\n[BASELINE & TEMPORAL VARIANCE]\n\u2022 CDE Variance: +0.0\u03c3 deviation relative to 30-day facility historical baseline (within expected variance).\n\u2022 Temporal Profile: Multi-pass telemetry verified with 7-day rolling window.\n\n[ATMOSPHERIC & PLUME DISPERSAL]\n\u2022 Estimated Wind Vector: 20.8 km/h toward SSW \u00b7 Class C (Slightly Unstable)\n\u2022 Hazard Radius: Gaussian puff dispersion model active for perimeter containment.\n\n[TACTICAL RECOMMENDATIONS & SOP]\n\u2022 Queue for manual analyst review with Sentinel-2 SWIR B12/B11 spectral overlay.\n\u2022 Check for unindexed brick kilns or secondary metal processing facilities nearby.",
+    "mode": "NEURAL",
+    "generated_at": "2026-09-12T07:17:23.659818+00:00",
+    "latency_ms": 13094.0
+  },
+  "292a29ccd0d605be": {
+    "text": "[TAXONOMY & THREAT SEVERITY]\n\u2022 Event ID: 292a29ccd0d605be; Classification: DEFERRED_FOR_ANALYST; Severity: DEFERRED (ANALYST REVIEW); confidence: 0.843.\n\u2022 Assessment: Unclassified anomalous thermal radiance; no facility or hazard class assigned.\n\n[RADIOMETRIC & THERMAL TELEMETRY]\n\u2022 FRP: 37.94 MW; brightness temperature: 387.7 K (114.55\u00b0C).\n\u2022 CDE: 0.0\u03c3; sensor/orbit details not supplied.\n\n[SPATIAL & FACILITY CONTEXT]\n\u2022 Coordinates: 30.88605\u00b0N, 75.84077\u00b0E; facility association: none.\n\u2022 Context: Indo-Gangetic Plain, Punjab/Haryana/Western Uttar Pradesh belt. No facility-level radiance classification assigned.\n\n[BASELINE & TEMPORAL VARIANCE]\n\u2022 CDE variance: 0.0\u03c3 relative to the 30-day baseline; no temporal profile supplied.\n\n[ATMOSPHERIC & PLUME DISPERSAL]\n\u2022 Wind and dispersion parameters not supplied; no plume or hazard radius assessed.\n\n[TACTICAL RECOMMENDATIONS & SOP]\n\u2022 Queue manual review; verify with Sentinel-2 SWIR B12/B11 and confirm event time, sensor/orbit, facility registry, and wind data.\n\u2022 Conduct local verification for agricultural burning, surface disposal, brick kilns, or secondary metal processing; retain DEFERRED status until confirmed.",
+    "mode": "NEURAL",
+    "generated_at": "2026-09-12T07:17:52.821926+00:00",
+    "latency_ms": 2594.0
   }
 }
