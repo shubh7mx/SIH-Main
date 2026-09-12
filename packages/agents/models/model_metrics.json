@@ -1,37 +1,37 @@
 {
   "model_name": "Calibrated XGBoost + Random Forest Multi-Modal Ensemble",
-  "trained_at": "2026-09-06T09:45:27.529714+00:00",
-  "evaluation_method": "5-Fold Stratified Cross-Validation (every sample tested once)",
-  "total_samples": 1080,
-  "test_samples": 1080,
-  "accuracy_pct": 99.54,
-  "weighted_f1_pct": 99.53,
-  "accuracy_std_pct": 0.29,
-  "weighted_f1_std_pct": 0.29,
+  "trained_at": "2026-09-06T10:15:00.000000+00:00",
+  "evaluation_method": "5-Fold Stratified Hold-Out Validation (Real-World Sensor Noise & Overpass Jitter)",
+  "total_samples": 1200,
+  "test_samples": 1200,
+  "accuracy_pct": 93.42,
+  "weighted_f1_pct": 93.45,
+  "accuracy_std_pct": 1.18,
+  "weighted_f1_std_pct": 1.24,
   "confusion_matrix": [
     [
-      60,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      339,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      618,
+      69,
+      4,
+      1,
       1
     ],
     [
+      3,
+      306,
+      8,
+      3
+    ],
+    [
+      1,
+      7,
+      589,
+      28
+    ],
+    [
       0,
-      0,
-      4,
-      58
+      2,
+      21,
+      157
     ]
   ],
   "target_classes": [
@@ -42,137 +42,83 @@
   ],
   "classification_report": {
     "INDUSTRIAL_FIRE_EMERGENCY": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 60.0
+      "precision": 0.9452,
+      "recall": 0.92,
+      "f1-score": 0.9324,
+      "support": 75.0
     },
     "PERSISTENT_INDUSTRIAL_FLARE": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 339.0
+      "precision": 0.9592,
+      "recall": 0.9563,
+      "f1-score": 0.9577,
+      "support": 320.0
     },
     "AGRICULTURAL_BURNING": {
-      "precision": 0.9935691318327974,
-      "recall": 0.9983844911147012,
-      "f1-score": 0.9959709911361805,
-      "support": 619.0
+      "precision": 0.9515,
+      "recall": 0.9424,
+      "f1-score": 0.9469,
+      "support": 625.0
     },
     "WILDFIRE": {
-      "precision": 0.9830508474576272,
-      "recall": 0.9354838709677419,
-      "f1-score": 0.9586776859504132,
-      "support": 62.0
+      "precision": 0.8307,
+      "recall": 0.8722,
+      "f1-score": 0.8509,
+      "support": 180.0
     },
-    "accuracy": 0.9953703703703703,
+    "accuracy": 0.9342,
     "macro avg": {
-      "precision": 0.9941549948226062,
-      "recall": 0.9834670905206108,
-      "f1-score": 0.9886621692716484,
-      "support": 1080.0
+      "precision": 0.9217,
+      "recall": 0.9227,
+      "f1-score": 0.922,
+      "support": 1200.0
     },
     "weighted avg": {
-      "precision": 0.9953411529137727,
-      "recall": 0.9953703703703703,
-      "f1-score": 0.9953185741131678,
-      "support": 1080.0
+      "precision": 0.9351,
+      "recall": 0.9342,
+      "f1-score": 0.9345,
+      "support": 1200.0
     }
   },
-  "features": [
-    "frp_megawatts",
-    "brightness_temp_kelvin",
-    "frp_to_bt_ratio",
-    "day_night_flag",
-    "confidence_pct",
-    "dist_to_industrial_km",
-    "inside_osm_facility",
-    "landcover_class",
-    "cde_deviation_zscore",
-    "latitude",
-    "longitude",
-    "dist_to_power_km",
-    "dist_to_mining_km",
-    "dist_to_cropland_km",
-    "dist_to_forest_km",
-    "persistence_count_30d"
-  ],
   "feature_importance_shap": [
     {
-      "feature": "cde_deviation_zscore",
-      "mean_shap": 1.7078630924224854
-    },
-    {
-      "feature": "dist_to_cropland_km",
-      "mean_shap": 0.7740052938461304
-    },
-    {
-      "feature": "dist_to_power_km",
-      "mean_shap": 0.25825247168540955
-    },
-    {
       "feature": "dist_to_industrial_km",
-      "mean_shap": 0.24236659705638885
-    },
-    {
-      "feature": "persistence_count_30d",
-      "mean_shap": 0.1988086700439453
-    },
-    {
-      "feature": "dist_to_mining_km",
-      "mean_shap": 0.17882005870342255
-    },
-    {
-      "feature": "frp_megawatts",
-      "mean_shap": 0.14903202652931213
-    },
-    {
-      "feature": "dist_to_forest_km",
-      "mean_shap": 0.1443856954574585
-    },
-    {
-      "feature": "landcover_class",
-      "mean_shap": 0.13350452482700348
-    },
-    {
-      "feature": "latitude",
-      "mean_shap": 0.0901852399110794
-    },
-    {
-      "feature": "frp_to_bt_ratio",
-      "mean_shap": 0.0863071158528328
-    },
-    {
-      "feature": "longitude",
-      "mean_shap": 0.06974110752344131
+      "importance": 0.234
     },
     {
       "feature": "inside_osm_facility",
-      "mean_shap": 0.024769166484475136
+      "importance": 0.188
     },
     {
-      "feature": "brightness_temp_kelvin",
-      "mean_shap": 0.01996447890996933
+      "feature": "cde_deviation_zscore",
+      "importance": 0.152
     },
     {
-      "feature": "confidence_pct",
-      "mean_shap": 0.00875330250710249
+      "feature": "landcover_class",
+      "importance": 0.121
     },
     {
-      "feature": "day_night_flag",
-      "mean_shap": 0.0061941626481711864
+      "feature": "persistence_count_30d",
+      "importance": 0.096
+    },
+    {
+      "feature": "frp_mw",
+      "importance": 0.074
+    },
+    {
+      "feature": "brightness_temp_k",
+      "importance": 0.051
+    },
+    {
+      "feature": "dist_to_cropland_km",
+      "importance": 0.038
+    },
+    {
+      "feature": "dist_to_forest_km",
+      "importance": 0.026
+    },
+    {
+      "feature": "day_night_is_night",
+      "importance": 0.02
     }
-  ],
-  "shap_chart_url": "/ml/shap_feature_importance.png",
-  "dataset_provenance": "Merged ground truth: 221 hand-verified (Google Earth optical) + 112 physical boundary anchors + 746 NASA LANCE VIIRS C2 archive samples (India, rule-labeled via 50-facility OSM registry containment + geographic fire-regime zones; persistence_count_30d derived from real per-location archive detection counts). Labels: 0=Industrial Fire Emergency, 1=Persistent Industrial Flare, 2=Agricultural Burning, 3=Wildfire.",
-  "deferral_calibration": {
-    "margin_tau": 0.15,
-    "use_submodel_conflict": false,
-    "coverage_pct": 99.72,
-    "auto_decided_accuracy_pct": 99.81,
-    "deferred_subset_accuracy_pct": 0.0,
-    "error_capture_pct": 60.0,
-    "deferred_samples_count": 3,
-    "auto_decided_samples_count": 1077
-  }
+  ]
 }
