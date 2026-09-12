@@ -1,0 +1,10 @@
+{
+  "last_active_at": "2026-09-12T07:46:33.807071+00:00",
+  "last_firms_acq_at": "2026-09-06T12:00:00Z",
+  "total_restarts": 1,
+  "last_backfill_at": "2026-09-12T07:46:33.807071+00:00",
+  "last_backfill_events_count": 45,
+  "downtime_seconds": 0,
+  "adaptive_mode": "PEAK_DAY (High-Frequency 5m)",
+  "backfill_in_progress": false
+}
