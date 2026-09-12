@@ -1596,38 +1596,62 @@ export function TacticalMap({
               });
             };
 
-            if (clusterId != null && src && typeof src.getClusterExpansionZoom === "function") {
-              src.getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
-                if (!err && typeof zoom === "number") {
-                  // zoom + 0.4 ensures the cluster fully splits into children
-                  easeToExpansion(zoom + 0.4);
-                } else {
-                  easeToExpansion(map.getZoom() + 2.5);
-                }
-              });
-            } else if (clusterId != null && src && typeof src.getClusterLeaves === "function") {
-              // Legacy fallback: measure leaf spread to pick a fitting zoom
-              src.getClusterLeaves(clusterId, 200, 0, (err: any, leaves: any[]) => {
-                if (!err && leaves && leaves.length > 0) {
-                  let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
-                  for (const leaf of leaves) {
-                    const [lng, lat] = leaf.geometry.coordinates;
-                    if (lng < minLng) minLng = lng;
-                    if (lng > maxLng) maxLng = lng;
-                    if (lat < minLat) minLat = lat;
-                    if (lat > maxLat) maxLat = lat;
+            const fallbackZoom = map.getZoom() + 2.5;
+
+            if (clusterId != null && src) {
+              // maplibre-gl v5: getClusterExpansionZoom / getClusterLeaves return Promises
+              (async () => {
+                let targetZoom: number | null = null;
+
+                // 1) Expansion zoom: the exact zoom at which this cluster splits
+                if (typeof src.getClusterExpansionZoom === "function") {
+                  try {
+                    const z = await src.getClusterExpansionZoom(clusterId);
+                    if (typeof z === "number" && !Number.isNaN(z)) {
+                      // +0.4 margin ensures the cluster fully splits into children
+                      targetZoom = z + 0.4;
+                    }
+                  } catch {
+                    /* fall through to leaf-spread framing */
                   }
-                  const spanLng = Math.max(0.02, maxLng - minLng);
-                  const spanLat = Math.max(0.02, maxLat - minLat);
-                  const span = Math.max(spanLng, spanLat);
-                  const fitZoom = Math.log2(360 / (span * 2.2));
-                  easeToExpansion(Math.max(map.getZoom() + 1.5, Math.min(16.5, fitZoom)));
-                } else {
-                  easeToExpansion(map.getZoom() + 2.5);
                 }
-              });
+
+                // 2) Smart framing refinement: if all leaves sit in a tight bbox,
+                //    zoom far enough that the children visibly separate.
+                if (typeof src.getClusterLeaves === "function") {
+                  try {
+                    const leaves = await src.getClusterLeaves(clusterId, 500, 0);
+                    if (Array.isArray(leaves) && leaves.length > 0) {
+                      let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+                      for (const leaf of leaves) {
+                        const [lng, lat] = leaf.geometry.coordinates;
+                        if (lng < minLng) minLng = lng;
+                        if (lng > maxLng) maxLng = lng;
+                        if (lat < minLat) minLat = lat;
+                        if (lat > maxLat) maxLat = lat;
+                      }
+                      const spanLng = Math.max(0, maxLng - minLng);
+                      const spanLat = Math.max(0, maxLat - minLat);
+                      const span = Math.max(spanLng, spanLat);
+                      if (span > 0.0001) {
+                        // fit the leaf extent (with padding) into the viewport
+                        const fitZoom = Math.log2(360 / (span * 3));
+                        const cappedFit = Math.min(16.5, fitZoom);
+                        targetZoom =
+                          targetZoom != null
+                            ? Math.max(targetZoom, cappedFit)
+                            : Math.max(fallbackZoom, cappedFit);
+                      }
+                    }
+                  } catch {
+                    /* ignore — expansion zoom (or fallback) still applies */
+                  }
+                }
+
+                easeToExpansion(targetZoom ?? fallbackZoom);
+              })();
             } else {
-              easeToExpansion(map.getZoom() + 2.5);
+              easeToExpansion(fallbackZoom);
             }
             return;
           }
