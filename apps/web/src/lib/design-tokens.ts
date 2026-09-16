@@ -180,7 +180,26 @@ export const SECTOR_TAGS: Record<string, SectorTagInfo> = {
 };
 
 /**
+ * Sentinel / placeholder facility_type values that should never resolve to a sector tag.
+ * These are the defaults TacticalMap & the events list use when no facility is mapped.
+ */
+const _SENTINEL_TYPES = new Set([
+  "unmapped", "unknown", "industrial", "other", "none", "null", "", "thermal anomaly",
+]);
+
+/**
+ * Substrings (lowercased) in facility_name that indicate a synthetic placeholder
+ * rather than a real facility (e.g. TacticalMap's default "Thermal Anomaly").
+ */
+const _SENTINEL_NAME_PATTERNS = [
+  "thermal anomaly", "unmapped", "industrial facility",
+  "unknown facility", "anomaly",
+];
+
+/**
  * Resolves the industrial sector tag from facility_type string or facility name keywords.
+ * Guards against placeholder values so agricultural/wildfire/unmapped events are not
+ * mistagged as an industrial sector (e.g. never tag "Thermal Anomaly" as Power Plant).
  */
 export function getSectorTag(
   facilityType?: string | null,
@@ -188,6 +207,11 @@ export function getSectorTag(
 ): SectorTagInfo | null {
   const typeStr = (facilityType || "").toLowerCase().trim();
   const nameStr = (facilityName || "").toLowerCase().trim();
+
+  // Reject explicit sentinel facility types
+  if (_SENTINEL_TYPES.has(typeStr)) return null;
+  // Reject sentinel facility-name patterns (placeholders, not real plant names)
+  if (_SENTINEL_NAME_PATTERNS.some((p) => nameStr.includes(p))) return null;
 
   // 1. Exact or prefix match on facility_type
   if (typeStr.includes("refiner") || typeStr.includes("petrochem")) return SECTOR_TAGS.refinery;
