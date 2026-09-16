@@ -15,7 +15,7 @@ router = APIRouter(prefix="/events", tags=["Thermal Events"])
 async def list_events(
     classification: Optional[str] = None,
     critical_only: bool = False,
-    limit: int = Query(50, ge=1, le=1000),
+    limit: int = Query(50, ge=1, le=5000),
     from_time: Optional[str] = Query(None, description="ISO timestamp start filter"),
     to_time: Optional[str] = Query(None, description="ISO timestamp end filter"),
     min_lat: Optional[float] = Query(None, ge=-90, le=90),

@@ -151,12 +151,30 @@ function LiveClock() {
 }
 
 export default function LandingPage() {
-  const eventsQuery = useEvents({ limit: 50 }, 30_000);
+  const eventsQuery = useEvents({ limit: 2000 }, 30_000);
   const analyticsQuery = useAnalytics(30_000);
   const healthQuery = useHealth(30_000);
 
   const events = eventsQuery.data ?? mockEvents;
   const backendOnline = Boolean(healthQuery.data?.status === "OPERATIONAL" && !healthQuery.error);
+
+  // Compute latest timestamp and 24h operational events
+  const latestMs = (() => {
+    if (!events.length) return Date.now();
+    const timestamps = events
+      .map((e) => new Date(e.acq_datetime || e.created_at).getTime())
+      .filter((t) => !isNaN(t));
+    return timestamps.length ? Math.max(...timestamps) : Date.now();
+  })();
+
+  const events24h = (() => {
+    const cutoff = latestMs - 24 * 60 * 60 * 1000;
+    const filtered = events.filter((e) => {
+      const t = new Date(e.acq_datetime || e.created_at).getTime();
+      return isNaN(t) || t >= cutoff;
+    });
+    return filtered.length > 0 ? filtered : events;
+  })();
 
   const stats = analyticsQuery.data ?? {
     total_events_processed: events.length,
@@ -225,7 +243,7 @@ export default function LandingPage() {
                   {backendOnline ? "Live Satellite Feed" : "3D Thermal Intelligence Engine"}
                 </span>
                 <span className="text-slate-600">|</span>
-                <span>{events.length} Active Detections</span>
+                <span>{events24h.length} Active Detections (24h)</span>
                 <span className="text-slate-600">|</span>
                 <LiveClock />
               </div>

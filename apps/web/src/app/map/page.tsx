@@ -24,26 +24,9 @@ function MapPageInner() {
   const searchParams = useSearchParams();
   const eventParam = searchParams.get("event") || searchParams.get("id");
 
-  const eventsQuery = useEvents({ limit: 1000 }, 30_000);
+  const eventsQuery = useEvents({ limit: 5000 }, 30_000);
   const alertStream = useAlertStream({ enabled: true });
   const [timeRange, setTimeRange] = useState<TimelineRange>("24H");
-
-  // Dynamic timeline query config based on selected range
-  const timelineQueryConfig = useMemo(() => {
-    const now = new Date();
-    if (timeRange === "7D") {
-      const from = new Date(now.getTime() - 7 * 24 * 3600 * 1000).toISOString();
-      return { fromTime: from, toTime: now.toISOString(), intervalMinutes: 360 }; // 6-hour buckets
-    }
-    if (timeRange === "30D") {
-      const from = new Date(now.getTime() - 30 * 24 * 3600 * 1000).toISOString();
-      return { fromTime: from, toTime: now.toISOString(), intervalMinutes: 1440 }; // 24-hour daily buckets
-    }
-    // Default 24H
-    return { intervalMinutes: 60 };
-  }, [timeRange]);
-
-  const timelineQuery = useTimeline(timelineQueryConfig, 60_000);
 
   const [liveEvents, setLiveEvents] = useState<HotspotEvent[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterCategory>("ALL");
@@ -61,34 +44,39 @@ function MapPageInner() {
     }
   }, [alertStream.latestEvent]);
 
-  // Playback ticker
-  useEffect(() => {
-    if (!isPlaying) return;
-    const buckets = timelineQuery.data?.buckets ?? [];
-    if (!buckets.length) {
-      setIsPlaying(false);
-      return;
-    }
-    const id = setInterval(() => {
-      setSelectedEpoch((prev) => {
-        if (prev === null) return buckets[0].epoch;
-        const idx = buckets.findIndex((b) => b.epoch === prev);
-        if (idx === -1 || idx >= buckets.length - 1) {
-          setIsPlaying(false);
-          return null;
-        }
-        return buckets[idx + 1].epoch;
-      });
-    }, 1400);
-    return () => clearInterval(id);
-  }, [isPlaying, timelineQuery.data]);
-
   const allEvents = useMemo(() => {
     const backend = eventsQuery.data ?? [];
     const ids = new Set(backend.map((e) => e.id));
     const fresh = liveEvents.filter((e) => !ids.has(e.id));
     return [...fresh, ...backend];
   }, [eventsQuery.data, liveEvents]);
+
+  // Determine latest anchor timestamp across dataset
+  const latestMs = useMemo(() => {
+    if (!allEvents.length) return Date.now();
+    const timestamps = allEvents
+      .map((e) => new Date(e.acq_datetime || e.created_at).getTime())
+      .filter((t) => !isNaN(t));
+    return timestamps.length ? Math.max(...timestamps) : Date.now();
+  }, [allEvents]);
+
+  // Dynamic timeline query config based on selected range and dataset anchor
+  const timelineQueryConfig = useMemo(() => {
+    const to = new Date(latestMs + 60 * 1000).toISOString();
+    if (timeRange === "7D") {
+      const from = new Date(latestMs - 7 * 24 * 3600 * 1000).toISOString();
+      return { fromTime: from, toTime: to, intervalMinutes: 360 }; // 6-hour buckets
+    }
+    if (timeRange === "30D") {
+      const from = new Date(latestMs - 30 * 24 * 3600 * 1000).toISOString();
+      return { fromTime: from, toTime: to, intervalMinutes: 1440 }; // 24-hour daily buckets
+    }
+    // Default 24H
+    const from = new Date(latestMs - 24 * 3600 * 1000).toISOString();
+    return { fromTime: from, toTime: to, intervalMinutes: 60 };
+  }, [timeRange, latestMs]);
+
+  const timelineQuery = useTimeline(timelineQueryConfig, 60_000);
 
   // ── Deep-link support: /map?event=<id> selects & flies to the event once on trigger ──────
   const handledEventParamRef = useRef<string | null>(null);
@@ -108,6 +96,15 @@ function MapPageInner() {
   }, [eventParam, allEvents]);
 
   const filteredEvents = useMemo(() => {
+    // Time range cutoff
+    const windowMs =
+      timeRange === "30D"
+        ? 30 * 24 * 3600 * 1000
+        : timeRange === "7D"
+        ? 7 * 24 * 3600 * 1000
+        : 24 * 3600 * 1000;
+    const rangeCutoff = latestMs - windowMs;
+
     return allEvents.filter((ev) => {
       if (activeFilter === "CRITICAL" && !ev.is_critical_alert && ev.classification !== "INDUSTRIAL_FIRE_EMERGENCY") return false;
       if (
@@ -131,20 +128,24 @@ function MapPageInner() {
       )
         return false;
 
+      const evTime = new Date(ev.acq_datetime || ev.created_at || "").getTime();
+
       if (selectedEpoch !== null) {
-        const evTime = new Date(ev.acq_datetime || ev.created_at || "").getTime();
         // Dynamic interval window match based on range: 1h (24H), 6h (7D), 24h (30D)
-        const windowMs =
+        const sliceWindowMs =
           timeRange === "30D"
             ? 24 * 3600 * 1000
             : timeRange === "7D"
             ? 6 * 3600 * 1000
             : 3600 * 1000;
-        if (Math.abs(evTime - selectedEpoch) > windowMs) return false;
+        if (Math.abs(evTime - selectedEpoch) > sliceWindowMs) return false;
+      } else {
+        // Range window filter
+        if (!isNaN(evTime) && evTime < rangeCutoff) return false;
       }
       return true;
     });
-  }, [allEvents, activeFilter, selectedEpoch]);
+  }, [allEvents, activeFilter, selectedEpoch, timeRange, latestMs]);
 
   return (
     <ConsoleShell>
@@ -175,8 +176,8 @@ function MapPageInner() {
           <div className="flex items-center gap-2 flex-shrink-0">
             <span className="font-mono text-[10px] text-mute hidden md:inline">
               Showing{" "}
-              <span className="text-white">{filteredEvents.length}</span> of{" "}
-              {allEvents.length} hotspots
+              <span className="text-cyan-300 font-semibold">{filteredEvents.length}</span> of{" "}
+              <span className="text-white">{timeRange === "30D" ? "30D" : timeRange === "7D" ? "7D" : "24H"}</span> hotspots
             </span>
             <button
               onClick={() => setResetSignal((s) => s + 1)}

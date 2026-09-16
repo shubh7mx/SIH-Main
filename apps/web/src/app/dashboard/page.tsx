@@ -19,7 +19,7 @@ import { getClassificationSeverity } from "@/lib/design-tokens";
 type TimeWindowFilter = "24h" | "7d" | "30d" | "ALL";
 
 export default function DashboardPage() {
-  const eventsQuery = useEvents({ limit: 1000 }, 30_000);
+  const eventsQuery = useEvents({ limit: 5000 }, 30_000);
   const alertStream = useAlertStream({ enabled: true });
   const timelineQuery = useTimeline({ intervalMinutes: 60 }, 60_000);
 
@@ -42,21 +42,35 @@ export default function DashboardPage() {
     return [...fresh, ...backend];
   }, [eventsQuery.data, liveEvents]);
 
-  const criticalCount = allEvents.filter((e) => e.is_critical_alert).length;
+  // Determine latest anchor timestamp across dataset
+  const latestMs = useMemo(() => {
+    if (!allEvents.length) return Date.now();
+    const timestamps = allEvents
+      .map((e) => new Date(e.acq_datetime || e.created_at).getTime())
+      .filter((t) => !isNaN(t));
+    return timestamps.length ? Math.max(...timestamps) : Date.now();
+  }, [allEvents]);
+
+  // 24-hour filtered slice
+  const events24h = useMemo(() => {
+    if (allEvents.length === 0) return [];
+    const cutoff = latestMs - 24 * 60 * 60 * 1000;
+    const filtered = allEvents.filter((e) => {
+      const t = new Date(e.acq_datetime || e.created_at).getTime();
+      return isNaN(t) || t >= cutoff;
+    });
+    return filtered.length > 0 ? filtered : allEvents;
+  }, [allEvents, latestMs]);
+
+  const criticalCount = events24h.filter((e) => e.is_critical_alert).length;
   const meanConfidence =
-    allEvents.length > 0
-      ? allEvents.reduce((s, e) => s + e.confidence_score, 0) / allEvents.length
+    events24h.length > 0
+      ? events24h.reduce((s, e) => s + e.confidence_score, 0) / events24h.length
       : 0;
 
   // Filtered events for Classification Mix based on selected time window
   const mixFilteredEvents = useMemo(() => {
     if (mixWindow === "ALL" || allEvents.length === 0) return allEvents;
-
-    // Anchor cutoff from latest timestamp in events or now
-    const latestMs = Math.max(
-      ...allEvents.map((e) => new Date(e.acq_datetime || e.created_at).getTime()).filter((t) => !isNaN(t)),
-      Date.now()
-    );
 
     const windowMs =
       mixWindow === "24h"
@@ -72,7 +86,7 @@ export default function DashboardPage() {
     });
 
     return filtered.length > 0 ? filtered : allEvents;
-  }, [allEvents, mixWindow]);
+  }, [allEvents, mixWindow, latestMs]);
 
   // Category distribution for active mix window
   const classCounts = new Map<string, number>();
@@ -115,7 +129,7 @@ export default function DashboardPage() {
               {alertStream.state === "open" ? "● LIVE STREAM" : "○ POLLING"}
             </span>
             <span className="px-2 py-1 rounded border border-white/10 bg-white/5 text-mute">
-              NASA FIRMS · {allEvents.length} detections / 24h
+              NASA FIRMS · {events24h.length} detections / 24h
             </span>
           </div>
         </div>
@@ -124,9 +138,9 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <KpiStatTile
             label="Active Detections"
-            value={allEvents.length}
+            value={events24h.length}
             unit="/24h"
-            subtext="Hotspots in current window"
+            subtext="Hotspots in 24h operational window"
             accentColor="#06b6d4"
             loading={loading}
           />
@@ -151,9 +165,9 @@ export default function DashboardPage() {
           />
           <KpiStatTile
             label="Total FRP Tracked"
-            value={allEvents.reduce((s, e) => s + e.frp_megawatts, 0).toFixed(0)}
+            value={events24h.reduce((s, e) => s + e.frp_megawatts, 0).toFixed(0)}
             unit="MW"
-            subtext="Cumulative radiative power"
+            subtext="Cumulative radiative power (24h)"
             accentColor="#f97316"
             loading={loading}
           />

@@ -332,7 +332,7 @@ class EventStore:
             t_dt = _parse_dt(to_time)
 
             if not f_dt or not t_dt:
-                # If bounds not fully provided, anchor across events or past 24 hours
+                # If bounds not fully provided, anchor to the past 24 hours of latest data
                 event_dts = []
                 for ev in self._events.values():
                     d = _parse_dt(ev.get("acq_datetime")) or _parse_dt(ev.get("created_at"))
@@ -340,12 +340,11 @@ class EventStore:
                         event_dts.append(d)
 
                 if event_dts:
-                    min_dt = min(event_dts)
                     max_dt = max(event_dts)
-                    f_dt = f_dt or min_dt - timedelta(minutes=30)
-                    t_dt = t_dt or max_dt + timedelta(minutes=30)
+                    f_dt = f_dt or (max_dt - timedelta(hours=24))
+                    t_dt = t_dt or max_dt
                 else:
-                    f_dt = f_dt or now - timedelta(hours=24)
+                    f_dt = f_dt or (now - timedelta(hours=24))
                     t_dt = t_dt or now
 
             # Ensure start is bucket-aligned
@@ -382,27 +381,18 @@ class EventStore:
                 d = _parse_dt(ev.get("acq_datetime")) or _parse_dt(ev.get("created_at"))
                 if not d:
                     continue
+
+                # Filter within time window bounds
+                if f_dt and d < f_dt:
+                    continue
+                if t_dt and d > t_dt:
+                    continue
+
                 ev_ts = d.timestamp()
                 b_key = int(ev_ts // interval_sec) * interval_sec
 
                 if b_key not in buckets:
-                    b_dt = datetime.fromtimestamp(b_key, tz=timezone.utc)
-                    buckets[b_key] = {
-                        "timestamp": b_dt.isoformat(),
-                        "epoch": b_key * 1000,
-                        "total_events": 0,
-                        "critical_count": 0,
-                        "mean_frp_mw": 0.0,
-                        "max_frp_mw": 0.0,
-                        "class_counts": {
-                            "INDUSTRIAL_FIRE_EMERGENCY": 0,
-                            "PERSISTENT_INDUSTRIAL_FLARE": 0,
-                            "AGRICULTURAL_BURNING": 0,
-                            "WILDFIRE": 0,
-                            "DEFERRED_FOR_ANALYST": 0,
-                        },
-                        "_frp_sum": 0.0,
-                    }
+                    continue
 
                 b = buckets[b_key]
                 b["total_events"] += 1
