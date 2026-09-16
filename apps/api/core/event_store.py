@@ -33,7 +33,10 @@ def _parse_dt(value: Any) -> Optional[datetime]:
     if isinstance(value, (int, float)):
         return datetime.fromtimestamp(value, tz=timezone.utc)
     try:
-        s = str(value).replace("Z", "+00:00")
+        s = str(value).strip().replace("Z", "+00:00")
+        # Handle URL query space decoded from '+'
+        if " " in s and ("+00:00" not in s):
+            s = s.replace(" ", "+")
         dt = datetime.fromisoformat(s)
         return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
     except Exception:
