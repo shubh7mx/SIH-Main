@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import type { Map as MlMap, Popup as MlPopup } from "maplibre-gl";
 import type { HotspotEvent } from "@/lib/types";
-import { getClassificationSeverity } from "@/lib/design-tokens";
+import { getClassificationSeverity, getSectorTag } from "@/lib/design-tokens";
 import {
   getIndiaStatesGeoJSON,
   getIndiaCitiesGeoJSON,
@@ -1425,8 +1425,12 @@ export function TacticalMap({
           const ev = eventsRef.current.find((item) => item.id === props.id);
           const anomalyInfo = ev ? inferAnomalyReason(ev) : null;
           const locInfo = ev ? getEventLocation(ev) : null;
+          const sector = getSectorTag(props.facility_type, props.facility_name);
           const title = props.facility_name || "Unmapped Thermal Anomaly";
           const locationLine = locInfo ? `<div class="hp-meta">📍 ${locInfo.displayLocation}</div>` : "";
+          const sectorTagHtml = sector
+            ? `<span style="background:${sector.bg}; border:1px solid ${sector.border}; color:${sector.color}; padding:1px 5px; border-radius:3px; font-size:9px; font-family:monospace; margin-left:4px;">${sector.icon} ${sector.shortLabel}</span>`
+            : "";
 
           popupRef.current = new maplibregl.Popup({
             closeButton: !isHover,
@@ -1435,7 +1439,10 @@ export function TacticalMap({
           })
             .setLngLat(coords)
             .setHTML(`
-              <div class="hp-badge" style="background:${color}22; border:1px solid ${color}66; color:${color}">${props.shortLabel || props.classification}</div>
+              <div style="display:flex; align-items:center; gap:4px; margin-bottom:4px;">
+                <span class="hp-badge" style="background:${color}22; border:1px solid ${color}66; color:${color}; margin-bottom:0;">${props.shortLabel || props.classification}</span>
+                ${sectorTagHtml}
+              </div>
               <div class="hp-title">${title}</div>
               ${locationLine}
               ${anomalyInfo && (!props.facility_name || props.facility_name.includes("Unmapped") || props.facility_name.includes("Thermal Anomaly")) ? `<div class="hp-meta text-cyan-300 text-[10px] mt-0.5 font-sans">${anomalyInfo.categoryIcon} Suggestion: ${anomalyInfo.probableCause}</div>` : ""}

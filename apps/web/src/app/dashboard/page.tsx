@@ -6,6 +6,7 @@ import { TacticalMap } from "@/components/TacticalMap";
 import { DetectionsTrendChart } from "@/components/DetectionsTrendChart";
 import { KpiStatTile } from "@/components/ui/KpiStatTile";
 import { SeverityBadge } from "@/components/ui/SeverityBadge";
+import { SectorBadge } from "@/components/ui/SectorBadge";
 import { CardSkeleton } from "@/components/ui/LoadingSkeleton";
 import { useEvents, useAlertStream, useTimeline, describeError } from "@/lib/hooks";
 import type { HotspotEvent } from "@/lib/types";
@@ -15,12 +16,15 @@ import {
 } from "recharts";
 import { getClassificationSeverity } from "@/lib/design-tokens";
 
+type TimeWindowFilter = "24h" | "7d" | "30d" | "ALL";
+
 export default function DashboardPage() {
   const eventsQuery = useEvents({ limit: 1000 }, 30_000);
   const alertStream = useAlertStream({ enabled: true });
   const timelineQuery = useTimeline({ intervalMinutes: 60 }, 60_000);
 
   const [liveEvents, setLiveEvents] = useState<HotspotEvent[]>([]);
+  const [mixWindow, setMixWindow] = useState<TimeWindowFilter>("24h");
 
   useEffect(() => {
     if (alertStream.latestEvent) {
@@ -44,9 +48,35 @@ export default function DashboardPage() {
       ? allEvents.reduce((s, e) => s + e.confidence_score, 0) / allEvents.length
       : 0;
 
-  // Category distribution
+  // Filtered events for Classification Mix based on selected time window
+  const mixFilteredEvents = useMemo(() => {
+    if (mixWindow === "ALL" || allEvents.length === 0) return allEvents;
+
+    // Anchor cutoff from latest timestamp in events or now
+    const latestMs = Math.max(
+      ...allEvents.map((e) => new Date(e.acq_datetime || e.created_at).getTime()).filter((t) => !isNaN(t)),
+      Date.now()
+    );
+
+    const windowMs =
+      mixWindow === "24h"
+        ? 24 * 60 * 60 * 1000
+        : mixWindow === "7d"
+        ? 7 * 24 * 60 * 60 * 1000
+        : 30 * 24 * 60 * 60 * 1000;
+
+    const cutoff = latestMs - windowMs;
+    const filtered = allEvents.filter((e) => {
+      const t = new Date(e.acq_datetime || e.created_at).getTime();
+      return isNaN(t) || t >= cutoff;
+    });
+
+    return filtered.length > 0 ? filtered : allEvents;
+  }, [allEvents, mixWindow]);
+
+  // Category distribution for active mix window
   const classCounts = new Map<string, number>();
-  for (const e of allEvents) {
+  for (const e of mixFilteredEvents) {
     classCounts.set(e.classification, (classCounts.get(e.classification) ?? 0) + 1);
   }
   const classData = Array.from(classCounts.entries()).map(([name, count]) => ({
@@ -184,8 +214,15 @@ export default function DashboardPage() {
                         style={{ backgroundColor: sev.dot, boxShadow: `0 0 6px ${sev.glow}` }}
                       />
                       <div className="min-w-0 flex-1">
-                        <div className="text-[11px] text-white/90 truncate font-medium">
-                          {ev.facility_name ?? "Unmapped anomaly"}
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="text-[11px] text-white/90 truncate font-medium">
+                            {ev.facility_name ?? "Unmapped anomaly"}
+                          </span>
+                          <SectorBadge
+                            facilityType={ev.facility_type}
+                            facilityName={ev.facility_name}
+                            size="sm"
+                          />
                         </div>
                         <div className="font-mono text-[9px] text-mute">
                           {sev.shortLabel} · {ev.frp_megawatts.toFixed(0)} MW
@@ -211,11 +248,48 @@ export default function DashboardPage() {
           />
 
           {/* Classification distribution */}
-          <div className="surface-card rounded-xl border border-white/5 p-4">
-            <div className="eyebrow mb-3">Classification Mix</div>
+          <div className="surface-card rounded-xl border border-white/5 p-4 flex flex-col justify-between">
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="eyebrow">Classification Mix</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/70 text-cyan-400 border border-cyan-800/60">
+                    {mixWindow === "24h"
+                      ? "Last 24 Hours"
+                      : mixWindow === "7d"
+                      ? "Past 7 Days"
+                      : mixWindow === "30d"
+                      ? "Past 30 Days"
+                      : "All Active"}
+                    {" · "}
+                    {mixFilteredEvents.length} events
+                  </span>
+                </div>
+                {/* Time Range Selector */}
+                <div className="inline-flex items-center rounded-lg bg-black/40 border border-white/5 p-0.5 font-mono text-[10px]">
+                  {(["24h", "7d", "30d", "ALL"] as TimeWindowFilter[]).map((w) => (
+                    <button
+                      key={w}
+                      onClick={() => setMixWindow(w)}
+                      className={`px-2 py-0.5 rounded transition-colors ${
+                        mixWindow === w
+                          ? "bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/30"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {w === "ALL" ? "All" : w}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[10px] text-slate-500 font-mono mb-2">
+                Distribution across 4-class taxonomy for the selected operational window
+              </p>
+            </div>
+
             {classData.length === 0 ? (
               <div className="h-40 flex items-center justify-center text-mute font-mono text-[11px]">
-                No classified events yet.
+                No classified events in {mixWindow === "ALL" ? "database" : mixWindow} window.
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={160}>

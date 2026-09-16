@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import type { HotspotEvent } from "@/lib/types";
 import { SeverityBadge } from "@/components/ui/SeverityBadge";
+import { SectorBadge } from "@/components/ui/SectorBadge";
 import { ConfidenceMeter } from "@/components/ui/ConfidenceMeter";
 import { getClassificationSeverity } from "@/lib/design-tokens";
 import { useIncidentBrief } from "@/lib/hooks";
@@ -259,7 +260,14 @@ export function EventDrawer({ event, onClose }: Props) {
                     </div>
                     <div>
                       <span className="text-mute block text-[10px]">Sector Type</span>
-                      <span className="text-white capitalize">{activeEvent.facility_type ?? "Industrial"}</span>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-white capitalize">{activeEvent.facility_type ?? "Industrial"}</span>
+                        <SectorBadge
+                          facilityType={activeEvent.facility_type}
+                          facilityName={activeEvent.facility_name}
+                          size="sm"
+                        />
+                      </div>
                     </div>
                     <div>
                       <span className="text-mute block text-[10px]">CDE Anomaly</span>

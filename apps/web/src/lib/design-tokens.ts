@@ -102,6 +102,114 @@ export function getClassificationSeverity(classification: string | ThermalClassi
   }
 }
 
+// ── Industrial Sector Sub-Tags Taxonomy ──────────────────────────────────────
+export interface SectorTagInfo {
+  key: string;
+  label: string;
+  shortLabel: string;
+  icon: string;
+  color: string;
+  border: string;
+  bg: string;
+}
+
+export const SECTOR_TAGS: Record<string, SectorTagInfo> = {
+  refinery: {
+    key: "refinery",
+    label: "Petroleum Refinery",
+    shortLabel: "Refinery",
+    icon: "🛢️",
+    color: "#38bdf8", // Sky blue
+    border: "rgba(56, 189, 248, 0.4)",
+    bg: "rgba(56, 189, 248, 0.12)",
+  },
+  lng: {
+    key: "lng",
+    label: "LNG & Gas Terminal",
+    shortLabel: "LNG / Gas",
+    icon: "⛽",
+    color: "#06b6d4", // Cyan
+    border: "rgba(6, 182, 212, 0.4)",
+    bg: "rgba(6, 182, 212, 0.12)",
+  },
+  steel: {
+    key: "steel",
+    label: "Steel & Metallurgy",
+    shortLabel: "Steel / Metals",
+    icon: "🏗️",
+    color: "#fb923c", // Orange
+    border: "rgba(251, 146, 60, 0.4)",
+    bg: "rgba(251, 146, 60, 0.12)",
+  },
+  cement: {
+    key: "cement",
+    label: "Cement Rotary Kiln",
+    shortLabel: "Cement",
+    icon: "🧱",
+    color: "#facc15", // Amber/Yellow
+    border: "rgba(250, 204, 21, 0.4)",
+    bg: "rgba(250, 204, 21, 0.12)",
+  },
+  mining: {
+    key: "mining",
+    label: "Mining & Mineral Extraction",
+    shortLabel: "Mining / Quarry",
+    icon: "⛏️",
+    color: "#d97706", // Dark amber/bronze
+    border: "rgba(217, 119, 6, 0.4)",
+    bg: "rgba(217, 119, 6, 0.12)",
+  },
+  chemical: {
+    key: "chemical",
+    label: "Chemical & Fertilizer Plant",
+    shortLabel: "Chemicals",
+    icon: "🧪",
+    color: "#c084fc", // Purple
+    border: "rgba(192, 132, 252, 0.4)",
+    bg: "rgba(192, 132, 252, 0.12)",
+  },
+  power: {
+    key: "power",
+    label: "Thermal Power Station",
+    shortLabel: "Power Plant",
+    icon: "⚡",
+    color: "#4ade80", // Emerald
+    border: "rgba(74, 222, 128, 0.4)",
+    bg: "rgba(74, 222, 128, 0.12)",
+  },
+};
+
+/**
+ * Resolves the industrial sector tag from facility_type string or facility name keywords.
+ */
+export function getSectorTag(
+  facilityType?: string | null,
+  facilityName?: string | null
+): SectorTagInfo | null {
+  const typeStr = (facilityType || "").toLowerCase().trim();
+  const nameStr = (facilityName || "").toLowerCase().trim();
+
+  // 1. Exact or prefix match on facility_type
+  if (typeStr.includes("refiner") || typeStr.includes("petrochem")) return SECTOR_TAGS.refinery;
+  if (typeStr.includes("gas") || typeStr.includes("lng") || typeStr.includes("gail") || typeStr.includes("pipeline")) return SECTOR_TAGS.lng;
+  if (typeStr.includes("metal") || typeStr.includes("steel") || typeStr.includes("smelter") || typeStr.includes("blast") || typeStr.includes("iron")) return SECTOR_TAGS.steel;
+  if (typeStr.includes("cement") || typeStr.includes("clinker")) return SECTOR_TAGS.cement;
+  if (typeStr.includes("mining") || typeStr.includes("mine") || typeStr.includes("quarry") || typeStr.includes("coal") || typeStr.includes("bauxite") || typeStr.includes("iron_ore")) return SECTOR_TAGS.mining;
+  if (typeStr.includes("chem") || typeStr.includes("fertiliz") || typeStr.includes("urea") || typeStr.includes("ammonia")) return SECTOR_TAGS.chemical;
+  if (typeStr.includes("power") || typeStr.includes("thermal") || typeStr.includes("ntpc")) return SECTOR_TAGS.power;
+
+  // 2. Name-based heuristics fallback
+  if (nameStr.includes("refiner") || nameStr.includes("iocl") || nameStr.includes("bpcl") || nameStr.includes("hpcl") || nameStr.includes("reliance jamnagar")) return SECTOR_TAGS.refinery;
+  if (nameStr.includes("lng") || nameStr.includes("petronet") || nameStr.includes("gail") || nameStr.includes("terminal")) return SECTOR_TAGS.lng;
+  if (nameStr.includes("steel") || nameStr.includes("tata steel") || nameStr.includes("jsw") || nameStr.includes("sail") || nameStr.includes("jindal")) return SECTOR_TAGS.steel;
+  if (nameStr.includes("cement") || nameStr.includes("ultratech") || nameStr.includes("ambuja") || nameStr.includes("acc") || nameStr.includes("shree")) return SECTOR_TAGS.cement;
+  if (nameStr.includes("mine") || nameStr.includes("mining") || nameStr.includes("singrauli") || nameStr.includes("coal") || nameStr.includes("quarry") || nameStr.includes("bauxite")) return SECTOR_TAGS.mining;
+  if (nameStr.includes("chemical") || nameStr.includes("fertilizer") || nameStr.includes("iffco") || nameStr.includes("gnfc")) return SECTOR_TAGS.chemical;
+  if (nameStr.includes("power") || nameStr.includes("ntpc") || nameStr.includes("thermal")) return SECTOR_TAGS.power;
+
+  return null;
+}
+
 export const SURFACE_TOKENS = {
   canvas: "#03060a",
   card: "rgba(10, 15, 26, 0.75)",

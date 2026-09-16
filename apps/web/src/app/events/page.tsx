@@ -5,6 +5,7 @@ import { ConsoleShell } from "@/components/ConsoleShell";
 import { EventDrawer } from "@/components/EventDrawer";
 import { ReviewQueuePanel } from "@/components/ReviewQueuePanel";
 import { SeverityBadge } from "@/components/ui/SeverityBadge";
+import { SectorBadge } from "@/components/ui/SectorBadge";
 import { TableSkeleton } from "@/components/ui/LoadingSkeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useEvents, useAlertStream, useReviewQueue } from "@/lib/hooks";
@@ -215,9 +216,16 @@ export default function EventsPage() {
                             hour12: false,
                           })}
                         </td>
-                        <td className="px-3 py-2 text-[11px] max-w-[200px] truncate">
-                          <div className="text-white/90 font-medium truncate">
-                            {ev.facility_name ?? `Near ${getEventLocation(ev).city}`}
+                        <td className="px-3 py-2 text-[11px] max-w-[220px]">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="text-white/90 font-medium truncate">
+                              {ev.facility_name ?? `Near ${getEventLocation(ev).city}`}
+                            </span>
+                            <SectorBadge
+                              facilityType={ev.facility_type}
+                              facilityName={ev.facility_name}
+                              size="sm"
+                            />
                           </div>
                           <div className="font-mono text-[9px] text-mute">
                             {Number(ev.latitude ?? 0).toFixed(2)}°, {Number(ev.longitude ?? 0).toFixed(2)}°
