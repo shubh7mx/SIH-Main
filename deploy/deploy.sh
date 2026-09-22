@@ -94,4 +94,4 @@ echo -e "${GREEN}======================================================${NC}\n"
 pm2 status
 echo -e "${CYAN}Docker Containers:${NC}"
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-echo -e "\n${CYAN}• Domain: https://26162.codepegst.xyz/${NC}"
+echo -e "\n${CYAN}• Domain: https://26162.vlkn.qzz.io/${NC}"

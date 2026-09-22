@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import type { HotspotEvent } from "@/lib/types";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+import { API_BASE } from "@/lib/api";
 
 interface EscalateModalProps {
   event: HotspotEvent;
@@ -90,7 +89,7 @@ export function EscalateModal({
     setIsExecuting(true);
 
     // Call backend escalation API endpoint
-    fetch(`${API_BASE}/api/events/${event.id}/escalate`, {
+    fetch(`${API_BASE}/events/${event.id}/escalate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ note: "Evaluator live demonstration escalation" }),

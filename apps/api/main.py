@@ -150,6 +150,8 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "https://26162.vlkn.qzz.io",
+    "http://26162.vlkn.qzz.io",
     "https://26162.codepegst.xyz",
     "http://26162.codepegst.xyz",
 ]
@@ -157,7 +159,7 @@ ALLOWED_ORIGINS = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1|.*\.codepegst\.xyz)(:\d+)?",
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1|.*\.vlkn\.qzz\.io|.*\.qzz\.io|.*\.codepegst\.xyz)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -2,8 +2,7 @@
 
 import React, { useState } from "react";
 import { useAlertStream } from "@/lib/hooks";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+import { API_BASE } from "@/lib/api";
 
 interface Scenario {
   id: string;
@@ -58,7 +57,7 @@ export function LiveStreamStatus() {
   const handleInject = async (scenarioId: string) => {
     setLoadingScenario(scenarioId);
     try {
-      const res = await fetch(`${API_BASE}/api/events/inject`, {
+      const res = await fetch(`${API_BASE}/events/inject`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ scenario: scenarioId }),
